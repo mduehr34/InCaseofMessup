@@ -1,0 +1,82 @@
+# Project: Marrow & Myth - Technical Standards
+
+## AI Behavior & Communication (HIGHEST PRIORITY)
+- CONFIDENCE THRESHOLD: If you are not at least 95% confident in the architectural path, logic implementation, or how a task interacts with existing systems, you MUST stop and ask clarifying questions. 
+- Do not guess or make assumptions about game mechanics (d10 math, grid rules, etc.) or file structures.
+- Ask for clarification until you reach a 95% confidence level before writing any code.
+- If a request conflicts with the "Core Architectural Pillars" below, point out the conflict and ask for guidance.
+
+## Core Architectural Pillars
+- DATA-DRIVEN DESIGN: All game content (monsters, cards, items, settlement events) MUST be defined via ScriptableObjects. No hardcoded stats in MonoBehaviours.
+- JSON SERIALIZATION: All combat and settlement states must be fully JSON-serializable to support a robust save/load system. Avoid using complex engine types (like Transform or GameObject) in data classes.
+- ARCHAEOLOGICAL UI: UI Toolkit is the standard. Use UXML and USS. Styles should reflect a "carved stone" aesthetic.
+
+## C# & Unity Standards
+- Use Unity 6000.4.0f1 features (e.g., improved ScriptableObject workflows).
+- Follow "Composition over Inheritance."
+- Naming Convention: PascalCase for public members, _camelCase for private fields.
+- Always include [SerializeField] for private variables that need to be tweaked in the Inspector.
+- Ensure all ScriptableObject classes have a [CreateAssetMenu] attribute.
+
+## Game-Specific Constants
+- Grid Size: 22 units wide x 16 units high.
+- Phase Order: Vitality Phase -> Hunter Phase -> Behavior Refresh -> Monster Phase.
+- Math: Use d10-based resolution as defined in the GDD.
+
+## d10 Resolution (complete rules)
+- Precision Check: d10 + Attacker Accuracy vs Monster Evasion → Hit/Miss
+- Force Check: d10 + Attacker Strength vs Monster Toughness → Wound (Flesh) / Shell Hit
+- Critical hit: natural roll ≥ crit threshold (default 10; Luck 1 = crit on 9+, Luck 2 = crit on 8+, etc.)
+- Element weakness: roll bonus die on Force Check, take the higher result
+- Element resistance: roll penalty die on Force Check, take the lower result
+- Exposed part: Force Check auto-passes — no roll needed
+
+## Win/Loss Conditions
+- Monster defeated: last Removable behavior card removed — fires immediately, mid-turn, regardless of phase
+- Hunt lost: all 4 hunters' Head OR Torso Flesh = 0
+- Hunter collapses (survives hunt): that hunter's Head OR Torso Flesh = 0 — removed from grid, does not block movement
+
+## Behavior Deck Group Progression
+- Opening group cards are always drawn first, in random order within the group
+- Opening → Escalation: after all Opening cards have been drawn once; deck rebuilds and reshuffles
+- Apex trigger: first part break (default), a specific round number, or HP threshold — defined per MonsterSO
+- Permanent cards: always present, never count toward win condition, not shuffled with removable deck
+- Single Trigger cards: fire exactly once when their condition is met, then permanently leave the deck
+
+## Deck Cap
+- Maximum 20 cards per hunter deck at any time
+- Late-game deck building requires actively removing Tier 1/2 cards to make room
+
+## Pack Special Rules (PackMonsterSO ONLY)
+- One shared behavior deck for all 3 wolves
+- Each Monster Phase: ONE card drawn; ALL three wolves execute that card's action simultaneously
+- Killing blow on any wolf → Aggro token transfers immediately to the hunter who dealt it
+- Win condition: all Removable cards removed from the shared deck (all 3 wolves defeated)
+- Part break/wound removals apply to the shared deck regardless of which wolf owns that part
+- ONLY The Pack uses PackMonsterSO. All other multi-difficulty variants use standard MonsterSO.
+
+## ScriptableObject Asset Naming
+- General: [TypePrefix]_[ContentName] — e.g. Monster_Gaunt, Card_BracePosition, Event_EVT01
+- BehaviorCardSO assets: [MonsterName]_[CardName] — e.g. Gaunt_ScentLock, Gaunt_Lunge
+
+## Technical Constraints
+- ASSEMBLY DEFINITIONS: All core systems (Data, Systems, UI, Logic) must reside in their own Assembly Definition (.asmdef) files. No circular dependencies. No new assemblies without explicit approval.
+- INTERFACE-FIRST: For major systems (Grid, Combat, AI), define the Public Interface (API) first. Do not write full implementations until the interface is approved.
+- JSON TYPES — STRICT RULE: All runtime state classes (CombatState, CampaignState, HunterCombatState, etc.) must use only plain C# types. Forbidden in data/state classes: Transform, GameObject, Vector3, MonoBehaviour, Component. Acceptable: int, float, string, bool, arrays of those, Vector2Int. Use string tags (not SO references) in all runtime state — resolve SO references via registry at load time.
+
+## Interface Approval Process
+- IGridManager, ICombatManager, IMonsterAI: post the full interface definition for review before writing any implementation code.
+- If an implementation would require changing an already-approved interface, stop and ask before proceeding.
+
+## Stage Gates
+- Do not begin Stage N+1 until Stage N's Definition of Done is confirmed.
+- At the start of each session: state which stage you are on and confirm the previous stage's verification test still passes.
+- If a bug requires changes to a class defined in a prior stage: note it explicitly, fix it cleanly, and re-run that stage's verification test before continuing forward.
+
+## Clarification Protocol — Always Stop and Ask Before:
+- Implementing any BehaviorCardSO trigger condition not already defined in a STAGE_*.md file
+- Making any change to a public interface (IGridManager, ICombatManager, IMonsterAI)
+- Adding any new Assembly Definition beyond the four defined in Stage 1
+- Interpreting a Chronicle Event's "mechanicalEffect" string that isn't an obvious stat or resource change
+- Writing any art generation prompt not derived from Appendix B of the GDD
+- Creating a new monster using PackMonsterSO (only The Pack uses this)
