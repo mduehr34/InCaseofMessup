@@ -2,8 +2,7 @@
     "name": "MnM.Core.Logic",
     "rootNamespace": "MnM.Core.Logic",
     "references": [
-        "MnM.Core.Data",
-        "MnM.Core.Systems"
+        "MnM.Core.Data"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
