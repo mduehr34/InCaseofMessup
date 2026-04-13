@@ -22,7 +22,8 @@
       "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/mduehr34/InCaseofMessup/commits?sha=main --jq '.[0:3] | .[] | .commit.message[0:60] + \" \\(\" + .sha[0:7] + \"\\)\"')",
       "Bash('/c/Program Files/GitHub CLI/gh.exe' pr create --base main --head master --title 'Stage 2-A: IGridManager, ICombatManager, IMonsterAI interfaces' --body ':*)",
       "Bash('/c/Program Files/GitHub CLI/gh.exe' pr create --base master --head stage-2a --title 'Stage 2-A: IGridManager, ICombatManager, IMonsterAI interfaces' --body ':*)",
-      "Bash(ls Assets/_Game/Scripts/Core.Data/CombatStateTest*)"
+      "Bash(ls Assets/_Game/Scripts/Core.Data/CombatStateTest*)",
+      "Bash('/c/Program Files/GitHub CLI/gh.exe' pr create --base master --head stage-2b --title 'Stage 2-B: CombatState and all sub-state classes' --body ':*)"
     ]
   }
 }
