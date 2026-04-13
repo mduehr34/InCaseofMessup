@@ -2,7 +2,24 @@
   "permissions": {
     "allow": [
       "Bash(tasklist /FI \"IMAGENAME eq Unity.exe\")",
-      "Bash(tasklist)"
+      "Bash(tasklist)",
+      "mcp__coplay-mcp__check_compile_errors",
+      "mcp__coplay-mcp__execute_script",
+      "mcp__coplay-mcp__get_unity_logs",
+      "mcp__coplay-mcp__read_file",
+      "Bash(gh repo:*)",
+      "Bash(where gh:*)",
+      "Bash(winget install:*)",
+      "Bash(refreshenv)",
+      "Bash(export PATH=\"$PATH:/c/Program Files/GitHub CLI\")",
+      "Bash(gh auth:*)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" auth login --web --hostname github.com)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" auth status)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" repo view mduehr34/InCaseofMessup --json defaultBranchRef --jq .defaultBranchRef.name)",
+      "Bash('/c/Program Files/GitHub CLI/gh.exe' pr create --base main --head master --title 'Stage 1 complete — SO classes, enums, structs, and mock data assets' --body ':*)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" pr list --repo mduehr34/InCaseofMessup --state all)",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/mduehr34/InCaseofMessup/branches/main --jq '.commit.commit.message + \" \\(\" + .commit.sha[0:7] + \"\\)\"')",
+      "Bash(\"/c/Program Files/GitHub CLI/gh.exe\" api repos/mduehr34/InCaseofMessup/commits?sha=main --jq '.[0:3] | .[] | .commit.message[0:60] + \" \\(\" + .sha[0:7] + \"\\)\"')"
     ]
   }
 }
