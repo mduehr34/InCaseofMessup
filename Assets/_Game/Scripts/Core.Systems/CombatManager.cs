@@ -16,6 +16,10 @@ namespace MnM.Core.Systems
         public CombatState CurrentState { get; private set; }
         public CombatPhase CurrentPhase { get; private set; }
 
+        // ── Sub-Systems ──────────────────────────────────────────
+        private AggroManager _aggroManager = new AggroManager();
+        public AggroManager AggroManager => _aggroManager;
+
         // ── Events ───────────────────────────────────────────────
         public event System.Action<CombatPhase>             OnPhaseChanged;
         public event System.Action<string, int, DamageType> OnDamageDealt;
@@ -27,6 +31,7 @@ namespace MnM.Core.Systems
         {
             CurrentState = initialState;
             CurrentPhase = CombatPhase.VitalityPhase;
+            _aggroManager.Initialize(initialState);
             Debug.Log($"[Combat] Started. Year:{initialState.campaignYear} " +
                       $"Monster:{initialState.monster.monsterName} " +
                       $"Hunters:{initialState.hunters.Length}");
