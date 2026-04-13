@@ -16,15 +16,6 @@ namespace MnM.Core.Data
         public int footprintH;
     }
 
-    // Stage 2-B stub — fields defined in STAGE_02_B.md
-    [System.Serializable]
-    public class CombatState : IJsonSerializable { }
-
-    // Stage 2-B stub — fields defined in STAGE_02_B.md
-    [System.Serializable]
-    public class CombatResult : IJsonSerializable { }
-
-
     [System.Serializable]
     public struct LinkPoint
     {
