@@ -1,0 +1,16 @@
+{
+    "name": "MnM.Core.Systems",
+    "rootNamespace": "MnM.Core.Systems",
+    "references": [
+        "MnM.Core.Data"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
