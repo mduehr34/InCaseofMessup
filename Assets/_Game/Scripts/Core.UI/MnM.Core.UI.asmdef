@@ -1,0 +1,17 @@
+{
+    "name": "MnM.Core.UI",
+    "rootNamespace": "MnM.Core.UI",
+    "references": [
+        "MnM.Core.Data",
+        "MnM.Core.Systems"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

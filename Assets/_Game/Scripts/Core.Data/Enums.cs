@@ -1,0 +1,56 @@
+namespace MnM.Core.Data
+{
+    public enum WeaponType
+    {
+        FistWeapon, Dagger, SwordAndShield, Axe,
+        HammerMaul, Spear, Greatsword, Bow
+    }
+
+    public enum ElementTag { None, Fire, Ice, Venom, Shock }
+
+    public enum BodyPartTag
+    {
+        Head, Throat, Torso, LeftFlank, RightFlank,
+        HindLegs, Tail, Arms, Legs, Waist, Back
+    }
+
+    public enum ResourceType
+    {
+        Bone, Hide, Organ,
+        UniqueCommon, UniqueUncommon, UniqueRare
+    }
+
+    public enum BehaviorCardType { Removable, Permanent, SingleTrigger }
+    public enum BehaviorGroup { Opening, Escalation, Apex }
+
+    public enum CardCategory
+    {
+        Opener, Linker, Finisher,
+        BasicAttack, Reaction, Signature
+    }
+
+    public enum DifficultyLevel { Easy, Medium, Hard }
+    public enum InjurySeverity { Minor, Major, Critical }
+    public enum CodexCategory { Monsters, Artifacts, SettlementRecords }
+    public enum CharacterSex { Male, Female }
+
+    public enum CharacterBuild
+    {
+        // Male builds
+        Aethel, Beorn, Cyne, Duna,
+        // Female builds
+        Eira, Freya, Gerd, Hild
+    }
+
+    public enum GuidingPrincipalTag
+    {
+        LifeOrStrength, BloodPrice, MarrowKnowledge,
+        LegacyOrForgetting, TheSuture
+    }
+
+    public enum StatusEffect { Shaken, Slowed, Pinned, Exposed, Bleeding }
+    public enum CombatPhase { VitalityPhase, HunterPhase, BehaviorRefresh, MonsterPhase }
+    public enum DamageType { Shell, Flesh }
+    public enum FacingArc { Front, Flank, Rear }
+    public enum AudioContext { SettlementEarly, SettlementLate, HuntTravel, CombatStandard, CombatOverlord }
+}
