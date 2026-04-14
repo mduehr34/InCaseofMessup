@@ -459,6 +459,119 @@ namespace MnM.Core.Systems
                 crafter.recipeList.Any(recipe => recipe != null && recipe.itemName == item.itemName));
         }
 
+        // ── Character Retirement ─────────────────────────────────────────────
+
+        // Returns true if the character was retired this call
+        public bool CheckRetirement(RuntimeCharacterState character)
+        {
+            if (character.isRetired) return false;
+            if (character.huntCount < _campaignData.retirementHuntCount) return false;
+
+            character.isRetired = true;
+
+            // Find highest proficiency for legacy bonus
+            int    highestTier  = 0;
+            string legacyWeapon = "FistWeapon";
+
+            if (character.proficiencyTiers != null)
+            {
+                for (int i = 0; i < character.proficiencyTiers.Length; i++)
+                {
+                    if (character.proficiencyTiers[i] > highestTier)
+                    {
+                        highestTier  = character.proficiencyTiers[i];
+                        legacyWeapon = (character.proficiencyWeaponTypes != null &&
+                                        i < character.proficiencyWeaponTypes.Length)
+                            ? character.proficiencyWeaponTypes[i]
+                            : "FistWeapon";
+                    }
+                }
+            }
+
+            // TODO: Store legacy bonus in CampaignState so new characters can start
+            // at Tier 1 of legacyWeapon. Wire this in Stage 6 UI when birth flow is built.
+            Debug.Log($"[Settlement] {character.characterName} RETIRED after {character.huntCount} hunts. " +
+                      $"Legacy: {legacyWeapon} Tier {highestTier}");
+
+            // Move from active to retired roster
+            var active  = new System.Collections.Generic.List<RuntimeCharacterState>(_campaign.characters);
+            var retired = new System.Collections.Generic.List<RuntimeCharacterState>(_campaign.retiredCharacters);
+            active.Remove(character);
+            retired.Add(character);
+            _campaign.characters        = active.ToArray();
+            _campaign.retiredCharacters = retired.ToArray();
+
+            AddToChronicle($"Year {_campaign.currentYear}: {character.characterName} retired. " +
+                           $"Legacy: {legacyWeapon} Tier 1 available.");
+            return true;
+        }
+
+        // Convenience — checks all active characters
+        public void CheckAllRetirements()
+        {
+            // Snapshot to avoid modifying the array we're iterating
+            var snapshot = (RuntimeCharacterState[])_campaign.characters.Clone();
+            foreach (var ch in snapshot)
+                CheckRetirement(ch);
+        }
+
+        // ── Character Birth ───────────────────────────────────────────────────
+
+        public RuntimeCharacterState BirthNewCharacter(string name, string sex, string bodyBuild)
+        {
+            var newCharacter = new RuntimeCharacterState
+            {
+                characterId             = System.Guid.NewGuid().ToString(),
+                characterName           = name,
+                sex                     = sex,
+                bodyBuild               = bodyBuild,
+                accuracy                = 0,
+                evasion                 = 0,
+                strength                = 0,
+                toughness               = 0,
+                luck                    = 0,
+                movement                = 3,
+                deckCardNames           = new[] { "Brace", "Shove" },
+                injuryCardNames         = new string[0],
+                fightingArtNames        = new string[0],
+                disorderNames           = new string[0],
+                proficiencyWeaponTypes  = new[] { "FistWeapon" },
+                proficiencyTiers        = new[] { 1 },
+                proficiencyActivations  = new[] { 0 },
+                huntCount               = 0,
+                isRetired               = false,
+                equippedItemNames       = new string[0],
+                equippedWeaponName      = "",
+            };
+
+            var active = new System.Collections.Generic.List<RuntimeCharacterState>(_campaign.characters)
+                { newCharacter };
+            _campaign.characters = active.ToArray();
+
+            AddToChronicle($"Year {_campaign.currentYear}: {name} born.");
+            Debug.Log($"[Settlement] New character born: {name} ({sex}, {bodyBuild}). " +
+                      $"Active roster: {_campaign.characters.Length}");
+
+            return newCharacter;
+        }
+
+        // ── Year Advance ──────────────────────────────────────────────────────
+
+        public void AdvanceYear()
+        {
+            _campaign.currentYear++;
+            _campaign.pendingHuntResult = default;
+
+            AddToChronicle($"--- Year {_campaign.currentYear} begins ---");
+            Debug.Log($"[Campaign] *** YEAR {_campaign.currentYear} BEGINS ***");
+
+            if (_campaign.currentYear > 30)
+                Debug.Log("[Campaign] Year 30 passed — campaign concludes after this year's hunt");
+
+            // Auto-save after every year advance
+            SaveManager.Save(_campaign);
+        }
+
         // ── Shuffle Helper ────────────────────────────────────────────────────
         private static void ShuffleList<T>(List<T> list)
         {

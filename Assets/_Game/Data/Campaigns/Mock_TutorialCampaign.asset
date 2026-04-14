@@ -22,7 +22,9 @@ MonoBehaviour:
   monsterRoster:
   - {fileID: 11400000, guid: 9b47334a3da03b445b364fb050f2479d, type: 2}
   eventPool: []
-  startingInnovations: []
+  startingInnovations:
+  - {fileID: 11400000, guid: 76870f05e9958cc409bc73141a1a4bd1, type: 2}
+  - {fileID: 11400000, guid: adb4c6b3dee6d50418e445943cb71fc3, type: 2}
   crafterPool: []
   guidingPrincipals: []
   retirementHuntCount: 10
