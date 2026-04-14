@@ -1,0 +1,105 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd"
+         editor-extension-mode="False">
+
+    <Style src="../USS/tokens.uss"/>
+    <Style src="../USS/stone-panel.uss"/>
+    <Style src="../USS/combat-screen.uss"/>
+
+    <!-- Root -->
+    <ui:VisualElement name="combat-root" class="fullscreen-bg combat-root">
+
+        <!-- ── Zone 1: Phase Bar ─────────────────────────────── -->
+        <ui:VisualElement name="phase-bar" class="phase-bar stone-panel--raised">
+            <ui:Label name="phase-label" text="VITALITY PHASE" class="phase-label"/>
+            <ui:VisualElement class="phase-bar__spacer"/>
+            <ui:Label name="round-label" text="Round 1" class="round-label"/>
+        </ui:VisualElement>
+
+        <!-- ── Zone 2: Content Row ───────────────────────────── -->
+        <ui:VisualElement name="content-row" class="content-row">
+
+            <!-- Left: 4 Hunter Panels stacked -->
+            <ui:VisualElement name="hunter-panel-container" class="hunter-panel-container">
+
+                <ui:VisualElement name="hunter-panel-0" class="hunter-panel stone-panel">
+                    <ui:VisualElement class="hunter-header">
+                        <ui:Label name="hunter-name-0" text="---" class="stone-panel__header hunter-name"/>
+                        <ui:Label name="aggro-0" text="&#x2691;" class="aggro-indicator"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="body-zones-0" class="body-zones"/>
+                    <ui:VisualElement name="status-effects-0" class="status-effects-row"/>
+                    <ui:VisualElement name="active-info-0" class="active-hunter-info">
+                        <ui:Label name="ap-label-0" text="AP: 2" class="ap-label"/>
+                        <ui:VisualElement name="grit-pips-0" class="grit-pips-row"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement name="hunter-panel-1" class="hunter-panel stone-panel">
+                    <ui:VisualElement class="hunter-header">
+                        <ui:Label name="hunter-name-1" text="---" class="stone-panel__header hunter-name"/>
+                        <ui:Label name="aggro-1" text="&#x2691;" class="aggro-indicator"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="body-zones-1" class="body-zones"/>
+                    <ui:VisualElement name="status-effects-1" class="status-effects-row"/>
+                    <ui:VisualElement name="active-info-1" class="active-hunter-info">
+                        <ui:Label name="ap-label-1" text="AP: 2" class="ap-label"/>
+                        <ui:VisualElement name="grit-pips-1" class="grit-pips-row"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement name="hunter-panel-2" class="hunter-panel stone-panel">
+                    <ui:VisualElement class="hunter-header">
+                        <ui:Label name="hunter-name-2" text="---" class="stone-panel__header hunter-name"/>
+                        <ui:Label name="aggro-2" text="&#x2691;" class="aggro-indicator"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="body-zones-2" class="body-zones"/>
+                    <ui:VisualElement name="status-effects-2" class="status-effects-row"/>
+                    <ui:VisualElement name="active-info-2" class="active-hunter-info">
+                        <ui:Label name="ap-label-2" text="AP: 2" class="ap-label"/>
+                        <ui:VisualElement name="grit-pips-2" class="grit-pips-row"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <ui:VisualElement name="hunter-panel-3" class="hunter-panel stone-panel">
+                    <ui:VisualElement class="hunter-header">
+                        <ui:Label name="hunter-name-3" text="---" class="stone-panel__header hunter-name"/>
+                        <ui:Label name="aggro-3" text="&#x2691;" class="aggro-indicator"/>
+                    </ui:VisualElement>
+                    <ui:VisualElement name="body-zones-3" class="body-zones"/>
+                    <ui:VisualElement name="status-effects-3" class="status-effects-row"/>
+                    <ui:VisualElement name="active-info-3" class="active-hunter-info">
+                        <ui:Label name="ap-label-3" text="AP: 2" class="ap-label"/>
+                        <ui:VisualElement name="grit-pips-3" class="grit-pips-row"/>
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+            </ui:VisualElement>
+
+            <!-- Center: Combat Grid (cells generated in C#) -->
+            <ui:VisualElement name="grid-container" class="grid-container stone-panel"/>
+
+            <!-- Right: Monster Panel -->
+            <ui:VisualElement name="monster-panel" class="monster-panel stone-panel">
+                <ui:Label name="monster-name"       text="---"           class="stone-panel__header"/>
+                <ui:Label name="monster-difficulty" text="Standard"      class="monster-difficulty-label"/>
+                <ui:Label name="monster-deck-count" text="Removable: --" class="monster-deck-label"/>
+                <ui:Label name="monster-stance"     text=""              class="monster-stance-label"/>
+                <ui:VisualElement name="monster-parts-container"         class="monster-parts-container"/>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+        <!-- ── Zone 3: Card Hand ─────────────────────────────── -->
+        <ui:VisualElement name="card-hand-zone" class="card-hand-zone stone-panel--raised">
+            <ui:VisualElement name="hand-cards" class="hand-cards"/>
+            <ui:VisualElement name="hand-actions" class="hand-actions">
+                <ui:Label  name="ap-display"   text="AP: 2"    class="hand-ap-display"/>
+                <ui:Label  name="grit-display" text="Grit: 3"  class="hand-grit-display"/>
+                <ui:Button name="end-turn-btn" text="END TURN" class="action-btn action-btn--primary end-turn-btn"/>
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>
