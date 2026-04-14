@@ -2,6 +2,20 @@ using UnityEngine;
 
 namespace MnM.Core.Data
 {
+    // Marker interface — all runtime state classes implement this
+    public interface IJsonSerializable { }
+
+    [System.Serializable]
+    public class GridOccupant
+    {
+        public string occupantId;       // hunterId or "monster"
+        public bool isHunter;
+        public int gridX;
+        public int gridY;
+        public int footprintW;          // Monster: 2 or 3. Hunter: always 1
+        public int footprintH;
+    }
+
     [System.Serializable]
     public struct LinkPoint
     {
