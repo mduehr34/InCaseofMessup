@@ -190,6 +190,14 @@ namespace MnM.Core.Systems
 
         public void SetMonsterAI(IMonsterAI ai) => _monsterAI = ai;
 
+        public void InitializeMonsterAI(MonsterSO monster, string difficulty)
+        {
+            var ai = new MonsterAI();
+            ai.InitializeDeck(monster, difficulty);
+            SetMonsterAI(ai);
+            Debug.Log($"[Combat] MonsterAI initialized for {monster.monsterName} ({difficulty})");
+        }
+
         private static void ShuffleList<T>(List<T> list)
         {
             for (int i = list.Count - 1; i > 0; i--)
