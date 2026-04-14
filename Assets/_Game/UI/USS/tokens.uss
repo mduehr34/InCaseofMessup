@@ -1,0 +1,68 @@
+/* ============================================================
+   Marrow & Myth — Design Tokens
+   All UI colours, sizes, and spacing defined here.
+   Import this file at the top of every screen USS file.
+   ============================================================ */
+
+:root {
+    /* ── Palette ─────────────────────────────────────────────── */
+    --color-bg-deep:          #0A0A0C;   /* Near-black background */
+    --color-bg-panel:         #1A1815;   /* Stone panel background */
+    --color-bg-panel-raised:  #232018;   /* Slightly lighter raised panel */
+    --color-bg-panel-active:  #2A251E;   /* Selected / active panel */
+
+    --color-border:           #3D3830;   /* Default stone border */
+    --color-border-accent:    #5C5040;   /* Highlighted border */
+    --color-border-danger:    #6B2020;   /* Error / collapse border */
+
+    --color-text-primary:     #D4CCBA;   /* Main readable text */
+    --color-text-dim:         #8A8070;   /* Secondary / label text */
+    --color-text-accent:      #B8860B;   /* Marrow gold — headings, highlights */
+    --color-text-danger:      #CC3333;   /* Collapse, loss, danger */
+    --color-text-disabled:    #4A4540;   /* Greyed-out unplayable */
+
+    --color-shell:            #4A5568;   /* Shell bar fill — grey-blue */
+    --color-shell-bg:         #1E2530;   /* Shell bar background */
+    --color-flesh:            #742A2A;   /* Flesh bar fill — dark red */
+    --color-flesh-bg:         #2A1010;   /* Flesh bar background */
+    --color-grit:             #8B7355;   /* Grit pip fill — warm bone */
+    --color-grit-bg:          #2A2018;   /* Grit pip background */
+
+    --color-aggro:            #B8860B;   /* Aggro token — Marrow gold */
+    --color-loud:             #CC4B2A;   /* Loud tag — orange-red */
+    --color-exposed:          #B85050;   /* Exposed part indicator */
+    --color-broken:           #4A3020;   /* Broken part — dark brown */
+    --color-denied:           #1A0A30;   /* Grid denied cell — dark purple */
+    --color-marrow-sink:      #1A2A10;   /* Marrow sink tile — dark green */
+
+    --color-highlight-valid:  #1A3020;   /* Valid target cell highlight */
+    --color-highlight-select: #2A4030;   /* Selected cell highlight */
+
+    /* ── Typography ─────────────────────────────────────────── */
+    --font-size-xl:    20px;   /* Screen titles */
+    --font-size-title: 16px;   /* Panel headers */
+    --font-size-body:  13px;   /* Normal text */
+    --font-size-label: 11px;   /* Small labels, zone names */
+    --font-size-small: 10px;   /* Badges, tags */
+
+    /* ── Spacing ─────────────────────────────────────────────── */
+    --spacing-xs:  4px;
+    --spacing-sm:  8px;
+    --spacing-md: 16px;
+    --spacing-lg: 24px;
+    --spacing-xl: 40px;
+
+    /* ── Panel Rules ─────────────────────────────────────────── */
+    --panel-border-width:  2px;
+    --panel-border-radius: 0px;   /* Stone = no rounded corners — ever */
+    --panel-padding:       8px;
+
+    /* ── Stat Bars ───────────────────────────────────────────── */
+    --bar-height-shell: 8px;    /* Shell bars are thinner */
+    --bar-height-flesh: 12px;   /* Flesh bars are taller — easier to read */
+    --bar-width-full:   100%;
+
+    /* ── Grid ────────────────────────────────────────────────── */
+    --grid-cell-size:   50px;   /* Each combat grid cell */
+    --grid-cell-border: 1px;
+}
