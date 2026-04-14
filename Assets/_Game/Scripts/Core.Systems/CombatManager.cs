@@ -18,7 +18,8 @@ namespace MnM.Core.Systems
         public CombatPhase CurrentPhase { get; private set; }
 
         // ── Sub-Systems ──────────────────────────────────────────
-        private AggroManager _aggroManager = new AggroManager();
+        private AggroManager  _aggroManager  = new AggroManager();
+        private ComboTracker  _comboTracker  = new ComboTracker();
         private bool _firstPartBreakOccurred = false;
         public AggroManager AggroManager => _aggroManager;
 
@@ -185,27 +186,41 @@ namespace MnM.Core.Systems
             if (targetPartIndex >= 0)
             {
                 var targetPart = CurrentState.monster.parts[targetPartIndex];
-                var result = CardResolver.Resolve(
-                    card, hunter, CurrentState.monster,
-                    ref targetPart, GetMonsterSO(),
-                    _firstPartBreakOccurred);
 
-                CurrentState.monster.parts[targetPartIndex] = targetPart;
+                // Trap zone check — if triggered, skip normal damage resolution
+                bool trapFired = HandleTrapZone(targetPart.partName, hunterId);
 
-                // Act on removed cards — CardResolver is acyclic, so callers drive removal
-                foreach (var removedName in result.removedCardNames)
-                    _monsterAI?.RemoveCard(removedName);
-
-                if (result.apexShouldTrigger && !_firstPartBreakOccurred)
+                if (!trapFired)
                 {
-                    _firstPartBreakOccurred = true;
-                    _monsterAI?.TriggerApex();
-                }
+                    var result = CardResolver.Resolve(
+                        card, hunter, CurrentState.monster,
+                        ref targetPart, GetMonsterSO(),
+                        _firstPartBreakOccurred);
 
-                if (result.damageDealt > 0)
-                    OnDamageDealt?.Invoke(CurrentState.monster.monsterName,
-                        result.damageDealt, result.damageType);
+                    CurrentState.monster.parts[targetPartIndex] = targetPart;
+
+                    // Act on removed cards — CardResolver is acyclic, so callers drive removal
+                    foreach (var removedName in result.removedCardNames)
+                        _monsterAI?.RemoveCard(removedName);
+
+                    if (result.apexShouldTrigger && !_firstPartBreakOccurred)
+                    {
+                        _firstPartBreakOccurred = true;
+                        _monsterAI?.TriggerApex();
+                    }
+
+                    if (result.damageDealt > 0)
+                        OnDamageDealt?.Invoke(CurrentState.monster.monsterName,
+                            result.damageDealt, result.damageType);
+                }
             }
+
+            // Collapse check — runs after every card resolution in case damage was dealt
+            foreach (var h in CurrentState.hunters)
+                CheckHunterCollapse(h);
+
+            // Combo tracking
+            _comboTracker.NotifyCardPlayed(hunterId, card.category);
 
             RemoveCardFromHand(hunter, cardName);
             return true;
@@ -239,8 +254,60 @@ namespace MnM.Core.Systems
 
         public bool TryMoveHunter(string hunterId, Vector2Int destination)
         {
-            Debug.LogWarning("[Combat] TryMoveHunter stub — implement in Stage 3-D");
-            return false;
+            var hunter = GetHunter(hunterId);
+            if (hunter == null)
+            {
+                Debug.LogWarning($"[Combat] TryMoveHunter: {hunterId} not found");
+                return false;
+            }
+            if (hunter.isCollapsed)
+            {
+                Debug.LogWarning($"[Combat] TryMoveHunter: {hunter.hunterName} is collapsed");
+                return false;
+            }
+            if (!(_gridManager as IGridManager).IsInBounds(destination))
+            {
+                Debug.LogWarning($"[Combat] TryMoveHunter: destination out of bounds");
+                return false;
+            }
+            if ((_gridManager as IGridManager).IsOccupied(destination))
+            {
+                Debug.LogWarning($"[Combat] TryMoveHunter: destination occupied");
+                return false;
+            }
+            if ((_gridManager as IGridManager).IsDenied(destination))
+            {
+                Debug.LogWarning($"[Combat] TryMoveHunter: destination denied by Spear zone");
+                return false;
+            }
+
+            // Movement cost check (Slowed = half movement)
+            int effectiveMovement = hunter.movement; // Base movement from CharacterSO (wired in Stage 4)
+            int accuracy = hunter.accuracy;
+            StatusEffectResolver.ApplyStatusPenalties(hunter, ref accuracy, ref effectiveMovement);
+
+            var from = new Vector2Int(hunter.gridX, hunter.gridY);
+            int dist = (_gridManager as IGridManager).GetDistance(from, destination);
+            if (dist > effectiveMovement)
+            {
+                Debug.LogWarning($"[Combat] TryMoveHunter: distance {dist} exceeds movement {effectiveMovement}");
+                return false;
+            }
+
+            // Execute move
+            (_gridManager as IGridManager).MoveOccupant(hunterId, destination);
+            hunter.gridX = destination.x;
+            hunter.gridY = destination.y;
+
+            // Check which arc the hunter is in relative to the monster — may trigger Flank Sense
+            // EvaluateTrigger handles this in MonsterAI (wired when full content added Stage 7)
+            var monsterCell   = new Vector2Int(CurrentState.monster.gridX, CurrentState.monster.gridY);
+            var monsterFacing = new Vector2Int(CurrentState.monster.facingX, CurrentState.monster.facingY);
+            var arc = (_gridManager as IGridManager).GetArcFromAttackerToTarget(
+                destination, monsterCell, monsterFacing);
+
+            Debug.Log($"[Combat] {hunter.hunterName} moved to ({destination.x},{destination.y}) — Arc: {arc}");
+            return true;
         }
 
         public void EndHunterTurn(string hunterId)
@@ -253,6 +320,7 @@ namespace MnM.Core.Systems
             discard.AddRange(hunter.handCardNames);
             hunter.discardCardNames = discard.ToArray();
             hunter.handCardNames    = new string[0];
+            _comboTracker.OnHunterTurnEnd(hunterId);
             Debug.Log($"[Combat] {hunter.hunterName} ended turn");
             AdvancePhase(); // Check if all hunters done
         }
@@ -260,6 +328,83 @@ namespace MnM.Core.Systems
         public void ExecuteBehaviorCard(string behaviorCardName)
         {
             Debug.Log($"[Combat] ExecuteBehaviorCard: {behaviorCardName} — stub, implement Stage 3");
+        }
+
+        // ── Collapse / Hunt Loss ──────────────────────────────────
+        private void CheckHunterCollapse(HunterCombatState hunter)
+        {
+            if (hunter.isCollapsed) return;
+
+            var head  = System.Array.Find(hunter.bodyZones, z => z.zone == "Head");
+            var torso = System.Array.Find(hunter.bodyZones, z => z.zone == "Torso");
+
+            bool headDead  = head.fleshCurrent  <= 0;
+            bool torsoDead = torso.fleshCurrent <= 0;
+
+            if (headDead || torsoDead)
+            {
+                hunter.isCollapsed = true;
+                string cause = headDead ? "Head Flesh = 0" : "Torso Flesh = 0";
+                Debug.Log($"[Combat] *** {hunter.hunterName} COLLAPSED ({cause}) ***");
+                OnEntityCollapsed?.Invoke(hunter.hunterId);
+
+                // Remove from grid — collapsed hunters don't block movement
+                (_gridManager as IGridManager)?.RemoveOccupant(hunter.hunterId);
+
+                CheckHuntLoss();
+            }
+        }
+
+        private void CheckHuntLoss()
+        {
+            if (System.Array.TrueForAll(CurrentState.hunters, h => h.isCollapsed))
+            {
+                var result = new CombatResult
+                {
+                    isVictory          = false,
+                    roundsElapsed      = CurrentState.currentRound,
+                    collapsedHunterIds = System.Array.ConvertAll(
+                        CurrentState.hunters, h => h.hunterId),
+                };
+                Debug.Log("[Combat] *** HUNT LOST — All hunters collapsed ***");
+                OnCombatEnded?.Invoke(result);
+            }
+        }
+
+        // ── Trap Zone Handling ────────────────────────────────────
+        // Returns true if a trap was triggered (caller should skip normal attack resolution)
+        private bool HandleTrapZone(string partName, string hunterId)
+        {
+            var part = System.Array.Find(
+                CurrentState.monster.parts, p => p.partName == partName);
+
+            if (part.partName == null) return false;
+
+            if (!part.isRevealed)
+            {
+                var monsterSO = GetMonsterSO();
+                bool isTrap = monsterSO != null &&
+                    System.Array.IndexOf(monsterSO.trapZoneParts, partName) >= 0;
+
+                if (isTrap)
+                {
+                    int idx = System.Array.FindIndex(
+                        CurrentState.monster.parts, p => p.partName == partName);
+                    if (idx >= 0)
+                    {
+                        var mutablePart = CurrentState.monster.parts[idx];
+                        mutablePart.isRevealed = true;
+                        CurrentState.monster.parts[idx] = mutablePart;
+                    }
+
+                    Debug.Log($"[Combat] *** TRAP TRIGGERED — {partName} was a Trap Zone! ***");
+                    Debug.Log($"[Combat] Counter-attack fires. No damage applied this hit.");
+
+                    // Full trigger evaluation wired in Stage 7 with real behavior cards
+                    return true; // trap triggered — skip normal attack
+                }
+            }
+            return false; // not a trap — proceed normally
         }
 
         // ── Win / Loss ────────────────────────────────────────────
@@ -279,12 +424,11 @@ namespace MnM.Core.Systems
             }
 
             // Hunt lost — all hunters collapsed
+            // Event already fired via CheckHuntLoss() — polling only, does NOT re-fire OnCombatEnded
             if (CurrentState.hunters.All(h => h.isCollapsed))
             {
                 result.isVictory     = false;
                 result.roundsElapsed = CurrentState.currentRound;
-                Debug.Log("[Combat] *** HUNT LOST — All hunters collapsed ***");
-                OnCombatEnded?.Invoke(result);
                 return true;
             }
 
