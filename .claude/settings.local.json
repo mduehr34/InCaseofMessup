@@ -34,7 +34,10 @@
       "Bash(gh pr create --title 'Stage 3: Full Combat Engine — MonsterAI, CardResolver, ComboTracker, Collapse' --body ':*)",
       "Bash(winget list:*)",
       "Bash('/c/Program Files/GitHub CLI/gh.exe' pr create --title 'Stage 3: Full Combat Engine — MonsterAI, CardResolver, ComboTracker, Collapse' --body ':*)",
-      "Bash(git -C \"C:\\\\Users\\\\mdueh\\\\Desktop\\\\Games\\\\Unity\\\\MarrowAndMyth\" diff Assets/Scenes/SampleScene.unity)"
+      "Bash(git -C \"C:\\\\Users\\\\mdueh\\\\Desktop\\\\Games\\\\Unity\\\\MarrowAndMyth\" diff Assets/Scenes/SampleScene.unity)",
+      "Bash(gh pr create --title '4A: CampaignState, RuntimeCharacterState & SaveManager' --base master --body ':*)",
+      "Bash(cmd /c \"gh pr create --title \\\\\"4A: CampaignState, RuntimeCharacterState & SaveManager\\\\\" --base master --repo mduehr34/InCaseofMessup --body \\\\\"## Summary\\\\n- Adds CampaignState and all sub-state classes \\(RuntimeCharacterState, ResourceEntry, HuntResult\\) — fully JSON-serializable, no Unity engine types\\\\n- Adds CampaignStateFactory with mock Year 1 state and Gaunt Standard victory builders\\\\n- Adds SaveManager \\(static class\\) writing to Application.persistentDataPath/campaign_save.json\\\\n\\\\n## Test plan\\\\n- [x] SaveManagerTest attached to GameObject in SampleScene, Play pressed\\\\n- [x] All 8 console assertions passed with no errors\\\\n- [x] Test script deleted, test GameObject removed from scene\\\\n- [x] Save file written and read from AppData/LocalLow/DefaultCompany/MarrowAndMyth/campaign_save.json\\\\n\\\\n🤖 Generated with [Claude Code]\\(https://claude.com/claude-code\\)\\\\\"\")",
+      "Bash('C:\\\\Program Files\\\\GitHub CLI\\\\gh.exe' pr create --title '4A: CampaignState, RuntimeCharacterState & SaveManager' --base master --body ':*)"
     ]
   }
 }
