@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using MnM.Core.Data;
+using MnM.Core.Logic;
 
 namespace MnM.Core.Systems
 {
@@ -18,6 +19,7 @@ namespace MnM.Core.Systems
 
         // ── Sub-Systems ──────────────────────────────────────────
         private AggroManager _aggroManager = new AggroManager();
+        private bool _firstPartBreakOccurred = false;
         public AggroManager AggroManager => _aggroManager;
 
         // ── Events ───────────────────────────────────────────────
@@ -141,16 +143,103 @@ namespace MnM.Core.Systems
             _monsterAI.ExecuteCard(card, CurrentState);
         }
 
-        // ── Hunter Actions — Stubs (implemented fully in Stage 3) ─
+        // ── Hunter Actions ────────────────────────────────────────
         public bool TryPlayCard(string hunterId, string cardName, Vector2Int targetCell)
         {
-            Debug.LogWarning("[Combat] TryPlayCard stub — implement in Stage 3");
-            return false;
+            var hunter = GetHunter(hunterId);
+            if (hunter == null)
+            {
+                Debug.LogWarning($"[Combat] TryPlayCard: hunter {hunterId} not found");
+                return false;
+            }
+
+            if (!System.Array.Exists(hunter.handCardNames, n => n == cardName))
+            {
+                Debug.LogWarning($"[Combat] TryPlayCard: \"{cardName}\" not in {hunter.hunterName}'s hand");
+                return false;
+            }
+
+            // Load card SO via Resources — Stage 5 will use a proper registry
+            var card = Resources.Load<ActionCardSO>($"Data/Cards/Action/{cardName}");
+            if (card == null)
+            {
+                Debug.LogWarning($"[Combat] TryPlayCard: ActionCardSO not found for \"{cardName}\"");
+                return false;
+            }
+
+            int netCost = card.apCost - card.apRefund;
+            if (hunter.apRemaining < netCost && card.category != CardCategory.Reaction)
+            {
+                Debug.LogWarning($"[Combat] TryPlayCard: insufficient AP. " +
+                                 $"Have:{hunter.apRemaining} Need:{netCost}");
+                return false;
+            }
+
+            int targetPartIndex = FindMonsterPartAtCell(targetCell);
+            if (targetPartIndex < 0 && card.category != CardCategory.Reaction)
+            {
+                Debug.LogWarning($"[Combat] TryPlayCard: no monster part at ({targetCell.x},{targetCell.y})");
+                return false;
+            }
+
+            if (targetPartIndex >= 0)
+            {
+                var targetPart = CurrentState.monster.parts[targetPartIndex];
+                var result = CardResolver.Resolve(
+                    card, hunter, CurrentState.monster,
+                    ref targetPart, GetMonsterSO(),
+                    _firstPartBreakOccurred);
+
+                CurrentState.monster.parts[targetPartIndex] = targetPart;
+
+                // Act on removed cards — CardResolver is acyclic, so callers drive removal
+                foreach (var removedName in result.removedCardNames)
+                    _monsterAI?.RemoveCard(removedName);
+
+                if (result.apexShouldTrigger && !_firstPartBreakOccurred)
+                {
+                    _firstPartBreakOccurred = true;
+                    _monsterAI?.TriggerApex();
+                }
+
+                if (result.damageDealt > 0)
+                    OnDamageDealt?.Invoke(CurrentState.monster.monsterName,
+                        result.damageDealt, result.damageType);
+            }
+
+            RemoveCardFromHand(hunter, cardName);
+            return true;
         }
+
+        private int FindMonsterPartAtCell(Vector2Int cell)
+        {
+            // Returns index 0 if cell is within the monster's footprint.
+            // Stage 5 UI will map cells to specific named parts.
+            var m = CurrentState.monster;
+            bool inFootprint =
+                cell.x >= m.gridX && cell.x < m.gridX + m.footprintW &&
+                cell.y >= m.gridY && cell.y < m.gridY + m.footprintH;
+            return inFootprint ? 0 : -1;
+        }
+
+        private void RemoveCardFromHand(HunterCombatState hunter, string cardName)
+        {
+            var hand    = new List<string>(hunter.handCardNames);
+            var discard = new List<string>(hunter.discardCardNames);
+            hand.Remove(cardName);
+            discard.Add(cardName);
+            hunter.handCardNames    = hand.ToArray();
+            hunter.discardCardNames = discard.ToArray();
+        }
+
+        // Placeholder — Stage 5 will use a SO registry
+        private MonsterSO GetMonsterSO() =>
+            Resources.Load<MonsterSO>(
+                $"Data/Monsters/{CurrentState.monster.monsterName.Replace(" ", "")}");
 
         public bool TryMoveHunter(string hunterId, Vector2Int destination)
         {
-            Debug.LogWarning("[Combat] TryMoveHunter stub — implement in Stage 3");
+            Debug.LogWarning("[Combat] TryMoveHunter stub — implement in Stage 3-D");
             return false;
         }
 

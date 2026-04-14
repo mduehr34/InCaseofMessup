@@ -27,6 +27,10 @@ namespace MnM.Core.Data
         public int facingX;                 // Unit vector: -1, 0, or 1
         public int facingY;
         // Combat stats
+        public int accuracy;
+        public int strength;
+        public int luck;
+        public int movement;
         public int currentGrit;
         public int maxGrit;
         public int apRemaining;             // Resets to 2 each Hunter Phase
