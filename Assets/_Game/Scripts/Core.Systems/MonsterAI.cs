@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using MnM.Core.Data;
 
@@ -16,6 +17,10 @@ namespace MnM.Core.Systems
         // The shuffled draw pile for the current round
         // Rebuilt each time it empties or group advances
         private List<BehaviorCardSO> _activeDeck = new();
+
+        // ── Events ───────────────────────────────────────────────
+        // Fires immediately mid-turn when the last Removable card is removed
+        public event System.Action OnMonsterDefeated;
 
         // ── State ────────────────────────────────────────────────
         private bool _apexTriggered = false;
@@ -140,11 +145,44 @@ namespace MnM.Core.Systems
             Debug.Log("[MonsterAI] *** APEX TRIGGERED — Apex cards entered rotation ***");
         }
 
-        // ── Stubs — implemented in Session 3-B / 3-C ────────────
+        // ── Card Removal ─────────────────────────────────────────
         public void RemoveCard(string cardName)
         {
-            // STUB — implemented Session 3-B
-            Debug.LogWarning($"[MonsterAI] RemoveCard stub called for: {cardName} — implement in 3-B");
+            bool removed = false;
+
+            removed |= RemoveFromList(_openingCards,    cardName);
+            removed |= RemoveFromList(_escalationCards, cardName);
+            removed |= RemoveFromList(_apexCards,       cardName);
+
+            // Also evict from the active draw pile if it's sitting there
+            var inActive = _activeDeck.FirstOrDefault(
+                c => c.cardName == cardName && c.cardType != BehaviorCardType.Permanent);
+            if (inActive != null) _activeDeck.Remove(inActive);
+
+            if (removed)
+            {
+                Debug.Log($"[MonsterAI] Card removed: \"{cardName}\". " +
+                          $"Remaining Removable: {RemainingRemovableCount}");
+
+                // Win condition — fires IMMEDIATELY, mid-turn, mid-phase
+                if (!HasRemovableCards())
+                {
+                    Debug.Log("[MonsterAI] *** LAST REMOVABLE CARD REMOVED — MONSTER DEFEATED ***");
+                    OnMonsterDefeated?.Invoke();
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[MonsterAI] RemoveCard: \"{cardName}\" not found in any removable list");
+            }
+        }
+
+        private bool RemoveFromList(List<BehaviorCardSO> list, string cardName)
+        {
+            var card = list.FirstOrDefault(c => c.cardName == cardName);
+            if (card == null) return false;
+            list.Remove(card);
+            return true;
         }
 
         public void ExecuteCard(BehaviorCardSO card, CombatState state)

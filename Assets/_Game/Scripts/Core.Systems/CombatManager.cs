@@ -173,11 +173,32 @@ namespace MnM.Core.Systems
             Debug.Log($"[Combat] ExecuteBehaviorCard: {behaviorCardName} — stub, implement Stage 3");
         }
 
-        // ── Win / Loss — Stub (implemented in Stage 3) ───────────
+        // ── Win / Loss ────────────────────────────────────────────
+        // Monster defeat fires via OnMonsterDefeated event (immediate, mid-turn).
+        // This polling path exists for cases where callers need to check synchronously.
         public bool IsCombatOver(out CombatResult result)
         {
             result = default;
-            // Stub — Stage 3 implements real win/loss detection
+
+            // Monster defeated — event already fired via HandleMonsterDefeated,
+            // but allow polling too (does NOT re-fire OnCombatEnded)
+            if (_monsterAI != null && !_monsterAI.HasRemovableCards())
+            {
+                result.isVictory     = true;
+                result.roundsElapsed = CurrentState.currentRound;
+                return true;
+            }
+
+            // Hunt lost — all hunters collapsed
+            if (CurrentState.hunters.All(h => h.isCollapsed))
+            {
+                result.isVictory     = false;
+                result.roundsElapsed = CurrentState.currentRound;
+                Debug.Log("[Combat] *** HUNT LOST — All hunters collapsed ***");
+                OnCombatEnded?.Invoke(result);
+                return true;
+            }
+
             return false;
         }
 
@@ -194,8 +215,27 @@ namespace MnM.Core.Systems
         {
             var ai = new MonsterAI();
             ai.InitializeDeck(monster, difficulty);
+
+            // Subscribe before SetMonsterAI so the event is wired before any draws
+            ai.OnMonsterDefeated += HandleMonsterDefeated;
+
             SetMonsterAI(ai);
             Debug.Log($"[Combat] MonsterAI initialized for {monster.monsterName} ({difficulty})");
+        }
+
+        private void HandleMonsterDefeated()
+        {
+            var result = new CombatResult
+            {
+                isVictory          = true,
+                roundsElapsed      = CurrentState.currentRound,
+                collapsedHunterIds = CurrentState.hunters
+                    .Where(h => h.isCollapsed)
+                    .Select(h => h.hunterId)
+                    .ToArray(),
+            };
+            Debug.Log($"[Combat] *** HUNT WON *** Round:{result.roundsElapsed}");
+            OnCombatEnded?.Invoke(result);
         }
 
         private static void ShuffleList<T>(List<T> list)
