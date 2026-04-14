@@ -280,5 +280,193 @@ namespace MnM.Core.Systems
                 Debug.LogWarning($"[Settlement] Character not found: {characterId}");
             return ch;
         }
+
+        // ── Innovation Deck ───────────────────────────────────────────────────
+        public InnovationSO[] DrawInnovationOptions(int drawCount = 3)
+        {
+            if (_campaignData.startingInnovations == null)
+                return new InnovationSO[0];
+
+            // Pool = all available IDs not yet adopted
+            var pool = _campaign.availableInnovationIds
+                .Where(id => !_campaign.adoptedInnovationIds.Contains(id))
+                .Select(id => GetInnovationById(id))
+                .Where(inn => inn != null)
+                .ToList();
+
+            if (pool.Count == 0)
+            {
+                Debug.Log("[Innovation] No innovations available to draw");
+                return new InnovationSO[0];
+            }
+
+            // Shuffle and take up to drawCount
+            ShuffleList(pool);
+            var drawn = pool.Take(drawCount).ToArray();
+            Debug.Log($"[Innovation] Drew {drawn.Length} options: " +
+                      $"[{string.Join(", ", drawn.Select(i => i.innovationName))}]");
+            return drawn;
+        }
+
+        public void AdoptInnovation(InnovationSO innovation)
+        {
+            if (_campaign.adoptedInnovationIds.Contains(innovation.innovationId))
+            {
+                Debug.LogWarning($"[Innovation] Already adopted: {innovation.innovationId}");
+                return;
+            }
+
+            // Mark as adopted
+            var adopted = new List<string>(_campaign.adoptedInnovationIds)
+                { innovation.innovationId };
+            _campaign.adoptedInnovationIds = adopted.ToArray();
+
+            // Cascade — add newly unlocked cards to available pool (no duplicates)
+            if (innovation.addsToDeck != null)
+            {
+                var available = new List<string>(_campaign.availableInnovationIds);
+                foreach (var unlocked in innovation.addsToDeck)
+                {
+                    if (unlocked != null && !available.Contains(unlocked.innovationId))
+                    {
+                        available.Add(unlocked.innovationId);
+                        Debug.Log($"[Innovation] Cascade unlock: {unlocked.innovationId} " +
+                                  $"({unlocked.innovationName}) added to pool");
+                    }
+                }
+                _campaign.availableInnovationIds = available.ToArray();
+            }
+
+            AddToChronicle($"Year {_campaign.currentYear}: Innovation adopted — {innovation.innovationName}.");
+            Debug.Log($"[Innovation] Adopted: {innovation.innovationName}. " +
+                      $"Pool now: {_campaign.availableInnovationIds.Length} " +
+                      $"Adopted: {_campaign.adoptedInnovationIds.Length}");
+        }
+
+        private InnovationSO GetInnovationById(string id)
+        {
+            if (_campaignData.startingInnovations == null) return null;
+            // Search starting set; cascaded SOs must be referenced from starting SOs
+            foreach (var inn in _campaignData.startingInnovations)
+            {
+                if (inn == null) continue;
+                if (inn.innovationId == id) return inn;
+                // Check cascade references
+                if (inn.addsToDeck != null)
+                    foreach (var child in inn.addsToDeck)
+                        if (child != null && child.innovationId == id) return child;
+            }
+            Debug.LogWarning($"[Innovation] InnovationSO not found for id: {id}");
+            return null;
+        }
+
+        // ── Crafter Unlock ────────────────────────────────────────────────────
+        public bool TryUnlockCrafter(CrafterSO crafter)
+        {
+            if (_campaign.builtCrafterNames.Contains(crafter.crafterName))
+            {
+                Debug.Log($"[Crafter] Already built: {crafter.crafterName}");
+                return false;
+            }
+
+            // Check unlock cost
+            if (crafter.unlockCost != null)
+            {
+                for (int i = 0; i < crafter.unlockCost.Length; i++)
+                {
+                    int needed = (crafter.unlockCostAmounts != null && i < crafter.unlockCostAmounts.Length)
+                        ? crafter.unlockCostAmounts[i] : 0;
+                    int have   = GetResourceAmount(crafter.unlockCost[i].resourceName);
+                    if (have < needed)
+                    {
+                        Debug.LogWarning($"[Crafter] Cannot unlock {crafter.crafterName} — " +
+                                         $"need {needed} {crafter.unlockCost[i].resourceName}, have {have}");
+                        return false;
+                    }
+                }
+
+                // Deduct
+                for (int i = 0; i < crafter.unlockCost.Length; i++)
+                {
+                    int needed = (crafter.unlockCostAmounts != null && i < crafter.unlockCostAmounts.Length)
+                        ? crafter.unlockCostAmounts[i] : 0;
+                    RemoveResource(crafter.unlockCost[i].resourceName, needed);
+                }
+            }
+
+            var built = new List<string>(_campaign.builtCrafterNames) { crafter.crafterName };
+            _campaign.builtCrafterNames = built.ToArray();
+
+            AddToChronicle($"Year {_campaign.currentYear}: {crafter.crafterName} built.");
+            Debug.Log($"[Crafter] Unlocked: {crafter.crafterName}");
+            return true;
+        }
+
+        // ── Crafting ──────────────────────────────────────────────────────────
+        public bool TryCraftItem(ItemSO item, string forCharacterId)
+        {
+            // Crafter must be built
+            if (!IsCrafterBuiltForItem(item))
+            {
+                Debug.LogWarning($"[Crafting] No built Crafter for: {item.itemName}");
+                return false;
+            }
+
+            // Check resources
+            if (item.craftingCost != null)
+            {
+                for (int i = 0; i < item.craftingCost.Length; i++)
+                {
+                    int needed = (item.craftingCostAmounts != null && i < item.craftingCostAmounts.Length)
+                        ? item.craftingCostAmounts[i] : 0;
+                    int have   = GetResourceAmount(item.craftingCost[i].resourceName);
+                    if (have < needed)
+                    {
+                        Debug.LogWarning($"[Crafting] Insufficient {item.craftingCost[i].resourceName}: " +
+                                         $"need {needed}, have {have}");
+                        return false;
+                    }
+                }
+
+                // Deduct
+                for (int i = 0; i < item.craftingCost.Length; i++)
+                {
+                    int needed = (item.craftingCostAmounts != null && i < item.craftingCostAmounts.Length)
+                        ? item.craftingCostAmounts[i] : 0;
+                    RemoveResource(item.craftingCost[i].resourceName, needed);
+                }
+            }
+
+            // Add to character's loadout
+            var character = GetCharacter(forCharacterId);
+            if (character == null) return false;
+
+            var items = new List<string>(character.equippedItemNames) { item.itemName };
+            character.equippedItemNames = items.ToArray();
+
+            Debug.Log($"[Crafting] Crafted {item.itemName} for {character.characterName}");
+            return true;
+        }
+
+        private bool IsCrafterBuiltForItem(ItemSO item)
+        {
+            // An item can be crafted if ANY built crafter lists it in its recipeList
+            if (_campaignData.crafterPool == null) return false;
+            return _campaignData.crafterPool.Any(crafter =>
+                crafter != null &&
+                _campaign.builtCrafterNames.Contains(crafter.crafterName) &&
+                crafter.recipeList != null &&
+                crafter.recipeList.Any(recipe => recipe != null && recipe.itemName == item.itemName));
+        }
+
+        // ── Shuffle Helper ────────────────────────────────────────────────────
+        private static void ShuffleList<T>(List<T> list)
+        {
+            for (int i = list.Count - 1; i > 0; i--)
+            {
+                int j = UnityEngine.Random.Range(0, i + 1);
+                (list[i], list[j]) = (list[j], list[i]);
+            }
+        }
     }
 }
