@@ -341,3 +341,20 @@
     font-size: var(--font-size-small);
     color:     var(--color-text-dim);
 }
+
+.loud-tag {
+    font-size:         var(--font-size-small);
+    color:             var(--color-text-danger);
+    -unity-font-style: bold;
+    margin-left:       var(--spacing-xs);
+}
+
+.exposed-tag {
+    font-size:         var(--font-size-small);
+    color:             var(--color-text-accent);
+    -unity-font-style: bold;
+    margin-left:       var(--spacing-xs);
+    border-color:      var(--color-text-accent);
+    border-width:      1px;
+    padding:           1px var(--spacing-xs);
+}
