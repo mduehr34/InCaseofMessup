@@ -1,0 +1,225 @@
+/* ============================================================
+   Marrow & Myth — Stone Panel System
+   Import tokens.uss before this file.
+   ============================================================ */
+
+/* ── Base Stone Panel ────────────────────────────────────────
+   The default carved stone tablet. Used for all major panels.
+   ──────────────────────────────────────────────────────────── */
+.stone-panel {
+    background-color: var(--color-bg-panel);
+    border-color:     var(--color-border);
+    border-width:     var(--panel-border-width);
+    border-radius:    var(--panel-border-radius);
+    padding:          var(--panel-padding);
+}
+
+/* ── Raised Stone Panel ──────────────────────────────────────
+   Slightly lighter — used for nested panels and active areas.
+   ──────────────────────────────────────────────────────────── */
+.stone-panel--raised {
+    background-color: var(--color-bg-panel-raised);
+    border-color:     var(--color-border-accent);
+    border-width:     var(--panel-border-width);
+    border-radius:    var(--panel-border-radius);
+    padding:          var(--panel-padding);
+}
+
+/* ── Active Stone Panel ──────────────────────────────────────
+   Highlighted state — selected hunter, active tab, etc.
+   ──────────────────────────────────────────────────────────── */
+.stone-panel--active {
+    background-color: var(--color-bg-panel-active);
+    border-color:     var(--color-text-accent);
+    border-width:     var(--panel-border-width);
+    border-radius:    var(--panel-border-radius);
+    padding:          var(--panel-padding);
+}
+
+/* ── Danger Stone Panel ──────────────────────────────────────
+   Collapsed hunter, critical state.
+   ──────────────────────────────────────────────────────────── */
+.stone-panel--danger {
+    background-color: var(--color-bg-panel);
+    border-color:     var(--color-border-danger);
+    border-width:     var(--panel-border-width);
+    border-radius:    var(--panel-border-radius);
+    padding:          var(--panel-padding);
+    opacity:          0.6;
+}
+
+/* ── Panel Header ────────────────────────────────────────────
+   Gold heading with bottom border — every panel's title row.
+   ──────────────────────────────────────────────────────────── */
+.stone-panel__header {
+    font-size:           var(--font-size-title);
+    color:               var(--color-text-accent);
+    -unity-font-style:   bold;
+    border-bottom-color: var(--color-border-accent);
+    border-bottom-width: 1px;
+    padding-bottom:      var(--spacing-xs);
+    margin-bottom:       var(--spacing-sm);
+}
+
+/* ── Stat Bar Container ──────────────────────────────────────
+   Outer track for Shell and Flesh bars.
+   ──────────────────────────────────────────────────────────── */
+.stat-bar-track {
+    flex-direction: row;
+    margin-bottom:  var(--spacing-xs);
+    align-items:    center;
+}
+
+/* ── Shell Bar ───────────────────────────────────────────────
+   Grey-blue, thinner. Renders behind flesh visually.
+   ──────────────────────────────────────────────────────────── */
+.shell-bar-track {
+    background-color: var(--color-shell-bg);
+    height:           var(--bar-height-shell);
+    flex: 1;
+    border-radius:    0px;
+}
+
+.shell-bar-fill {
+    background-color: var(--color-shell);
+    height:           100%;
+    border-radius:    0px;
+    /* Width set dynamically in C# as percentage */
+}
+
+/* ── Flesh Bar ───────────────────────────────────────────────
+   Dark red, taller. Colorblind note: also taller than shell.
+   ──────────────────────────────────────────────────────────── */
+.flesh-bar-track {
+    background-color: var(--color-flesh-bg);
+    height:           var(--bar-height-flesh);
+    flex: 1;
+    border-radius:    0px;
+}
+
+.flesh-bar-fill {
+    background-color: var(--color-flesh);
+    height:           100%;
+    border-radius:    0px;
+}
+
+/* ── Grit Pip ────────────────────────────────────────────────
+   Individual pip for Grit display (bone-warm dots).
+   ──────────────────────────────────────────────────────────── */
+.grit-pip {
+    width:            12px;
+    height:           12px;
+    background-color: var(--color-grit);
+    border-radius:    0px;
+    margin-right:     var(--spacing-xs);
+}
+
+.grit-pip--empty {
+    background-color: var(--color-grit-bg);
+    border-color:     var(--color-border);
+    border-width:     1px;
+}
+
+/* ── Status Effect Badge ─────────────────────────────────────
+   Small label tag for Shaken, Pinned, etc.
+   ──────────────────────────────────────────────────────────── */
+.status-badge {
+    font-size:        var(--font-size-small);
+    color:            var(--color-text-danger);
+    background-color: var(--color-bg-panel-raised);
+    border-color:     var(--color-border-danger);
+    border-width:     1px;
+    border-radius:    0px;
+    padding:          2px 4px;
+    margin-right:     var(--spacing-xs);
+    -unity-font-style: bold;
+}
+
+/* ── Loud Tag ────────────────────────────────────────────────
+   Orange-red badge on action cards that are Loud.
+   ──────────────────────────────────────────────────────────── */
+.loud-tag {
+    font-size:        var(--font-size-small);
+    color:            var(--color-loud);
+    border-color:     var(--color-loud);
+    border-width:     1px;
+    border-radius:    0px;
+    padding:          2px 4px;
+    -unity-font-style: bold;
+}
+
+/* ── Exposed Tag ─────────────────────────────────────────────
+   Red badge on monster parts that are Exposed.
+   ──────────────────────────────────────────────────────────── */
+.exposed-tag {
+    font-size:        var(--font-size-small);
+    color:            var(--color-exposed);
+    border-color:     var(--color-exposed);
+    border-width:     1px;
+    border-radius:    0px;
+    padding:          2px 4px;
+    -unity-font-style: bold;
+}
+
+/* ── Action Button ───────────────────────────────────────────
+   Primary action button — carved stone with gold border.
+   ──────────────────────────────────────────────────────────── */
+.action-btn {
+    background-color: var(--color-bg-panel-raised);
+    border-color:     var(--color-border-accent);
+    border-width:     var(--panel-border-width);
+    border-radius:    0px;
+    color:            var(--color-text-primary);
+    font-size:        var(--font-size-body);
+    padding:          var(--spacing-sm) var(--spacing-md);
+    -unity-font-style: bold;
+}
+
+.action-btn:hover {
+    background-color: var(--color-bg-panel-active);
+    border-color:     var(--color-text-accent);
+}
+
+.action-btn:active {
+    background-color: var(--color-bg-deep);
+}
+
+.action-btn--primary {
+    border-color: var(--color-text-accent);
+    color:        var(--color-text-accent);
+}
+
+.action-btn--danger {
+    border-color: var(--color-border-danger);
+    color:        var(--color-text-danger);
+}
+
+/* ── Zone Label ──────────────────────────────────────────────
+   Small all-caps label for body zone names (HEAD, TORSO, etc.)
+   ──────────────────────────────────────────────────────────── */
+.zone-label {
+    font-size:        var(--font-size-label);
+    color:            var(--color-text-dim);
+    -unity-font-style: bold;
+    width:            48px;
+    -unity-text-align: middle-left;
+}
+
+/* ── Aggro Indicator ─────────────────────────────────────────
+   Gold icon shown on the hunter holding the Aggro token.
+   ──────────────────────────────────────────────────────────── */
+.aggro-indicator {
+    color:            var(--color-aggro);
+    font-size:        var(--font-size-title);
+    -unity-font-style: bold;
+}
+
+/* ── Fullscreen Background ───────────────────────────────────
+   Root container for every screen.
+   ──────────────────────────────────────────────────────────── */
+.fullscreen-bg {
+    background-color: var(--color-bg-deep);
+    width:            100%;
+    height:           100%;
+    flex-direction:   column;
+}
