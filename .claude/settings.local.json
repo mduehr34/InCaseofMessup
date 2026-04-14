@@ -23,7 +23,8 @@
       "Bash('/c/Program Files/GitHub CLI/gh.exe' pr create --base main --head master --title 'Stage 2-A: IGridManager, ICombatManager, IMonsterAI interfaces' --body ':*)",
       "Bash('/c/Program Files/GitHub CLI/gh.exe' pr create --base master --head stage-2a --title 'Stage 2-A: IGridManager, ICombatManager, IMonsterAI interfaces' --body ':*)",
       "Bash(ls Assets/_Game/Scripts/Core.Data/CombatStateTest*)",
-      "Bash('/c/Program Files/GitHub CLI/gh.exe' pr create --base master --head stage-2b --title 'Stage 2-B: CombatState and all sub-state classes' --body ':*)"
+      "Bash('/c/Program Files/GitHub CLI/gh.exe' pr create --base master --head stage-2b --title 'Stage 2-B: CombatState and all sub-state classes' --body ':*)",
+      "Bash('/c/Program Files/GitHub CLI/gh.exe' pr create --base master --head stage-2c --title 'Stage 2-C: GridManager — placement, movement, facing arc, denial' --body ':*)"
     ]
   }
 }
