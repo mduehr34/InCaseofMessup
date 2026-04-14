@@ -1,0 +1,343 @@
+/* ============================================================
+   Marrow & Myth — Combat Screen Layout
+   Import tokens.uss and stone-panel.uss before this file.
+   ============================================================ */
+
+/* ── Root ────────────────────────────────────────────────────── */
+.combat-root {
+    flex-direction: column;
+    width:          100%;
+    height:         100%;
+}
+
+/* ── Zone 1: Phase Bar ───────────────────────────────────────── */
+.phase-bar {
+    flex-direction:  row;
+    align-items:     center;
+    height:          60px;
+    padding-left:    var(--spacing-md);
+    padding-right:   var(--spacing-md);
+    flex-shrink:     0;
+}
+
+.phase-label {
+    font-size:         var(--font-size-title);
+    color:             var(--color-text-accent);
+    -unity-font-style: bold;
+}
+
+.phase-bar__spacer {
+    flex: 1;
+}
+
+.round-label {
+    font-size: var(--font-size-body);
+    color:     var(--color-text-dim);
+}
+
+/* ── Zone 2: Content Row ─────────────────────────────────────── */
+.content-row {
+    flex-direction: row;
+    flex:           1;
+    min-height:     0;   /* Prevents flex overflow */
+}
+
+/* ── Hunter Panel Container ──────────────────────────────────── */
+.hunter-panel-container {
+    flex-direction: column;
+    width:          300px;
+    flex-shrink:    0;
+}
+
+.hunter-panel {
+    flex:           1;
+    margin:         2px;
+    flex-direction: column;
+}
+
+.hunter-panel--collapsed {
+    opacity:      0.5;
+    border-color: var(--color-border-danger);
+}
+
+.hunter-header {
+    flex-direction: row;
+    align-items:    center;
+    margin-bottom:  var(--spacing-xs);
+}
+
+.hunter-name {
+    flex:                1;
+    font-size:           var(--font-size-body);
+    margin-bottom:       0;
+    border-bottom-width: 0;   /* Override stone-panel__header bottom border for compact layout */
+}
+
+/* ── Body Zones ──────────────────────────────────────────────── */
+.body-zones {
+    flex-direction: column;
+    flex:           1;
+}
+
+.body-zone-row {
+    flex-direction: row;
+    align-items:    center;
+    margin-bottom:  3px;
+}
+
+.body-zone-bars {
+    flex:           1;
+    flex-direction: column;
+}
+
+/* ── Status Effects Row ──────────────────────────────────────── */
+.status-effects-row {
+    flex-direction: row;
+    flex-wrap:      wrap;
+    margin-top:     var(--spacing-xs);
+    min-height:     18px;
+}
+
+/* ── Active Hunter Info ──────────────────────────────────────── */
+.active-hunter-info {
+    flex-direction:    row;
+    align-items:       center;
+    margin-top:        var(--spacing-xs);
+    border-top-color:  var(--color-border);
+    border-top-width:  1px;
+    padding-top:       var(--spacing-xs);
+}
+
+.ap-label {
+    font-size:    var(--font-size-label);
+    color:        var(--color-text-primary);
+    margin-right: var(--spacing-sm);
+}
+
+.grit-pips-row {
+    flex-direction: row;
+    align-items:    center;
+}
+
+/* ── Grid Container ──────────────────────────────────────────── */
+.grid-container {
+    flex:           1;
+    flex-direction: column;
+    margin:         2px;
+    overflow:       hidden;
+}
+
+.grid-row {
+    flex-direction: row;
+    flex:           1;
+}
+
+.grid-cell {
+    width:            var(--grid-cell-size);
+    height:           var(--grid-cell-size);
+    border-color:     var(--color-border);
+    border-width:     var(--grid-cell-border);
+    background-color: var(--color-bg-deep);
+    flex-shrink:      0;
+}
+
+.grid-cell:hover {
+    background-color: var(--color-highlight-valid);
+}
+
+.grid-cell--selected {
+    background-color: var(--color-highlight-select);
+    border-color:     var(--color-text-accent);
+}
+
+.grid-cell--denied {
+    background-color: var(--color-denied);
+}
+
+.grid-cell--marrow {
+    background-color: var(--color-marrow-sink);
+}
+
+.grid-cell--hunter {
+    border-color: var(--color-text-primary);
+    border-width: 2px;
+}
+
+.grid-cell--monster {
+    border-color: var(--color-text-danger);
+    border-width: 2px;
+}
+
+/* ── Monster Panel ───────────────────────────────────────────── */
+.monster-panel {
+    width:          380px;
+    flex-shrink:    0;
+    margin:         2px;
+    flex-direction: column;
+    overflow:       hidden;
+}
+
+.monster-difficulty-label {
+    font-size:     var(--font-size-label);
+    color:         var(--color-text-dim);
+    margin-bottom: var(--spacing-xs);
+}
+
+.monster-deck-label {
+    font-size:     var(--font-size-label);
+    color:         var(--color-text-dim);
+    margin-bottom: var(--spacing-sm);
+}
+
+.monster-stance-label {
+    font-size:         var(--font-size-label);
+    color:             var(--color-text-accent);
+    -unity-font-style: italic;
+    margin-bottom:     var(--spacing-sm);
+}
+
+.monster-parts-container {
+    flex:           1;
+    flex-direction: column;
+    overflow:       hidden;
+}
+
+.monster-part-row {
+    flex-direction:   row;
+    align-items:      center;
+    margin-bottom:    4px;
+    padding:          3px var(--spacing-xs);
+    background-color: var(--color-bg-deep);
+    border-color:     var(--color-border);
+    border-width:     1px;
+}
+
+.monster-part-row--broken {
+    background-color: var(--color-broken);
+    opacity:          0.7;
+}
+
+.part-name {
+    font-size:   var(--font-size-label);
+    color:       var(--color-text-primary);
+    width:       72px;
+    flex-shrink: 0;
+}
+
+.part-bars {
+    flex:           1;
+    flex-direction: column;
+}
+
+/* ── Zone 3: Card Hand ───────────────────────────────────────── */
+.card-hand-zone {
+    flex-direction: row;
+    height:         260px;
+    flex-shrink:    0;
+    align-items:    center;
+    padding:        var(--spacing-sm);
+}
+
+.hand-cards {
+    flex:           1;
+    flex-direction: row;
+    align-items:    center;
+    overflow:       hidden;
+}
+
+.hand-actions {
+    flex-direction: column;
+    align-items:    flex-end;
+    margin-left:    var(--spacing-md);
+    flex-shrink:    0;
+}
+
+.hand-ap-display {
+    font-size:         var(--font-size-title);
+    color:             var(--color-text-primary);
+    -unity-font-style: bold;
+    margin-bottom:     var(--spacing-sm);
+}
+
+.hand-grit-display {
+    font-size:     var(--font-size-body);
+    color:         var(--color-grit);
+    margin-bottom: var(--spacing-md);
+}
+
+.end-turn-btn {
+    width:     140px;
+    height:    48px;
+    font-size: var(--font-size-body);
+}
+
+/* ── Action Cards ────────────────────────────────────────────── */
+.card {
+    width:          160px;
+    min-height:     200px;
+    margin:         0 var(--spacing-xs);
+    flex-direction: column;
+    flex-shrink:    0;
+}
+
+.card--unplayable {
+    opacity: 0.4;
+}
+
+.card--selected {
+    border-color:     var(--color-text-accent);
+    background-color: var(--color-bg-panel-active);
+}
+
+.card:hover {
+    border-color: var(--color-border-accent);
+}
+
+.card-header {
+    flex-direction: row;
+    align-items:    flex-start;
+    margin-bottom:  var(--spacing-xs);
+}
+
+.card-name {
+    font-size:         var(--font-size-body);
+    color:             var(--color-text-primary);
+    -unity-font-style: bold;
+    flex:              1;
+    white-space:       normal;
+}
+
+.card-category {
+    font-size:         var(--font-size-small);
+    color:             var(--color-text-dim);
+    margin-bottom:     var(--spacing-xs);
+    -unity-font-style: italic;
+}
+
+.card-effect {
+    font-size:   var(--font-size-small);
+    color:       var(--color-text-primary);
+    white-space: normal;
+    flex:        1;
+}
+
+.card-footer {
+    flex-direction:   row;
+    align-items:      center;
+    margin-top:       var(--spacing-xs);
+    border-top-color: var(--color-border);
+    border-top-width: 1px;
+    padding-top:      var(--spacing-xs);
+}
+
+.card-ap-cost {
+    font-size:         var(--font-size-label);
+    color:             var(--color-text-accent);
+    -unity-font-style: bold;
+    flex:              1;
+}
+
+.card-refund {
+    font-size: var(--font-size-small);
+    color:     var(--color-text-dim);
+}
