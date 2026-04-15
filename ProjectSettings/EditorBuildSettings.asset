@@ -24,10 +24,10 @@ EditorBuildSettings:
     path: Assets/CombatScene.unity
     guid: 95a99ffed582c414783ef65cd2082a28
   - enabled: 1
-    path: Assets/_Game/Scenes/Codex.unity
-    guid: edf87905a99be8642b37ef700ab7e00e
-  - enabled: 1
     path: Assets/_Game/Scenes/GearGrid.unity
     guid: a4fed030d99107c44affdf0f10bb8635
+  - enabled: 1
+    path: Assets/Codex.unity
+    guid: 43ae349897af51449b4c70e10f77a389
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

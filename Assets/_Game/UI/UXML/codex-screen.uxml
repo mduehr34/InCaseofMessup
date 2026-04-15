@@ -1,0 +1,37 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="../USS/tokens.uss"/>
+    <Style src="../USS/stone-panel.uss"/>
+    <Style src="../USS/settlement-shared.uss"/>
+    <Style src="../USS/codex-screen.uss"/>
+
+    <ui:VisualElement name="codex-root" class="fullscreen-bg codex-root">
+
+        <!-- Tab Bar -->
+        <ui:VisualElement name="codex-tabs" class="tab-bar stone-panel--raised codex-tab-bar">
+            <ui:Label text="CODEX" class="era-year" style="margin-right:24px;"/>
+            <ui:Button name="tab-monsters"  text="MONSTERS"           class="tab-btn tab-btn--active"/>
+            <ui:Button name="tab-artifacts" text="ARTIFACTS"          class="tab-btn"/>
+            <ui:Button name="tab-records"   text="SETTLEMENT RECORDS" class="tab-btn"/>
+            <ui:VisualElement style="flex:1"/>
+            <ui:Button name="btn-close"     text="CLOSE"              class="era-btn"/>
+        </ui:VisualElement>
+
+        <!-- Content Area: List + Detail -->
+        <ui:VisualElement name="codex-content" class="codex-content">
+
+            <!-- Left: Scrollable List -->
+            <ui:ScrollView name="codex-list" class="codex-list stone-panel"/>
+
+            <!-- Right: Detail Panel -->
+            <ui:VisualElement name="codex-detail" class="codex-detail stone-panel">
+                <ui:Label name="detail-title" text="Select an entry" class="stone-panel__header"/>
+                <ui:Label name="detail-meta"  text=""                class="proficiency-label"/>
+                <ui:ScrollView name="detail-body-scroll" class="detail-body-scroll">
+                    <ui:Label name="detail-body" text=""             class="codex-detail-body"/>
+                </ui:ScrollView>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

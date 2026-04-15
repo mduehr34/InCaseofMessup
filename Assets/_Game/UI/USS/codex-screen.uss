@@ -1,0 +1,59 @@
+.codex-root       { flex-direction: column; }
+
+.codex-tab-bar    { flex-direction: row; align-items: center; height: 60px; flex-shrink: 0; }
+
+.codex-content    { flex: 1; flex-direction: row; min-height: 0; }
+
+.codex-list       { width: 460px; flex-shrink: 0; margin: 2px; overflow: hidden; }
+
+.codex-detail     { flex: 1; flex-direction: column; margin: 2px; overflow: hidden; }
+
+.detail-body-scroll { flex: 1; }
+
+.codex-detail-body {
+    font-size:   var(--font-size-body);
+    color:       var(--color-text-primary);
+    white-space: normal;
+}
+
+/* ── List Entry ───────────────────────────────────────────────── */
+.codex-entry {
+    flex-direction: row;
+    align-items:    center;
+    padding:        var(--spacing-sm);
+    border-bottom-color: var(--color-border);
+    border-bottom-width: 1px;
+}
+
+.codex-entry:hover      { background-color: var(--color-bg-panel-raised); }
+.codex-entry--selected  { background-color: var(--color-bg-panel-active); border-color: var(--color-text-accent); }
+.codex-entry--locked    { opacity: 0.45; }
+
+.codex-entry-name {
+    flex:      1;
+    font-size: var(--font-size-body);
+    color:     var(--color-text-primary);
+}
+
+.codex-entry-tag {
+    font-size:  var(--font-size-small);
+    color:      var(--color-text-dim);
+    margin-left: var(--spacing-sm);
+}
+
+/* ── Chronicle Records ───────────────────────────────────────── */
+.chronicle-entry {
+    font-size:    var(--font-size-body);
+    color:        var(--color-text-primary);
+    white-space:  normal;
+    padding:      var(--spacing-xs) 0;
+    border-bottom-color: var(--color-border);
+    border-bottom-width: 1px;
+}
+
+.chronicle-divider {
+    font-size:        var(--font-size-label);
+    color:            var(--color-text-accent);
+    -unity-font-style: bold;
+    margin:           var(--spacing-sm) 0 var(--spacing-xs) 0;
+}

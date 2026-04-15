@@ -346,7 +346,7 @@ namespace MnM.Core.UI
 
         private void OnCodexClicked()
         {
-            Debug.Log("[Settlement] Codex — implement 6-G");
+            GameStateManager.Instance.OpenCodex();
         }
 
         private void OnHuntClicked()
