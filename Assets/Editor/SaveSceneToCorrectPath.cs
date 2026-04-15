@@ -6,19 +6,19 @@ public class SaveSceneToCorrectPath
 {
     public static void Execute()
     {
-        // Save current scene to the correct path
         var scene = UnityEngine.SceneManagement.SceneManager.GetActiveScene();
-        Debug.Log($"[SaveFix] Active scene path: {scene.path}");
+        Debug.Log($"[SaveFix] Active scene: {scene.name} | path: {scene.path}");
 
-        // Save to the correct location
-        bool saved = EditorSceneManager.SaveScene(scene, "Assets/_Game/Scenes/MainMenu.unity");
-        Debug.Log($"[SaveFix] Saved to Assets/_Game/Scenes/MainMenu.unity: {saved}");
+        string correctPath = $"Assets/_Game/Scenes/{scene.name}.unity";
+        bool saved = EditorSceneManager.SaveScene(scene, correctPath);
+        Debug.Log($"[SaveFix] Saved to {correctPath}: {saved}");
 
-        // Delete the duplicate that got created at the wrong path
-        if (AssetDatabase.AssetPathExists("Assets/MainMenu.unity"))
+        // Clean up any stray duplicate at root
+        string strayPath = $"Assets/{scene.name}.unity";
+        if (AssetDatabase.AssetPathExists(strayPath))
         {
-            AssetDatabase.DeleteAsset("Assets/MainMenu.unity");
-            Debug.Log("[SaveFix] Deleted duplicate Assets/MainMenu.unity");
+            AssetDatabase.DeleteAsset(strayPath);
+            Debug.Log($"[SaveFix] Deleted stray duplicate: {strayPath}");
         }
 
         AssetDatabase.Refresh();
