@@ -8,13 +8,17 @@ namespace MnM.Core.UI
 {
     public class SettlementScreenController : MonoBehaviour
     {
-        [SerializeField] private UIDocument  _uiDocument;
-        [SerializeField] private CampaignSO  _campaignSO;
+        [SerializeField] private UIDocument       _uiDocument;
+        [SerializeField] private CampaignSO       _campaignSO;
+        [SerializeField] private VisualTreeAsset  _eventModalAsset;
+        [SerializeField] private VisualTreeAsset  _gpModalAsset;
 
-        private VisualElement  _root;
-        private VisualElement  _tabContent;
+        private VisualElement     _root;
+        private VisualElement     _tabContent;
         private SettlementManager _settlement;
-        private string         _activeTab = "characters";
+        private string            _activeTab = "characters";
+        private VisualElement     _activeModal = null;
+        private InnovationSO[]    _drawnInnovations = null;
 
         private void OnEnable()
         {
@@ -45,6 +49,11 @@ namespace MnM.Core.UI
                 RefreshEraHeader();
                 RefreshResourceSummary();
             }
+
+            // Auto-fire Chronicle Event and any pending Guiding Principals
+            CheckAndFireChronicleEvent();
+            if (GameStateManager.Instance.CampaignState.activeGuidingPrincipalIds.Length > 0)
+                CheckAndFireGuidingPrincipal();
         }
 
         // ── Era Header ────────────────────────────────────────────
@@ -173,24 +182,150 @@ namespace MnM.Core.UI
             }
         }
 
-        // ── Crafters Tab — Stub ───────────────────────────────────
+        // ── Crafters Tab ──────────────────────────────────────────
         private void BuildCraftersTab()
         {
             _tabContent.Clear();
-            var stub = new Label("Crafters tab — implemented Session 6-D");
-            stub.AddToClassList("proficiency-label");
-            _tabContent.Add(stub);
-            Debug.Log("[Settlement] Crafters tab stub — implement 6-D");
+            var state = GameStateManager.Instance.CampaignState;
+            if (_campaignSO?.crafterPool == null)
+            {
+                _tabContent.Add(new Label("No crafters defined in CampaignSO"));
+                return;
+            }
+
+            foreach (var crafter in _campaignSO.crafterPool)
+            {
+                if (crafter == null) continue;
+                bool isBuilt = System.Array.IndexOf(state.builtCrafterNames, crafter.crafterName) >= 0;
+
+                var row = new VisualElement();
+                row.AddToClassList("character-row");
+                row.AddToClassList(isBuilt ? "stone-panel--raised" : "stone-panel");
+
+                var nameLabel = new Label(crafter.crafterName);
+                nameLabel.AddToClassList("character-name");
+                if (!isBuilt) nameLabel.style.color = new StyleColor(new Color(0.54f, 0.50f, 0.44f));
+                row.Add(nameLabel);
+
+                if (isBuilt)
+                {
+                    var builtTag = new Label("BUILT");
+                    builtTag.AddToClassList("status-badge");
+                    builtTag.style.color = new StyleColor(new Color(0.40f, 0.72f, 0.40f));
+                    row.Add(builtTag);
+
+                    var recipeLabel = new Label($"{crafter.recipeList?.Length ?? 0} recipes");
+                    recipeLabel.AddToClassList("proficiency-label");
+                    row.Add(recipeLabel);
+                }
+                else
+                {
+                    var costLabel = new Label(BuildCostString(crafter));
+                    costLabel.AddToClassList("proficiency-label");
+                    row.Add(costLabel);
+
+                    var crafterRef = crafter;
+                    var unlockBtn = new Button(() => OnUnlockCrafter(crafterRef)) { text = "UNLOCK" };
+                    unlockBtn.AddToClassList("small-btn");
+                    row.Add(unlockBtn);
+                }
+
+                _tabContent.Add(row);
+            }
         }
 
-        // ── Innovations Tab — Stub ────────────────────────────────
+        private string BuildCostString(CrafterSO crafter)
+        {
+            if (crafter.unlockCost == null || crafter.unlockCost.Length == 0) return "Free";
+            var parts = new System.Collections.Generic.List<string>();
+            for (int i = 0; i < crafter.unlockCost.Length; i++)
+            {
+                int amt = (crafter.unlockCostAmounts != null && i < crafter.unlockCostAmounts.Length)
+                    ? crafter.unlockCostAmounts[i] : 0;
+                parts.Add($"{amt}\u00d7 {crafter.unlockCost[i].resourceName}");
+            }
+            return string.Join(", ", parts);
+        }
+
+        private void OnUnlockCrafter(CrafterSO crafter)
+        {
+            bool success = _settlement.TryUnlockCrafter(crafter);
+            if (success)
+            {
+                Debug.Log($"[Settlement] Unlocked: {crafter.crafterName}");
+                BuildCraftersTab();
+                RefreshResourceSummary();
+            }
+        }
+
+        // ── Innovations Tab ───────────────────────────────────────
         private void BuildInnovationsTab()
         {
             _tabContent.Clear();
-            var stub = new Label("Innovations tab — implemented Session 6-D");
-            stub.AddToClassList("proficiency-label");
-            _tabContent.Add(stub);
-            Debug.Log("[Settlement] Innovations tab stub — implement 6-D");
+            var state = GameStateManager.Instance.CampaignState;
+
+            var adoptedHeader = new Label("ADOPTED INNOVATIONS");
+            adoptedHeader.AddToClassList("stone-panel__header");
+            _tabContent.Add(adoptedHeader);
+
+            if (state.adoptedInnovationIds.Length == 0)
+            {
+                _tabContent.Add(new Label("None yet"));
+            }
+            else
+            {
+                foreach (var id in state.adoptedInnovationIds)
+                {
+                    var label = new Label($"\u2022 {id}");
+                    label.AddToClassList("proficiency-label");
+                    _tabContent.Add(label);
+                }
+            }
+
+            var drawHeader = new Label("AVAILABLE TO ADOPT");
+            drawHeader.AddToClassList("stone-panel__header");
+            _tabContent.Add(drawHeader);
+
+            if (_drawnInnovations == null)
+                _drawnInnovations = _settlement.DrawInnovationOptions(3);
+
+            if (_drawnInnovations.Length == 0)
+            {
+                _tabContent.Add(new Label("No innovations available"));
+                return;
+            }
+
+            foreach (var inn in _drawnInnovations)
+            {
+                var row = new VisualElement();
+                row.AddToClassList("character-row");
+                row.AddToClassList("stone-panel");
+
+                var nameLabel = new Label(inn.innovationName);
+                nameLabel.AddToClassList("character-name");
+                row.Add(nameLabel);
+
+                var effectLabel = new Label(inn.effect);
+                effectLabel.AddToClassList("proficiency-label");
+                effectLabel.style.whiteSpace = WhiteSpace.Normal;
+                effectLabel.style.flexShrink = 1;
+                row.Add(effectLabel);
+
+                var innRef = inn;
+                var adoptBtn = new Button(() => OnAdoptInnovation(innRef)) { text = "ADOPT" };
+                adoptBtn.AddToClassList("small-btn");
+                row.Add(adoptBtn);
+
+                _tabContent.Add(row);
+            }
+        }
+
+        private void OnAdoptInnovation(InnovationSO innovation)
+        {
+            _settlement.AdoptInnovation(innovation);
+            _drawnInnovations = null; // Reset — each settlement phase draws fresh
+            BuildInnovationsTab();
+            Debug.Log($"[Settlement] Adopted: {innovation.innovationName}");
         }
 
         // ── Action Bar Handlers — Stubs ───────────────────────────
@@ -219,10 +354,159 @@ namespace MnM.Core.UI
             var state = GameStateManager.Instance.CampaignState;
             _settlement.CheckAllRetirements();
             _settlement.AdvanceYear();
+            _drawnInnovations = null; // Year boundary — innovations refresh
             RefreshEraHeader();
             RefreshResourceSummary();
             BuildCharactersTab();
             Debug.Log($"[Settlement] Year advanced to {state.currentYear}");
+        }
+
+        // ── Chronicle Event Flow ──────────────────────────────────
+        private void CheckAndFireChronicleEvent()
+        {
+            var evt = _settlement.DrawChronicleEvent();
+            if (evt != null) ShowEventModal(evt);
+        }
+
+        private void ShowEventModal(EventSO evt)
+        {
+            if (_eventModalAsset == null)
+            {
+                Debug.LogWarning("[Settlement] Event modal UXML asset not assigned");
+                return;
+            }
+
+            var overlay = _eventModalAsset.Instantiate();
+            // TemplateContainer must stretch to fill root so the absolute-positioned
+            // modal-overlay inside it covers the full screen.
+            overlay.style.position = Position.Absolute;
+            overlay.style.left     = 0;
+            overlay.style.top      = 0;
+            overlay.style.right    = 0;
+            overlay.style.bottom   = 0;
+            _root.Add(overlay);
+            _activeModal = overlay;
+
+            overlay.Q<Label>("event-id").text        = evt.eventId;
+            overlay.Q<Label>("event-name").text      = evt.eventName;
+            overlay.Q<Label>("event-narrative").text = evt.narrativeText;
+
+            bool isMandatory = evt.isMandatory || evt.choices == null || evt.choices.Length == 0;
+            overlay.Q<Label>("event-mandatory").style.display =
+                isMandatory ? DisplayStyle.Flex : DisplayStyle.None;
+
+            var choicesEl = overlay.Q<VisualElement>("event-choices");
+            var ackBtn    = overlay.Q<Button>("btn-acknowledge");
+
+            if (isMandatory)
+            {
+                choicesEl.style.display = DisplayStyle.None;
+                ackBtn.style.display    = DisplayStyle.Flex;
+                ackBtn.clicked += () =>
+                {
+                    _settlement.ResolveEvent(evt, -1);
+                    CloseModal();
+                    CheckAndFireChronicleEvent(); // Pick up next eligible event
+                };
+            }
+            else
+            {
+                choicesEl.style.display = DisplayStyle.Flex;
+                ackBtn.style.display    = DisplayStyle.None;
+
+                var btnA = overlay.Q<Button>("btn-choice-a");
+                var btnB = overlay.Q<Button>("btn-choice-b");
+
+                if (evt.choices.Length > 0)
+                {
+                    btnA.text = $"{evt.choices[0].choiceLabel}: {evt.choices[0].outcomeText}";
+                    btnA.clicked += () =>
+                    {
+                        _settlement.ResolveEvent(evt, 0);
+                        CloseModal();
+                        CheckAndFireGuidingPrincipal();
+                        CheckAndFireChronicleEvent(); // Pick up next eligible event
+                    };
+                }
+
+                if (evt.choices.Length > 1)
+                {
+                    btnB.text = $"{evt.choices[1].choiceLabel}: {evt.choices[1].outcomeText}";
+                    btnB.clicked += () =>
+                    {
+                        _settlement.ResolveEvent(evt, 1);
+                        CloseModal();
+                        CheckAndFireGuidingPrincipal();
+                        CheckAndFireChronicleEvent(); // Pick up next eligible event
+                    };
+                }
+                else
+                {
+                    btnB.style.display = DisplayStyle.None;
+                }
+            }
+
+            Debug.Log($"[Settlement] Showing event: {evt.eventId} \u2014 {evt.eventName}");
+        }
+
+        // ── Guiding Principal Flow ────────────────────────────────
+        private void CheckAndFireGuidingPrincipal()
+        {
+            var state = GameStateManager.Instance.CampaignState;
+            if (state.activeGuidingPrincipalIds.Length == 0) return;
+
+            string gpId = state.activeGuidingPrincipalIds[0];
+            var gpSO = FindGuidingPrincipal(gpId);
+            if (gpSO != null) ShowGuidingPrincipalModal(gpSO);
+        }
+
+        private void ShowGuidingPrincipalModal(GuidingPrincipalSO gp)
+        {
+            if (_gpModalAsset == null)
+            {
+                Debug.LogWarning("[Settlement] GP modal UXML asset not assigned");
+                return;
+            }
+
+            var overlay = _gpModalAsset.Instantiate();
+            overlay.style.position = Position.Absolute;
+            overlay.style.left     = 0;
+            overlay.style.top      = 0;
+            overlay.style.right    = 0;
+            overlay.style.bottom   = 0;
+            _root.Add(overlay);
+            _activeModal = overlay;
+
+            overlay.Q<Label>("gp-name").text    = gp.principalName;
+            overlay.Q<Label>("gp-trigger").text = gp.triggerCondition;
+
+            var btnA = overlay.Q<Button>("btn-gp-a");
+            var btnB = overlay.Q<Button>("btn-gp-b");
+
+            btnA.text = $"A: {gp.choiceA.outcomeText}";
+            btnB.text = $"B: {gp.choiceB.outcomeText}";
+
+            btnA.clicked += () => { _settlement.ResolveGuidingPrincipal(gp.principalId, 0); CloseModal(); };
+            btnB.clicked += () => { _settlement.ResolveGuidingPrincipal(gp.principalId, 1); CloseModal(); };
+
+            Debug.Log($"[Settlement] Showing Guiding Principal: {gp.principalId}");
+        }
+
+        private void CloseModal()
+        {
+            if (_activeModal != null)
+            {
+                _root.Remove(_activeModal);
+                _activeModal = null;
+            }
+            RefreshResourceSummary();
+            if (_activeTab == "characters") BuildCharactersTab();
+        }
+
+        private GuidingPrincipalSO FindGuidingPrincipal(string id)
+        {
+            if (_campaignSO?.guidingPrincipals == null) return null;
+            return System.Array.Find(_campaignSO.guidingPrincipals, gp => gp.principalId == id);
         }
     }
 }

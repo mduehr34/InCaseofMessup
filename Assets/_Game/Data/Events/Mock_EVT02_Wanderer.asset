@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b42b211e5ee878468687a6229d4bd67, type: 3}
+  m_Name: Mock_EVT02_Wanderer
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.EventSO
+  eventId: EVT-02
+  eventName: The Wanderer
+  yearRangeMin: 1
+  yearRangeMax: 5
+  isMandatory: 0
+  campaignTag: 
+  monsterTag: 
+  seasonTag: 
+  difficultyTag: 
+  narrativeText: 'A scarred stranger arrives at the settlement gates. They carry
+    a satchel of tools and an unreadable expression. They say only: "I know things
+    worth knowing."'
+  choices:
+  - choiceLabel: A
+    outcomeText: Welcome the wanderer. They share their knowledge freely.
+    mechanicalEffect: +2 to next Innovations draw (apply manually)
+    artifactUnlockId: 
+    codexEntryId: 
+    guidingPrincipalTrigger: 
+  - choiceLabel: B
+    outcomeText: Ask what they truly want. Their answer changes everything.
+    mechanicalEffect: 'Triggers Guiding Principal: Blood or Bone (apply manually)'
+    artifactUnlockId: 
+    codexEntryId: 
+    guidingPrincipalTrigger: GP-01

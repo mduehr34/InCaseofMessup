@@ -21,12 +21,18 @@ MonoBehaviour:
   ironmanMode: 0
   monsterRoster:
   - {fileID: 11400000, guid: 9b47334a3da03b445b364fb050f2479d, type: 2}
-  eventPool: []
+  eventPool:
+  - {fileID: 11400000, guid: 43c0a06fd9864e14c99ec8da88c51591, type: 2}
+  - {fileID: 11400000, guid: 3bc76cab91f05054db4481d29836eb2d, type: 2}
   startingInnovations:
-  - {fileID: 11400000, guid: 76870f05e9958cc409bc73141a1a4bd1, type: 2}
-  - {fileID: 11400000, guid: adb4c6b3dee6d50418e445943cb71fc3, type: 2}
-  crafterPool: []
-  guidingPrincipals: []
+  - {fileID: 11400000, guid: 263895c2055326d4e8f89e325a6df528, type: 2}
+  - {fileID: 11400000, guid: fa6b8cefa0110914aa47184b179fb78b, type: 2}
+  - {fileID: 11400000, guid: cf3c5ce1ef9124549b54c08e2489eb29, type: 2}
+  crafterPool:
+  - {fileID: 11400000, guid: ac69920ca30fdb747a28eec370f29667, type: 2}
+  - {fileID: 11400000, guid: 1e2744b08c1d26545b940445766e5e06, type: 2}
+  guidingPrincipals:
+  - {fileID: 11400000, guid: 263e128a493feb84586b8a21ed698b85, type: 2}
   retirementHuntCount: 10
   birthConditionAge: 0
   overlordMonster: {fileID: 0}
