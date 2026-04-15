@@ -1,0 +1,211 @@
+/* ============================================================
+   Marrow & Myth — Settlement Shared Styles
+   Used by: MainMenu, Settlement, Codex, Travel screens.
+   Import after tokens.uss and stone-panel.uss.
+   ============================================================ */
+
+/* ── Era / Year Header Bar ──────────────────────────────────── */
+.era-bar {
+    height:          60px;
+    flex-direction:  row;
+    align-items:     center;
+    padding-left:    var(--spacing-md);
+    padding-right:   var(--spacing-md);
+    flex-shrink:     0;
+}
+
+.era-year {
+    font-size:        var(--font-size-xl);
+    color:            var(--color-text-accent);
+    -unity-font-style: bold;
+    margin-right:     var(--spacing-sm);
+}
+
+.era-name {
+    font-size:  var(--font-size-body);
+    color:      var(--color-text-dim);
+    flex:       1;
+    -unity-font-style: italic;
+}
+
+.era-btn {
+    background-color: transparent;
+    border-color:     var(--color-border-accent);
+    border-width:     1px;
+    border-radius:    0px;
+    color:            var(--color-text-dim);
+    font-size:        var(--font-size-label);
+    padding:          var(--spacing-xs) var(--spacing-sm);
+}
+
+/* ── Tab Bar ─────────────────────────────────────────────────── */
+.tab-bar {
+    flex-direction: row;
+    border-bottom-color: var(--color-border);
+    border-bottom-width: 1px;
+    margin-bottom:  var(--spacing-sm);
+}
+
+.tab-btn {
+    flex:             1;
+    background-color: transparent;
+    border-width:     0;
+    border-radius:    0px;
+    color:            var(--color-text-dim);
+    font-size:        var(--font-size-label);
+    padding:          var(--spacing-sm);
+    border-bottom-color: transparent;
+    border-bottom-width: 2px;
+}
+
+.tab-btn--active {
+    color:               var(--color-text-accent);
+    border-bottom-color: var(--color-text-accent);
+    border-bottom-width: 2px;
+    -unity-font-style:   bold;
+}
+
+.tab-btn:hover {
+    color: var(--color-text-primary);
+}
+
+.tab-content {
+    flex: 1;
+    overflow: hidden;
+}
+
+/* ── Action Bar ──────────────────────────────────────────────── */
+.action-bar {
+    height:          80px;
+    flex-direction:  row;
+    align-items:     center;
+    justify-content: center;
+    padding:         0 var(--spacing-lg);
+    flex-shrink:     0;
+}
+
+.action-bar .action-btn {
+    margin: 0 var(--spacing-sm);
+    min-width: 180px;
+    height:    48px;
+}
+
+/* ── Modal Overlay ───────────────────────────────────────────── */
+.modal-overlay {
+    position:         absolute;
+    left:             0;
+    top:              0;
+    right:            0;
+    bottom:           0;
+    background-color: rgba(0, 0, 0, 0.78);
+    align-items:      center;
+    justify-content:  center;
+}
+
+.modal-panel {
+    width:      800px;
+    max-height: 560px;
+    flex-direction: column;
+}
+
+/* ── Character Row ───────────────────────────────────────────── */
+.character-row {
+    flex-direction: row;
+    align-items:    center;
+    margin-bottom:  var(--spacing-xs);
+    padding:        var(--spacing-sm);
+}
+
+.character-name {
+    font-size:        var(--font-size-body);
+    color:            var(--color-text-primary);
+    -unity-font-style: bold;
+    flex:             1;
+}
+
+.injury-indicator {
+    font-size:  var(--font-size-label);
+    color:      var(--color-text-danger);
+    margin-right: var(--spacing-sm);
+}
+
+.proficiency-label {
+    font-size:  var(--font-size-small);
+    color:      var(--color-text-dim);
+    margin-right: var(--spacing-xs);
+}
+
+.small-btn {
+    background-color: var(--color-bg-panel-raised);
+    border-color:     var(--color-border-accent);
+    border-width:     1px;
+    border-radius:    0px;
+    color:            var(--color-text-dim);
+    font-size:        var(--font-size-small);
+    padding:          3px var(--spacing-sm);
+}
+
+/* ── Main Menu Specific ──────────────────────────────────────── */
+.title-block {
+    align-items:     center;
+    justify-content: center;
+    flex:            1;
+}
+
+.title-marrow {
+    font-size:        72px;
+    color:            var(--color-text-accent);
+    -unity-font-style: bold;
+}
+
+.title-myth {
+    font-size:        48px;
+    color:            var(--color-text-primary);
+    -unity-font-style: bold;
+}
+
+.title-subtitle {
+    font-size:  var(--font-size-body);
+    color:      var(--color-text-dim);
+    margin-top: var(--spacing-sm);
+    -unity-font-style: italic;
+}
+
+.menu-buttons {
+    align-items: center;
+    padding:     var(--spacing-lg);
+    margin:      var(--spacing-lg) var(--spacing-xl);
+}
+
+.menu-btn {
+    width:            320px;
+    height:           52px;
+    margin-bottom:    var(--spacing-sm);
+    font-size:        var(--font-size-title);
+    -unity-font-style: bold;
+    background-color: var(--color-bg-panel-raised);
+    border-color:     var(--color-border-accent);
+    border-width:     2px;
+    border-radius:    0px;
+    color:            var(--color-text-primary);
+}
+
+.menu-btn--secondary {
+    color:        var(--color-text-dim);
+    border-color: var(--color-border);
+    font-size:    var(--font-size-body);
+    height:       40px;
+}
+
+.menu-btn:hover {
+    border-color: var(--color-text-accent);
+    color:        var(--color-text-accent);
+}
+
+.version-label {
+    font-size:        var(--font-size-small);
+    color:            var(--color-text-dim);
+    position:         absolute;
+    bottom:           var(--spacing-sm);
+    right:            var(--spacing-sm);
+}
