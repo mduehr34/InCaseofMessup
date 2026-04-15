@@ -3,7 +3,8 @@
     "rootNamespace": "MnM.Core.UI",
     "references": [
         "MnM.Core.Data",
-        "MnM.Core.Systems"
+        "MnM.Core.Systems",
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
