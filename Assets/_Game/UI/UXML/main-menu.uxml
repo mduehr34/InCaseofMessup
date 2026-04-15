@@ -1,0 +1,27 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="../USS/tokens.uss"/>
+    <Style src="../USS/stone-panel.uss"/>
+    <Style src="../USS/settlement-shared.uss"/>
+
+    <ui:VisualElement name="main-menu-root" class="fullscreen-bg">
+
+        <!-- Title Block -->
+        <ui:VisualElement name="title-block" class="title-block">
+            <ui:Label text="MARROW"         class="title-marrow"/>
+            <ui:Label text="&amp; MYTH"     class="title-myth"/>
+            <ui:Label text="THE UNMADE AGE" class="title-subtitle"/>
+        </ui:VisualElement>
+
+        <!-- Menu Buttons -->
+        <ui:VisualElement name="menu-buttons" class="menu-buttons stone-panel">
+            <ui:Button name="btn-new-campaign" text="NEW CAMPAIGN" class="menu-btn"/>
+            <ui:Button name="btn-continue"     text="CONTINUE"     class="menu-btn"/>
+            <ui:Button name="btn-codex"        text="CODEX"        class="menu-btn menu-btn--secondary"/>
+            <ui:Button name="btn-settings"     text="SETTINGS"     class="menu-btn menu-btn--secondary"/>
+            <ui:Button name="btn-credits"      text="CREDITS"      class="menu-btn menu-btn--secondary"/>
+        </ui:VisualElement>
+
+        <ui:Label name="version-label" text="v0.1.0" class="version-label"/>
+
+    </ui:VisualElement>
+</ui:UXML>
