@@ -12,6 +12,9 @@ EditorBuildSettings:
     path: Assets/_Game/Scenes/MainMenu.unity
     guid: 3cffc491666886f4d8f92b16a291c97b
   - enabled: 1
+    path: Assets/_Game/Scenes/CampaignSelect.unity
+    guid: 85a6bb6b6c6932946a9877e33c68fcc2
+  - enabled: 1
     path: Assets/_Game/Scenes/Settlement.unity
     guid: 1bb47bd74957364469ade04a2102d59b
   - enabled: 1
@@ -23,5 +26,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Game/Scenes/Codex.unity
     guid: edf87905a99be8642b37ef700ab7e00e
+  - enabled: 1
+    path: Assets/_Game/Scenes/GearGrid.unity
+    guid: a4fed030d99107c44affdf0f10bb8635
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

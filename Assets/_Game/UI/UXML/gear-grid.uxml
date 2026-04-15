@@ -1,0 +1,60 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="../USS/tokens.uss"/>
+    <Style src="../USS/stone-panel.uss"/>
+    <Style src="../USS/settlement-shared.uss"/>
+    <Style src="../USS/gear-grid.uss"/>
+
+    <ui:VisualElement name="gear-grid-root" class="fullscreen-bg gear-grid-root">
+
+        <!-- Header -->
+        <ui:VisualElement class="era-bar stone-panel--raised">
+            <ui:Label name="hunter-name-header" text="Loadout" class="era-year"/>
+            <ui:VisualElement style="flex:1"/>
+            <ui:Button name="btn-close" text="CLOSE" class="era-btn"/>
+        </ui:VisualElement>
+
+        <!-- Main Content -->
+        <ui:VisualElement name="gear-main" class="gear-main" style="flex-grow:1; flex-direction:row; min-height:0;">
+
+            <!-- Left: Hunter Portrait placeholder -->
+            <ui:VisualElement name="hunter-portrait" class="hunter-portrait stone-panel">
+                <ui:Label name="portrait-name" text="---" class="stone-panel__header"/>
+                <ui:Label name="portrait-build" text="---" class="proficiency-label"/>
+            </ui:VisualElement>
+
+            <!-- Center: 3x3 Grid (gear + consumables) -->
+            <ui:VisualElement name="gear-center" class="gear-center">
+                <ui:Label text="GEAR GRID" class="stone-panel__header"/>
+                <ui:VisualElement name="gear-grid-3x3" class="gear-grid-3x3"/>
+            </ui:VisualElement>
+
+            <!-- Right: Item Details + Set Bonus -->
+            <ui:VisualElement name="item-detail-panel" class="item-detail-panel stone-panel">
+                <ui:Label name="item-name"      text="Select an item" class="stone-panel__header"/>
+                <ui:Label name="item-tier"      text=""               class="proficiency-label"/>
+                <ui:Label name="item-stats"     text=""               class="item-stat-block"/>
+                <ui:Label name="item-links"     text=""               class="proficiency-label"/>
+                <ui:Label name="item-special"   text=""               class="event-narrative"/>
+                <ui:VisualElement class="stone-panel--raised" style="margin-top:8px; padding:8px">
+                    <ui:Label text="SET BONUS"            class="stone-panel__header"/>
+                    <ui:Label name="set-name"  text="---" class="proficiency-label"/>
+                    <ui:Label name="set-bonus" text="---" class="proficiency-label"/>
+                </ui:VisualElement>
+                <ui:Button name="btn-unequip" text="UNEQUIP" class="action-btn action-btn--danger"/>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+        <!-- Stats Summary Bar -->
+        <ui:VisualElement name="stats-bar" class="stats-bar stone-panel--raised">
+            <ui:Label name="stat-accuracy"  text="ACC: 0+0"  class="stat-summary-label"/>
+            <ui:Label name="stat-strength"  text="STR: 0+0"  class="stat-summary-label"/>
+            <ui:Label name="stat-evasion"   text="EVA: 0+0"  class="stat-summary-label"/>
+            <ui:Label name="stat-toughness" text="TGH: 0+0"  class="stat-summary-label"/>
+            <ui:Label name="stat-luck"      text="LCK: 0+0"  class="stat-summary-label"/>
+            <ui:Label name="stat-movement"  text="MOV: 3+0"  class="stat-summary-label"/>
+            <ui:Label name="active-links"   text=""           class="proficiency-label"/>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>
