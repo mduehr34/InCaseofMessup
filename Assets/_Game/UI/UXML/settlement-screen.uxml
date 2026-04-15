@@ -1,0 +1,51 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="../USS/tokens.uss"/>
+    <Style src="../USS/stone-panel.uss"/>
+    <Style src="../USS/settlement-shared.uss"/>
+    <Style src="../USS/settlement-screen.uss"/>
+
+    <ui:VisualElement name="settlement-root" class="fullscreen-bg">
+
+        <!-- Era Header -->
+        <ui:VisualElement name="era-bar" class="era-bar stone-panel--raised">
+            <ui:Label name="year-label" text="Year 1"     class="era-year"/>
+            <ui:Label name="era-name"  text="The Ember"   class="era-name"/>
+            <ui:VisualElement style="flex:1"/>
+            <ui:Label name="resource-summary" text=""     class="resource-summary-label"/>
+            <ui:Button name="btn-codex"    text="CODEX"   class="era-btn"/>
+        </ui:VisualElement>
+
+        <!-- Main Content Row -->
+        <ui:VisualElement name="settlement-main" class="settlement-main">
+
+            <!-- Left: Settlement Scene -->
+            <ui:VisualElement name="settlement-scene" class="settlement-scene stone-panel">
+                <ui:Label text="SETTLEMENT" class="settlement-scene-placeholder"/>
+                <!-- Crafter sprites added dynamically -->
+            </ui:VisualElement>
+
+            <!-- Right: Management Panel -->
+            <ui:VisualElement name="management-panel" class="management-panel stone-panel">
+
+                <!-- Tab Bar -->
+                <ui:VisualElement name="tab-bar" class="tab-bar">
+                    <ui:Button name="tab-characters"  text="CHARACTERS"  class="tab-btn tab-btn--active"/>
+                    <ui:Button name="tab-crafters"    text="CRAFTERS"    class="tab-btn"/>
+                    <ui:Button name="tab-innovations" text="INNOVATIONS" class="tab-btn"/>
+                </ui:VisualElement>
+
+                <!-- Tab Content -->
+                <ui:ScrollView name="tab-content" class="tab-content"/>
+
+            </ui:VisualElement>
+        </ui:VisualElement>
+
+        <!-- Action Bar -->
+        <ui:VisualElement name="action-bar" class="action-bar stone-panel--raised">
+            <ui:Button name="btn-hunt"     text="SEND HUNTING PARTY" class="action-btn action-btn--primary"/>
+            <ui:Button name="btn-craft"    text="CRAFT GEAR"         class="action-btn"/>
+            <ui:Button name="btn-end-year" text="END YEAR"           class="action-btn action-btn--danger"/>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

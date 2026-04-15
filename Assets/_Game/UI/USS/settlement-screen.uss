@@ -1,0 +1,40 @@
+/* Settlement Screen specific layout */
+.settlement-main {
+    flex:           1;
+    flex-direction: row;
+    min-height:     0;
+}
+
+.settlement-scene {
+    width:           600px;
+    flex-shrink:     0;
+    margin:          2px;
+    align-items:     center;
+    justify-content: center;
+    background-color: var(--color-bg-deep);
+}
+
+.settlement-scene-placeholder {
+    color:            var(--color-text-dim);
+    font-size:        var(--font-size-label);
+    -unity-font-style: italic;
+}
+
+.management-panel {
+    flex:           1;
+    flex-direction: column;
+    margin:         2px;
+    overflow:       hidden;
+}
+
+.resource-summary-label {
+    font-size:    var(--font-size-small);
+    color:        var(--color-text-dim);
+    margin-right: var(--spacing-md);
+}
+
+.hunt-count-label {
+    font-size:    var(--font-size-small);
+    color:        var(--color-text-dim);
+    margin-right: var(--spacing-sm);
+}
