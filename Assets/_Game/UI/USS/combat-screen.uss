@@ -168,6 +168,12 @@
     border-width: 2px;
 }
 
+.grid-cell--valid {
+    background-color: var(--color-highlight-valid);
+    border-color:     var(--color-text-accent);
+    border-width:     2px;
+}
+
 /* ── Monster Panel ───────────────────────────────────────────── */
 .monster-panel {
     width:          380px;

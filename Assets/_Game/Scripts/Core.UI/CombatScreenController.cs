@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.InputSystem;
 using MnM.Core.Systems;
 using MnM.Core.Data;
 
@@ -37,6 +38,15 @@ namespace MnM.Core.UI
         private string        _pendingCardName = null;   // Card selected, awaiting target
         private VisualElement _selectedCardEl  = null;   // Currently highlighted card element
 
+        // ── Grid ─────────────────────────────────────────────────
+        private VisualElement    _gridContainer;
+        private VisualElement[,] _gridCells;              // [x, y] — 22×16
+
+        [SerializeField] private GridManager _gridManager;
+
+        // ── Keyboard / Grid Cursor ───────────────────────────────
+        private Vector2Int _gridCursor = new Vector2Int(-1, -1); // -1 = no selection
+
         // ── Lifecycle ────────────────────────────────────────────
         private void OnEnable()
         {
@@ -59,9 +69,11 @@ namespace MnM.Core.UI
 
         private void Start()
         {
-            // If CombatManager has an active state, do an initial refresh
             if (_combatManager?.CurrentState != null)
+            {
                 RefreshAll();
+                BuildGrid();
+            }
         }
 
         // ── Element Caching ──────────────────────────────────────
@@ -160,13 +172,22 @@ namespace MnM.Core.UI
         private void OnEndTurnClicked()
         {
             if (_combatManager?.CurrentState == null) return;
+
             var activeHunter = System.Array.Find(
                 _combatManager.CurrentState.hunters,
                 h => !h.hasActedThisPhase && !h.isCollapsed);
+
             if (activeHunter != null)
             {
+                // Hunter still has their turn — end it
                 _combatManager.EndHunterTurn(activeHunter.hunterId);
-                Debug.Log($"[CombatUI] End Turn clicked for {activeHunter.hunterName}");
+                Debug.Log($"[CombatUI] End Turn: {activeHunter.hunterName} done");
+            }
+            else
+            {
+                // All hunters have acted — advance to next phase
+                _combatManager.AdvancePhase();
+                Debug.Log("[CombatUI] All hunters acted — phase advanced");
             }
         }
 
@@ -179,7 +200,7 @@ namespace MnM.Core.UI
             RefreshHunterPanels(state.hunters, state.aggroHolderId);
             RefreshMonsterPanel(state.monster);
             RefreshCardHand(state);
-            // Grid refresh — stub until Session 5-E
+            RefreshGrid();
         }
 
         // ── Hunter Panels ─────────────────────────────────────────
@@ -516,6 +537,7 @@ namespace MnM.Core.UI
                 _pendingCardName = null;
                 _selectedCardEl  = null;
                 Debug.Log($"[CombatUI] Card deselected: {cardName}");
+                RefreshGrid();
                 return;
             }
 
@@ -524,7 +546,235 @@ namespace MnM.Core.UI
             cardEl.EnableInClassList("card--selected", true);
 
             Debug.Log($"[CombatUI] Card selected: {cardName} — click a grid cell to target");
-            // Grid cells will show valid target highlights — implemented Session 5-E
+            RefreshGrid();
+        }
+
+        // ── Grid Building ─────────────────────────────────────────
+        public void BuildGrid()
+        {
+            _gridContainer = _root.Q<VisualElement>("grid-container");
+            if (_gridContainer == null)
+            {
+                Debug.LogError("[CombatUI] grid-container not found in UXML");
+                return;
+            }
+
+            _gridContainer.Clear();
+            _gridCells = new VisualElement[22, 16];
+
+            for (int y = 0; y < 16; y++)
+            {
+                var row = new VisualElement();
+                row.AddToClassList("grid-row");
+
+                for (int x = 0; x < 22; x++)
+                {
+                    var cell = new VisualElement();
+                    cell.AddToClassList("grid-cell");
+
+                    int cx = x, cy = y;
+                    cell.RegisterCallback<ClickEvent>(_ => OnGridCellClicked(cx, cy));
+
+                    _gridCells[x, y] = cell;
+                    row.Add(cell);
+                }
+
+                _gridContainer.Add(row);
+            }
+
+            Debug.Log("[CombatUI] Grid built: 22×16 cells");
+            RefreshGrid();
+        }
+
+        public void RefreshGrid()
+        {
+            if (_gridCells == null || _combatManager?.CurrentState == null) return;
+
+            var state = _combatManager.CurrentState;
+            IGridManager grid = _gridManager;
+
+            for (int y = 0; y < 16; y++)
+            for (int x = 0; x < 22; x++)
+            {
+                var cell = _gridCells[x, y];
+                if (cell == null) continue;
+
+                var pos = new Vector2Int(x, y);
+
+                cell.EnableInClassList("grid-cell--denied",   false);
+                cell.EnableInClassList("grid-cell--marrow",   false);
+                cell.EnableInClassList("grid-cell--hunter",   false);
+                cell.EnableInClassList("grid-cell--monster",  false);
+                cell.EnableInClassList("grid-cell--selected", false);
+                cell.EnableInClassList("grid-cell--valid",    false);
+
+                if (grid != null)
+                {
+                    if (grid.IsDenied(pos))     cell.AddToClassList("grid-cell--denied");
+                    if (grid.IsMarrowSink(pos)) cell.AddToClassList("grid-cell--marrow");
+                }
+
+                bool isHunterCell  = IsHunterAtCell(state.hunters, x, y);
+                bool isMonsterCell = IsMonsterAtCell(state.monster, x, y);
+                if (isHunterCell)  cell.AddToClassList("grid-cell--hunter");
+                if (isMonsterCell) cell.AddToClassList("grid-cell--monster");
+
+                if (_gridCursor.x == x && _gridCursor.y == y)
+                    cell.AddToClassList("grid-cell--selected");
+
+                if (_pendingCardName != null && isMonsterCell)
+                    cell.AddToClassList("grid-cell--valid");
+            }
+        }
+
+        private bool IsHunterAtCell(HunterCombatState[] hunters, int x, int y)
+        {
+            foreach (var h in hunters)
+                if (!h.isCollapsed && h.gridX == x && h.gridY == y) return true;
+            return false;
+        }
+
+        private bool IsMonsterAtCell(MonsterCombatState monster, int x, int y)
+        {
+            return x >= monster.gridX && x < monster.gridX + monster.footprintW &&
+                   y >= monster.gridY && y < monster.gridY + monster.footprintH;
+        }
+
+        // ── Grid Cell Clicks ──────────────────────────────────────
+        private void OnGridCellClicked(int x, int y)
+        {
+            _gridCursor = new Vector2Int(x, y);
+            Debug.Log($"[CombatUI] Grid cell clicked: ({x},{y})");
+
+            if (_pendingCardName != null)
+            {
+                ResolveCardAtCell(x, y);
+            }
+            else
+            {
+                var state = _combatManager?.CurrentState;
+                if (state != null)
+                {
+                    var hunter = System.Array.Find(
+                        state.hunters, h => !h.isCollapsed && h.gridX == x && h.gridY == y);
+                    if (hunter != null)
+                        Debug.Log($"[CombatUI] Hunter at ({x},{y}): {hunter.hunterName}");
+                }
+            }
+
+            RefreshGrid();
+        }
+
+        private void ResolveCardAtCell(int x, int y)
+        {
+            var state = _combatManager?.CurrentState;
+            if (state == null || _pendingCardName == null) return;
+
+            var activeHunter = System.Array.Find(
+                state.hunters, h => !h.hasActedThisPhase && !h.isCollapsed);
+            if (activeHunter == null)
+            {
+                Debug.LogWarning("[CombatUI] No active hunter to play card");
+                return;
+            }
+
+            var targetCell = new Vector2Int(x, y);
+            bool success = _combatManager.TryPlayCard(
+                activeHunter.hunterId, _pendingCardName, targetCell);
+
+            if (success)
+                Debug.Log($"[CombatUI] Card played: {_pendingCardName} → ({x},{y})");
+            else
+                Debug.Log($"[CombatUI] TryPlayCard failed: {_pendingCardName} → ({x},{y}) — invalid target or insufficient AP");
+
+            _pendingCardName = null;
+            if (_selectedCardEl != null)
+            {
+                _selectedCardEl.EnableInClassList("card--selected", false);
+                _selectedCardEl = null;
+            }
+
+            RefreshAll();
+            RefreshGrid();
+        }
+
+        // ── Keyboard Input ────────────────────────────────────────
+        private void Update()
+        {
+            HandleKeyboardInput();
+        }
+
+        private void HandleKeyboardInput()
+        {
+            var kb = Keyboard.current;
+            if (kb == null) return;
+
+            // Number keys 1–6: select card by index
+            Key[] digitKeys = { Key.Digit1, Key.Digit2, Key.Digit3, Key.Digit4, Key.Digit5, Key.Digit6 };
+            for (int i = 0; i < digitKeys.Length; i++)
+            {
+                if (kb[digitKeys[i]].wasPressedThisFrame)
+                {
+                    SelectCardByIndex(i);
+                    return;
+                }
+            }
+
+            // Escape: cancel card selection
+            if (kb[Key.Escape].wasPressedThisFrame)
+            {
+                if (_pendingCardName != null)
+                {
+                    _pendingCardName = null;
+                    if (_selectedCardEl != null)
+                    {
+                        _selectedCardEl.EnableInClassList("card--selected", false);
+                        _selectedCardEl = null;
+                    }
+                    RefreshGrid();
+                    Debug.Log("[CombatUI] Card selection cancelled");
+                }
+                return;
+            }
+
+            // WASD / Arrow: move grid cursor
+            Vector2Int delta = Vector2Int.zero;
+            if (kb[Key.W].wasPressedThisFrame || kb[Key.UpArrow].wasPressedThisFrame)    delta.y = -1;
+            if (kb[Key.S].wasPressedThisFrame || kb[Key.DownArrow].wasPressedThisFrame)  delta.y =  1;
+            if (kb[Key.A].wasPressedThisFrame || kb[Key.LeftArrow].wasPressedThisFrame)  delta.x = -1;
+            if (kb[Key.D].wasPressedThisFrame || kb[Key.RightArrow].wasPressedThisFrame) delta.x =  1;
+
+            if (delta != Vector2Int.zero)
+            {
+                int nx = Mathf.Clamp((_gridCursor.x < 0 ? 11 : _gridCursor.x) + delta.x, 0, 21);
+                int ny = Mathf.Clamp((_gridCursor.y < 0 ?  8 : _gridCursor.y) + delta.y, 0, 15);
+                _gridCursor = new Vector2Int(nx, ny);
+                RefreshGrid();
+                return;
+            }
+
+            // Enter / Space: confirm grid cursor selection
+            if (kb[Key.Enter].wasPressedThisFrame || kb[Key.Space].wasPressedThisFrame)
+            {
+                if (_gridCursor.x >= 0)
+                    OnGridCellClicked(_gridCursor.x, _gridCursor.y);
+            }
+        }
+
+        private void SelectCardByIndex(int index)
+        {
+            var state = _combatManager?.CurrentState;
+            if (state == null) return;
+
+            var activeHunter = System.Array.Find(
+                state.hunters, h => !h.hasActedThisPhase && !h.isCollapsed);
+            if (activeHunter == null || index >= activeHunter.handCardNames.Length) return;
+
+            string cardName = activeHunter.handCardNames[index];
+            var cardEl = _handCards?.ElementAt(index) as VisualElement;
+
+            Debug.Log($"[CombatUI] Keyboard card select [{index + 1}]: {cardName}");
+            if (cardEl != null) OnCardClicked(cardName, cardEl, true);
         }
     }
 }

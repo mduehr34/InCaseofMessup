@@ -22,8 +22,8 @@ namespace MnM.Core.Data
                 hasActedThisPhase   = false,
                 isCollapsed         = false,
                 bodyZones           = BuildHunterBodyZones(),
-                handCardNames       = new string[0],
-                deckCardNames       = new[] { "Brace", "Shove" },
+                handCardNames       = new[] { "Brace", "Shove" },
+                deckCardNames       = new string[0],
                 discardCardNames    = new string[0],
                 activeStatusEffects = new string[0],
             };
