@@ -19,6 +19,9 @@ namespace MnM.Core.Systems
         public string                 SelectedDifficulty { get; private set; }
         public RuntimeCharacterState[] SelectedHunters   { get; private set; }
 
+        // Gear Grid — characterId to open on GearGrid scene load
+        public string PendingGearGridCharacterId { get; private set; }
+
         // ── Lifecycle ────────────────────────────────────────────
         private void Awake()
         {
@@ -84,6 +87,12 @@ namespace MnM.Core.Systems
         }
 
         // ── Navigation Helpers ───────────────────────────────────
+        public void OpenGearGrid(string characterId)
+        {
+            PendingGearGridCharacterId = characterId;
+            SceneManager.LoadScene("GearGrid");
+        }
+
         public void GoToMainMenu()
         {
             // Save before leaving (if campaign active)

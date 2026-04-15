@@ -38,22 +38,23 @@ Then confirm:
 # Stage 6-E: Gear Grid Screen
 
 **Resuming from:** Stage 6-D complete  
-**Done when:** Gear Grid opens from Character loadout button; 4×4 grid shows equipped items; clicking an item selects it; clicking a cell equips/moves it; stats summary updates with link bonuses; consumable slots visible  
-**Commit:** `"6E: Gear Grid — 4×4 layout, item equip, link resolver, stats summary"`  
+**Done when:** Gear Grid opens from Character loadout button; 3×3 grid shows equipped items; clicking an item selects it; clicking a cell equips/moves it; stats summary updates with link bonuses; consumable items placed in grid cells display a red border  
+**Commit:** `"6E: Gear Grid — 3×3 layout, item equip, link resolver, stats summary"`  
 **Next session:** STAGE_06_F.md  
 
 ---
 
 ## GDD Spec — Gear Grid Layout
 
+> **Design change (session 6-E):** Grid changed from 4×4 + separate consumable row to a unified 3×3 grid. Consumable items are placed in any cell; cells containing a consumable item display a red border to distinguish them from gear items.
+
 ```
 ┌────────────────┬─────────────────────────┬──────────────────┐
-│ HUNTER         │  4×4 GEAR GRID          │  ITEM DETAILS    │
+│ HUNTER         │  3×3 GEAR GRID          │  ITEM DETAILS    │
 │ PORTRAIT       │  (96×96px per cell)     │  PANEL           │
-│ (Left 240px)   │  (Center ~400px)        │  (Right 400px)   │
-│                ├─────────────────────────┤                  │
-│                │  CONSUMABLE SLOTS (3)   │  SET BONUS       │
-│                │  (below gear grid)      │  TRACKER         │
+│ (Left 240px)   │  (Center ~300px)        │  (Right panel)   │
+│                │  gear + consumables     │  SET BONUS       │
+│                │  share the same 9 cells │  TRACKER         │
 └────────────────┴─────────────────────────┴──────────────────┘
 │  STATS SUMMARY (bottom, full width)                         │
 └─────────────────────────────────────────────────────────────┘

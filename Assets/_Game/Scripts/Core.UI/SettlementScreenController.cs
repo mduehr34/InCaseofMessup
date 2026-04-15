@@ -331,7 +331,15 @@ namespace MnM.Core.UI
         // ── Action Bar Handlers — Stubs ───────────────────────────
         private void OpenGearGrid(string characterId)
         {
-            Debug.Log($"[Settlement] Open Gear Grid for: {characterId} — implement 6-E");
+            var state = GameStateManager.Instance.CampaignState;
+            var ch    = System.Array.Find(state.characters, c => c.characterId == characterId);
+            if (ch == null)
+            {
+                Debug.LogError($"[Settlement] OpenGearGrid: character not found: {characterId}");
+                return;
+            }
+            Debug.Log($"[Settlement] Opening gear grid for {ch.characterName}");
+            GameStateManager.Instance.OpenGearGrid(characterId);
         }
 
         private void OnCodexClicked()

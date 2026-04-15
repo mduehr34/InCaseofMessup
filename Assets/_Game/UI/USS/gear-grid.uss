@@ -1,0 +1,95 @@
+.gear-grid-root { flex-direction: column; }
+
+.gear-main {
+    flex:           1;
+    flex-direction: row;
+    min-height:     0;
+}
+
+.hunter-portrait {
+    width:           200px;
+    flex-shrink:     0;
+    flex-direction:  column;
+    align-items:     center;
+    margin:          2px;
+}
+
+.gear-center {
+    flex-direction: column;
+    align-items:    center;
+    padding:        var(--spacing-sm);
+    flex-shrink:    0;
+}
+
+.gear-grid-3x3 {
+    width:          288px;
+    height:         288px;
+    flex-wrap:      wrap;
+    flex-direction: row;
+}
+
+.gear-cell {
+    width:            96px;
+    height:           96px;
+    border-color:     var(--color-border);
+    border-width:     1px;
+    border-radius:    0px;
+    background-color: var(--color-bg-deep);
+    align-items:      center;
+    justify-content:  center;
+}
+
+.gear-cell:hover {
+    border-color: var(--color-border-accent);
+}
+
+.gear-cell--occupied {
+    background-color: var(--color-bg-panel-raised);
+    border-color:     var(--color-border-accent);
+}
+
+.gear-cell--selected {
+    border-color:     var(--color-text-accent);
+    border-width:     2px;
+}
+
+.gear-cell--consumable {
+    border-color:     var(--color-border-danger);
+    background-color: var(--color-bg-deep);
+}
+
+.gear-cell-label {
+    font-size:   var(--font-size-small);
+    color:       var(--color-text-dim);
+    white-space: normal;
+    -unity-text-align: middle-center;
+}
+
+.item-detail-panel {
+    flex:           1;
+    flex-direction: column;
+    margin:         2px;
+    overflow:       hidden;
+}
+
+.item-stat-block {
+    font-size:    var(--font-size-label);
+    color:        var(--color-text-primary);
+    white-space:  normal;
+    margin:       var(--spacing-xs) 0;
+}
+
+.stats-bar {
+    flex-direction: row;
+    height:         50px;
+    align-items:    center;
+    padding:        0 var(--spacing-md);
+    flex-shrink:    0;
+}
+
+.stat-summary-label {
+    font-size:        var(--font-size-body);
+    color:            var(--color-text-primary);
+    -unity-font-style: bold;
+    margin-right:     var(--spacing-lg);
+}
