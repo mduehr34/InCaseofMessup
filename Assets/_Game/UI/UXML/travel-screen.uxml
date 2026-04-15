@@ -1,0 +1,32 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="../USS/tokens.uss"/>
+    <Style src="../USS/stone-panel.uss"/>
+    <Style src="../USS/settlement-shared.uss"/>
+
+    <ui:VisualElement name="travel-root" class="fullscreen-bg">
+
+        <!-- Header -->
+        <ui:VisualElement class="era-bar stone-panel--raised">
+            <ui:Label name="hunt-target-label" text="Hunting: ---"    class="era-year"/>
+            <ui:VisualElement style="flex:1"/>
+            <ui:Label name="events-remaining"  text="3 events remain" class="proficiency-label"/>
+        </ui:VisualElement>
+
+        <!-- Path Visual -->
+        <ui:VisualElement name="path-visual" class="path-visual stone-panel">
+            <ui:Label text="TRAVELLING..." class="settlement-scene-placeholder"/>
+        </ui:VisualElement>
+
+        <!-- Hunter Condition Bar -->
+        <ui:VisualElement name="hunter-condition-bar" class="hunter-condition-bar stone-panel--raised">
+            <!-- Hunter status strips built dynamically by TravelScreenController -->
+        </ui:VisualElement>
+
+        <!-- Continue Button -->
+        <ui:VisualElement class="action-bar stone-panel--raised">
+            <ui:Button name="btn-continue-hunt" text="CONTINUE TO HUNT"
+                       class="action-btn action-btn--primary" style="display:none;"/>
+        </ui:VisualElement>
+
+    </ui:VisualElement>
+</ui:UXML>

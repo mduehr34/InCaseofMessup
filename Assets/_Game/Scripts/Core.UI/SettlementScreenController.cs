@@ -12,13 +12,15 @@ namespace MnM.Core.UI
         [SerializeField] private CampaignSO       _campaignSO;
         [SerializeField] private VisualTreeAsset  _eventModalAsset;
         [SerializeField] private VisualTreeAsset  _gpModalAsset;
+        [SerializeField] private VisualTreeAsset  _huntSelectModalAsset;
 
-        private VisualElement     _root;
-        private VisualElement     _tabContent;
-        private SettlementManager _settlement;
-        private string            _activeTab = "characters";
-        private VisualElement     _activeModal = null;
-        private InnovationSO[]    _drawnInnovations = null;
+        private VisualElement      _root;
+        private VisualElement      _tabContent;
+        private SettlementManager  _settlement;
+        private string             _activeTab = "characters";
+        private VisualElement      _activeModal = null;
+        private InnovationSO[]     _drawnInnovations = null;
+        private HuntSelectionModal _huntModal = new HuntSelectionModal();
 
         private void OnEnable()
         {
@@ -349,7 +351,12 @@ namespace MnM.Core.UI
 
         private void OnHuntClicked()
         {
-            Debug.Log("[Settlement] Hunt selection — implement 6-F");
+            if (_huntSelectModalAsset == null)
+            {
+                Debug.LogWarning("[Settlement] Hunt select modal UXML not assigned");
+                return;
+            }
+            _huntModal.Show(_root, _huntSelectModalAsset, _campaignSO);
         }
 
         private void OnCraftClicked()

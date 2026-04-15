@@ -1,0 +1,35 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="../USS/tokens.uss"/>
+    <Style src="../USS/stone-panel.uss"/>
+    <Style src="../USS/settlement-shared.uss"/>
+
+    <ui:VisualElement name="hunt-overlay" class="modal-overlay">
+        <ui:VisualElement name="hunt-modal" class="modal-panel stone-panel">
+
+            <ui:Label text="SEND HUNTING PARTY" class="stone-panel__header"/>
+
+            <!-- Monster Selection -->
+            <ui:Label text="TARGET" class="proficiency-label"/>
+            <ui:ScrollView name="monster-list" style="max-height:180px; flex-shrink:0;"/>
+
+            <!-- Difficulty -->
+            <ui:Label text="DIFFICULTY" class="proficiency-label" style="margin-top:8px;"/>
+            <ui:VisualElement name="difficulty-row" class="event-choices">
+                <ui:Button name="btn-diff-standard" text="STANDARD" class="action-btn tab-btn--active"/>
+                <ui:Button name="btn-diff-hardened" text="HARDENED" class="action-btn"/>
+                <ui:Button name="btn-diff-apex"     text="APEX"     class="action-btn"/>
+            </ui:VisualElement>
+
+            <!-- Hunter Selection (up to 4) -->
+            <ui:Label text="HUNTERS (select 4)" class="proficiency-label" style="margin-top:8px;"/>
+            <ui:ScrollView name="hunter-select-list" style="max-height:200px; flex-shrink:0;"/>
+
+            <!-- Confirm / Cancel -->
+            <ui:VisualElement class="event-choices" style="margin-top:12px;">
+                <ui:Button name="btn-cancel-hunt"  text="CANCEL" class="action-btn"/>
+                <ui:Button name="btn-confirm-hunt" text="HUNT"   class="action-btn action-btn--primary"/>
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

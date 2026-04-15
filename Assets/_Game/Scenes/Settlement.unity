@@ -289,6 +289,7 @@ MonoBehaviour:
   _campaignSO: {fileID: 11400000, guid: 44e70e786c79f9547807517d8f3ccfb9, type: 2}
   _eventModalAsset: {fileID: 9197481963319205126, guid: 42b6c71b1457b9e4aa5af67672e9efbb, type: 3}
   _gpModalAsset: {fileID: 9197481963319205126, guid: 7de97b0b1b617bf42b9a121af4364d9e, type: 3}
+  _huntSelectModalAsset: {fileID: 9197481963319205126, guid: 633d360b6a5d4b04e8bbf4901ca43eea, type: 3}
 --- !u!114 &1290390274
 MonoBehaviour:
   m_ObjectHideFlags: 0
