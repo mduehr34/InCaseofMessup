@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b42b211e5ee878468687a6229d4bd67, type: 3}
+  m_Name: Mock_EVT01_FirstWinter
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.EventSO
+  eventId: EVT-01
+  eventName: The First Winter
+  yearRangeMin: 1
+  yearRangeMax: 2
+  isMandatory: 1
+  campaignTag: 
+  monsterTag: 
+  seasonTag: 
+  difficultyTag: 
+  narrativeText: "The first snow falls earlier than expected. The settlement huddles
+    together against the cold. A child points to the horizon \u2014 something moves
+    in the white."
+  choices: []

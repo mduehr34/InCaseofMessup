@@ -1,0 +1,25 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="../USS/tokens.uss"/>
+    <Style src="../USS/stone-panel.uss"/>
+    <Style src="../USS/settlement-shared.uss"/>
+
+    <ui:VisualElement name="event-overlay" class="modal-overlay">
+        <ui:VisualElement name="event-modal" class="modal-panel stone-panel">
+
+            <ui:Label name="event-id"        text="EVT-01"      class="proficiency-label"   picking-mode="Ignore"/>
+            <ui:Label name="event-name"      text="Event Name"  class="stone-panel__header" picking-mode="Ignore"/>
+            <ui:Label name="event-mandatory" text="MANDATORY"   class="loud-tag"            picking-mode="Ignore"/>
+            <ui:Label name="event-narrative" text="..."         class="event-narrative"     picking-mode="Ignore"/>
+
+            <!-- Choice buttons — hidden for mandatory events -->
+            <ui:VisualElement name="event-choices" class="event-choices">
+                <ui:Button name="btn-choice-a" text="A: ..." class="action-btn"/>
+                <ui:Button name="btn-choice-b" text="B: ..." class="action-btn"/>
+            </ui:VisualElement>
+
+            <!-- Acknowledge — shown for mandatory events only -->
+            <ui:Button name="btn-acknowledge" text="ACKNOWLEDGE" class="action-btn action-btn--primary"/>
+
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
