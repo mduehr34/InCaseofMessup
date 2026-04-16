@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
@@ -10,8 +11,9 @@ namespace MnM.Core.UI
     public class CombatScreenController : MonoBehaviour
     {
         // ── Inspector References ─────────────────────────────────
-        [SerializeField] private UIDocument    _uiDocument;
-        [SerializeField] private CombatManager _combatManager;
+        [SerializeField] private UIDocument       _uiDocument;
+        [SerializeField] private CombatManager    _combatManager;
+        [SerializeField] private VisualTreeAsset  _resultModalAsset;
 
         // ── Cached Root Elements ─────────────────────────────────
         private VisualElement _root;
@@ -165,7 +167,100 @@ namespace MnM.Core.UI
         private void OnCombatEnded(CombatResult result)
         {
             Debug.Log($"[CombatUI] Combat ended — Victory:{result.isVictory}");
-            // Victory/defeat modal deferred to Stage 6
+
+            if (_resultModalAsset == null)
+            {
+                Debug.LogWarning("[CombatUI] Result modal asset not assigned — returning directly");
+                ReturnToSettlement(result);
+                return;
+            }
+
+            ShowResultModal(result);
+        }
+
+        private void ShowResultModal(CombatResult result)
+        {
+            var overlay = _resultModalAsset.Instantiate();
+            // TemplateContainer has no implicit size — must be stretched to fill root
+            // so the position:absolute modal-overlay inside can cover the full screen.
+            overlay.style.position = Position.Absolute;
+            overlay.style.left     = 0;
+            overlay.style.top      = 0;
+            overlay.style.right    = 0;
+            overlay.style.bottom   = 0;
+            _root.Add(overlay);
+
+            var state = _combatManager.CurrentState;
+
+            // Title and outcome
+            overlay.Q<Label>("result-title").text = result.isVictory ? "HUNT COMPLETE" : "HUNT FAILED";
+            var outcomeLabel = overlay.Q<Label>("result-outcome");
+            outcomeLabel.text = result.isVictory ? "VICTORY" : "DEFEAT";
+            outcomeLabel.style.color = result.isVictory
+                ? new StyleColor(new Color(0.40f, 0.80f, 0.40f))
+                : new StyleColor(new Color(0.80f, 0.25f, 0.25f));
+
+            overlay.Q<Label>("result-rounds").text  = $"{result.roundsElapsed} rounds fought";
+            overlay.Q<Label>("result-monster").text = state.monster.monsterName;
+
+            // Loot list (victory only — resolved in Settlement in Stage 7)
+            var lootList = overlay.Q<VisualElement>("loot-list");
+            if (result.isVictory)
+            {
+                var stub = new Label("Loot resolved in Settlement phase");
+                stub.AddToClassList("proficiency-label");
+                lootList.Add(stub);
+            }
+            else
+            {
+                var noLoot = new Label("No loot — hunt failed");
+                noLoot.AddToClassList("injury-indicator");
+                lootList.Add(noLoot);
+            }
+
+            // Hunter summary
+            var hunterResults = overlay.Q<VisualElement>("hunter-results");
+            foreach (var hunter in state.hunters)
+            {
+                var row = new Label(hunter.isCollapsed
+                    ? $"\u2691 {hunter.hunterName} \u2014 COLLAPSED"
+                    : $"\u2713 {hunter.hunterName} \u2014 survived");
+                row.AddToClassList(hunter.isCollapsed ? "injury-indicator" : "proficiency-label");
+                hunterResults.Add(row);
+            }
+
+            // Return button
+            overlay.Q<Button>("btn-return").clicked += () =>
+            {
+                _root.Remove(overlay);
+                ReturnToSettlement(result);
+            };
+        }
+
+        private void ReturnToSettlement(CombatResult result)
+        {
+            var state = _combatManager.CurrentState;
+
+            var huntResult = new HuntResult
+            {
+                isVictory          = result.isVictory,
+                monsterName        = state.monster.monsterName,
+                monsterDifficulty  = state.monster.difficulty,
+                roundsFought       = result.roundsElapsed,
+                collapsedHunterIds = result.collapsedHunterIds ?? new string[0],
+                survivingHunterIds = state.hunters
+                    .Where(h => !h.isCollapsed)
+                    .Select(h => h.hunterId)
+                    .ToArray(),
+                lootGained             = new ResourceEntry[0],
+                injuryCardNamesApplied = new string[state.hunters.Length],
+            };
+
+            Debug.Log($"[CombatUI] Building HuntResult — Victory:{huntResult.isVictory} " +
+                      $"Collapsed:{huntResult.collapsedHunterIds.Length} " +
+                      $"Surviving:{huntResult.survivingHunterIds.Length}");
+
+            GameStateManager.Instance.ReturnFromHunt(huntResult);
         }
 
         // ── End Turn ─────────────────────────────────────────────
@@ -737,7 +832,41 @@ namespace MnM.Core.UI
                 return;
             }
 
-            // WASD / Arrow: move grid cursor
+            // DEBUG ONLY — Ctrl+W: force victory, Ctrl+L: force loss
+            // Must be checked before WASD so Ctrl+W doesn't also move the cursor.
+            // Remove these shortcuts before Stage 7 content begins.
+            bool ctrlHeld = kb[Key.LeftCtrl].isPressed || kb[Key.RightCtrl].isPressed;
+            if (ctrlHeld)
+            {
+                if (kb[Key.W].wasPressedThisFrame)
+                {
+                    Debug.Log("[CombatUI] DEBUG: Force victory triggered (Ctrl+W)");
+                    var state = _combatManager?.CurrentState;
+                    OnCombatEnded(new CombatResult
+                    {
+                        isVictory          = true,
+                        roundsElapsed      = state?.currentRound ?? 0,
+                        collapsedHunterIds = new string[0],
+                    });
+                    return;
+                }
+                if (kb[Key.L].wasPressedThisFrame)
+                {
+                    Debug.Log("[CombatUI] DEBUG: Force loss triggered (Ctrl+L)");
+                    var state = _combatManager?.CurrentState;
+                    OnCombatEnded(new CombatResult
+                    {
+                        isVictory          = false,
+                        roundsElapsed      = state?.currentRound ?? 0,
+                        collapsedHunterIds = state != null
+                            ? System.Array.ConvertAll(state.hunters, h => h.hunterId)
+                            : new string[0],
+                    });
+                    return;
+                }
+            }
+
+            // WASD / Arrow: move grid cursor (Ctrl modifier excluded above)
             Vector2Int delta = Vector2Int.zero;
             if (kb[Key.W].wasPressedThisFrame || kb[Key.UpArrow].wasPressedThisFrame)    delta.y = -1;
             if (kb[Key.S].wasPressedThisFrame || kb[Key.DownArrow].wasPressedThisFrame)  delta.y =  1;

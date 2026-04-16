@@ -1,0 +1,27 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="../USS/tokens.uss"/>
+    <Style src="../USS/stone-panel.uss"/>
+    <Style src="../USS/settlement-shared.uss"/>
+
+    <ui:VisualElement name="result-overlay" class="modal-overlay">
+        <ui:VisualElement name="result-modal" class="modal-panel stone-panel">
+
+            <ui:Label name="result-title"    text="HUNT COMPLETE"  class="stone-panel__header"/>
+            <ui:Label name="result-outcome"  text="VICTORY"        class="result-outcome-label"/>
+            <ui:Label name="result-rounds"   text="8 rounds"       class="proficiency-label"/>
+            <ui:Label name="result-monster"  text="The Gaunt"      class="proficiency-label"/>
+
+            <ui:Label text="LOOT GAINED" class="proficiency-label" style="margin-top:12px;"/>
+            <ui:VisualElement name="loot-list" class="tab-content" style="max-height:160px;"/>
+
+            <ui:Label text="HUNTERS" class="proficiency-label" style="margin-top:8px;"/>
+            <ui:ScrollView name="hunter-results" style="max-height:220px;"/>
+
+            <ui:Button name="btn-return"
+                       text="RETURN TO SETTLEMENT"
+                       class="action-btn action-btn--primary"
+                       style="margin-top:16px;"/>
+
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

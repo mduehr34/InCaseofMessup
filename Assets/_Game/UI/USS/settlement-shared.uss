@@ -104,7 +104,7 @@
 
 .modal-panel {
     width:      800px;
-    max-height: 560px;
+    max-height: 680px;
     flex-direction: column;
 }
 
@@ -178,6 +178,13 @@
     border-width:      1px;
     border-color:      var(--color-border-accent);
     border-radius:     0px;
+}
+
+/* ── Result Modal ────────────────────────────────────────────── */
+.result-outcome-label {
+    font-size:         36px;
+    -unity-font-style: bold;
+    margin-bottom:     var(--spacing-sm);
 }
 
 /* ── Travel Screen ───────────────────────────────────────────── */
