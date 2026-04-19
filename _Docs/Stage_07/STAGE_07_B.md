@@ -5,14 +5,13 @@
 
 ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
 
-Stage 7-B | Style Lock — Generate & Approve Canonical Prompt
-Status: Stage 7-A complete. Art Generator window opens and
-calls the API successfully.
-Task: Generate 3–5 variants of Aldric (Aethel build, idle
-frame). Review against the GDD style description. Tune the
-prompt until the output matches. Lock that prompt as the
-canonical style template for all subsequent generation.
-Also generate and approve the Gaunt Standard idle sprite.
+Stage 7-B | Import Pipeline Verification — First Two Sprites
+Status: Stage 7-A complete. Art Importer window opens and
+copies PNGs to the project correctly.
+Task: Import the first two sprites (Aldric idle + Gaunt idle)
+using the Art Importer window. Confirm folder structure,
+naming convention, and import settings are all correct.
+This verifies the pipeline before batch-importing everything.
 
 Read these files before doing anything:
 - .cursorrules
@@ -20,148 +19,130 @@ Read these files before doing anything:
 - _Docs/Stage_07/STAGE_07_B.md
 
 Then confirm:
-- That you will generate multiple variants, not just one
-- That approved sprites are saved to the correct folders
-- That the locked prompt is recorded at the end
-  of this session for use in all future generation
-- What you will NOT generate yet (gear, other monsters —
-  those are Sessions 7-C and 7-D)
+- That the naming convention below will be followed for all
+  subsequent sprites
+- That Point (No Filter) import settings are applied
+- That the two test sprites are visible in Unity without
+  blurring at game resolution
+- What you will NOT import this session (everything else —
+  that is Sessions 7-C through 7-E)
 
 ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 ============================================================ -->
 
-# Stage 7-B: Style Lock — Generate & Approve Canonical Prompt
+# Stage 7-B: Import Pipeline Verification — First Two Sprites
 
-**Resuming from:** Stage 7-A complete — Art Generator window works  
-**Done when:** At least one approved character sprite and one approved monster sprite saved to disk; locked prompt template recorded at the bottom of this session  
-**Commit:** `"7B: Style lock — canonical prompt template approved, Aldric and Gaunt sprites saved"`  
+**Resuming from:** Stage 7-A complete — Art Importer window works  
+**Done when:** `char_aethel_idle_s.png` and `monster_gaunt.png` are imported, import settings verified, visible in Unity Sprite Editor without blurring  
+**Commit:** `"7B: Import pipeline verified — Aldric idle and Gaunt idle sprites imported"`  
 **Next session:** STAGE_07_C.md  
 
 ---
 
 ## Why This Session Exists
 
-Every other art generation session depends on having a locked style. If the first batch of characters looks wrong, fixing it later means regenerating everything. Spending one session getting the prompt exactly right pays off across all 17 art sessions that follow.
+Catching import setting mistakes on two sprites is far cheaper than catching them after all 30+ sprites are imported. One session confirming the pipeline pays off across all subsequent import sessions.
 
 ---
 
-## Generation Target 1: Aldric (Male, Aethel Build)
+## GDD Appendix B — Style Reference
 
-Generate 3 variants with these prompts in the Art Generator tool. Use the tool's Quick Prompt or type the suffix directly.
+All sprites must match this visual standard. Use when reviewing sprites before importing.
 
-**Variant A — Base prompt:**
 ```
-32x64 pixel sprite sheet, male warrior survivor, lean athletic build, 
-primitive leather wraps around torso and legs, bone bead necklace, 
-short dark hair, desaturated tanned skin, standing idle pose facing 
-right, single frame, transparent background, pixel art
+Style:    Dark pixel art, 16-bit era detail level, high contrast, desaturated palette
+Palette:  Ash grey (#8A8A8A), bone white (#D4CCBA), dried blood brown (#4A2020),
+          Marrow gold (#B8860B), shadow black (#0A0A0C), cold blue-green ambient
+Lighting: Torchlight and fire primary. Moonlight for outdoor. NEVER warm sunlight.
+Linework: Bold pixel outlines on characters and monsters. Thinner on environment.
 ```
-
-**Variant B — More specific to GDD:**
-```
-32x64 pixel sprite, SNES-era RPG character, male hunter, lean frame, 
-crude leather armor strips, sinew-wrapped wrists, bone talisman, 
-torch-lit warm shadow on left side, dark desaturated skin tones, 
-idle stance slight weight on right foot, facing right, no weapons, 
-pixel art bold outline, transparent background
-```
-
-**Variant C — Pushing the aesthetic:**
-```
-32x64 pixel art character sprite, primitive survivor male, lean build, 
-bone-white loincloth wrap, leather chest binding, crude knee wraps, 
-single bone earring, scar on left cheek, high contrast ash grey 
-shadows, minimal color, Marrow gold accent on belt bone clasp, 
-idle animation frame facing right, transparent background
-```
-
-Save each to: `Assets/_Game/Art/Generated/Characters/`
-- `aldric_variant_a.png`
-- `aldric_variant_b.png`
-- `aldric_variant_c.png`
-
-**Review against GDD Appendix B.1:**
-- ✓ Dark pixel art, 16-bit era detail
-- ✓ Desaturated palette — no bright colours
-- ✓ Bold pixel outlines
-- ✓ Torchlight primary (warm shadow on one side)
-- ✓ No warm sunlight
-
-Pick the best variant. Note what worked and what didn't.
 
 ---
 
-## Generation Target 2: The Gaunt (Standard, Idle)
+## Canonical Sprite Naming Convention
 
-**Variant A:**
-```
-64x64 pixel art creature sprite, enormous wolf, skeletal emaciated 
-frame, no eyes — sealed over with scar tissue, oversized jaw with 
-exposed fang rows, Marrow-blackened fur with gold (#B8860B) vein 
-traces, facing left idle pose, menacing stance, dark pixel art, 
-bold outline, transparent background
-```
+All sprites follow this naming scheme. It must be consistent — SO assets and code reference these exact filenames.
 
-**Variant B:**
-```
-64x64 pixel art monster sprite, blind wolf creature, grotesquely 
-large, ribs visible through patchy fur, eyeless head with 
-vibration-sensing whiskers, crouched hunting stance, facing left, 
-ash grey and bone white palette, Marrow gold veins on haunches, 
-pixel art SNES era, bold pixel outlines, transparent background
-```
+**Direction tokens** (used by characters and future monster facing):
+- `_s` = south / facing camera (default, always generated first)
+- `_n` = north / facing away
+- `_e` = east / facing right
+- `_w` = west / facing left
 
-Save to: `Assets/_Game/Art/Generated/Monsters/`
-- `gaunt_standard_variant_a.png`
-- `gaunt_standard_variant_b.png`
+**Characters (idle per direction):** `char_[buildname]_idle_[dir].png`
+- `char_aethel_idle_s.png`, `char_aethel_idle_n.png`, etc.
+- Build name is the character archetype — NOT the player-given hunter name.
+  The player names their hunter "Aldric"; the file stays `char_aethel_idle_s.png`.
 
----
+**Character animation frames:** `[firstname]_[state]_[dir]_[frame].png`
+- `aldric_walk_s_01.png`, `aldric_attack_e_02.png`, etc.
 
-## Tuning Guide
+**Monsters (per direction):** `monster_[name]_[dir].png`
+- `monster_gaunt_s.png`, `monster_gaunt_n.png`, `monster_gaunt_e.png`, `monster_gaunt_w.png`
+- Full 4-way for all monsters — each direction is unique art (no horizontal flip).
+- Stage 7-B/D import south (`_s`) only. Remaining directions imported when animation work begins.
 
-If variants don't match the target style, adjust these elements:
+**UI elements:** `ui_[descriptor].png`
+- `ui_stone_panel_bg.png`, `ui_card_frame.png`, etc.
 
-| Problem | Fix |
-|---|---|
-| Too colourful | Add: "extremely desaturated, near-greyscale with only Marrow gold accent" |
-| Lines too thin | Add: "thick 1-2px bold pixel outline on all edges" |
-| Wrong lighting | Add: "torchlight from right side, deep shadow on left, no ambient light" |
-| Too detailed / painterly | Add: "strict pixel art, visible pixel grid, no anti-aliasing, 16-bit console era" |
-| Wrong scale feel | Add: "proportioned for 32x64px canvas, chunky readable silhouette" |
-| Warm/sunny look | Add: "cold dim lighting, no sunlight, underground or night setting" |
+**Settlement buildings:** `building_[name].png`
+- `building_boneworks.png`, `building_herbalist.png`, etc.
 
 ---
 
-## Session Output — Record the Locked Prompts
+## Import Step 1: Aldric Idle
 
-After reviewing and approving, record the winning prompts here so all future sessions use the same template:
+**Your file:** `char_aethel_idle_s.png` (32×64 px, transparent background, facing camera)
 
-**LOCKED CHARACTER PROMPT SUFFIX:**
+1. Open Window → MnM → Art Generator
+2. Browse to your `char_aethel_idle_s.png`
+3. Set **Subfolder:** `Characters`, **File Name:** `char_aethel_idle_s`
+4. Click **SAVE TO PROJECT**
+5. Find `Assets/_Game/Art/Generated/Characters/char_aethel_idle_s.png` in the Project window
+
+---
+
+## Import Step 2: Gaunt Idle
+
+**Your file:** `monster_gaunt_s.png` (64×64 px, transparent background, facing camera)
+
+1. Browse to your `monster_gaunt_s.png`
+2. Set **Subfolder:** `Monsters`, **File Name:** `monster_gaunt_s`
+3. Click **SAVE TO PROJECT**
+
+---
+
+## Apply Import Settings (Both Sprites)
+
+Select each sprite in the Project window and set these in the Inspector:
+
 ```
-[FILL IN AFTER APPROVAL — copy the variant that best matched the GDD]
+Texture Type:     Sprite (2D and UI)
+Pixels Per Unit:  16   (32px character = 2 Unity units; 64px monster = 4 units)
+Filter Mode:      Point (No Filter)   ← Critical for pixel art — NEVER Bilinear
+Compression:      None
+Max Size:         64
 ```
 
-**LOCKED MONSTER PROMPT SUFFIX:**
-```
-[FILL IN AFTER APPROVAL — copy the variant that best matched the GDD]
-```
+Click **Apply** after setting each sprite.
 
-**Also update ArtGeneratorWindow.cs QuickPrompts array** with the two locked prompts so they appear as the top options in the tool.
+> ⚑ Filter Mode **must** be Point (No Filter). Any other setting blurs pixel art at game resolution. Check this on every sprite you import.
 
 ---
 
 ## Verification Test
 
-- [ ] At least 3 character variants generated and saved
-- [ ] At least 2 monster variants generated and saved
-- [ ] One character sprite approved — saved as `aldric_approved.png`
-- [ ] One monster sprite approved — saved as `gaunt_standard_approved.png`
-- [ ] Locked prompt template recorded at the bottom of this session file
-- [ ] ArtGeneratorWindow QuickPrompts updated with locked prompts
+- [ ] `Assets/_Game/Art/Generated/Characters/char_aethel_idle_s.png` exists
+- [ ] `Assets/_Game/Art/Generated/Monsters/monster_gaunt_s.png` exists
+- [ ] Both sprites have Filter Mode: Point (No Filter) in Inspector
+- [ ] Both sprites have Pixels Per Unit: 16
+- [ ] Character sprite is 32×64 — visible in Sprite Editor without blurring
+- [ ] Monster sprite is 64×64 — visible in Sprite Editor without blurring
+- [ ] Sprites display correctly at game scale (not oversized or undersized)
 
 ---
 
 ## Next Session
 
 **File:** `_Docs/Stage_07/STAGE_07_C.md`  
-**Covers:** Batch generate all 8 character base sprites (all builds, both genders) using the locked prompt
+**Covers:** Import all 8 character base sprites and apply correct import settings
