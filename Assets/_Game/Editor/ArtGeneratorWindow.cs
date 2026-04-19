@@ -15,17 +15,21 @@ namespace MnM.Editor
             "Linework: bold pixel outlines on characters & monsters. Thinner on environment.\n" +
             "UI: stone carving texture — chisel marks, relief grooves, worn edges.";
 
-        // ── Suggested names per category ────────────────────────────────────────────
+        // ── Suggested names per category (canonical convention: see STAGE_07_B.md) ──
+        // Characters:  char_[buildname]_idle.png
+        // Monsters:    monster_[name].png
+        // UI:          ui_[descriptor].png
+        // Settlement:  building_[name].png
         private static readonly string[][] NameSuggestions =
         {
-            // Characters
-            new[] { "aldric_idle", "aldric_attack", "hunter_f_idle", "hunter_f_attack" },
-            // Monsters
-            new[] { "gaunt_idle", "gaunt_lunge", "gaunt_roar", "pack_wolf_idle" },
-            // UI
-            new[] { "panel_stone", "button_normal", "button_hover", "icon_bone" },
-            // Settlement
-            new[] { "boneworks_ext", "lantern_shop_ext", "settlement_hut", "settlement_wall" },
+            // Characters — char_[buildname]_idle_[dir]  (_s = south/default)
+            new[] { "char_aethel_idle_s", "char_beorn_idle_s", "char_eira_idle_s", "char_freya_idle_s" },
+            // Monsters — monster_[name]_[dir]  (_s = south/default)
+            new[] { "monster_gaunt_s", "monster_thornback_s", "monster_pack_wolf_s", "monster_suture_s" },
+            // UI — ui_[descriptor]
+            new[] { "ui_stone_panel_bg", "ui_card_frame", "ui_button_normal", "ui_icon_bone" },
+            // Settlement — building_[name]
+            new[] { "building_boneworks", "building_herbalist", "building_lantern", "building_wall" },
         };
 
         // ── Subfolder options (must match Generated/ subfolders) ────────────────────

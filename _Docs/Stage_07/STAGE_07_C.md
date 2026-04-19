@@ -5,79 +5,105 @@
 
 ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
 
-Stage 7-C | Art Batch — All 8 Character Base Sprites
-Status: Stage 7-B complete. Canonical prompt template locked.
-Aldric and Gaunt approved sprites saved.
-Task: Generate all 8 character base sprites (4 male builds,
-4 female builds) using the LOCKED prompt template from
-Stage 7-B. Each sprite = idle frame only at this stage.
-Animation frames are a separate batch.
+Stage 7-C | Art Batch — Import All 8 Character Base Sprites
+Status: Stage 7-B complete. Import pipeline verified.
+Aldric idle and Gaunt idle imported with correct settings.
+Task: Import all 8 character idle sprites using the Art
+Importer window. Apply Point filtering and correct import
+settings to each. Verify all are visible in Unity without
+blurring.
 
 Read these files before doing anything:
 - .cursorrules
 - claude.md
 - _Docs/Stage_07/STAGE_07_C.md
-- Assets/_Game/Art/Generated/Characters/aldric_approved.png
-  (use as visual reference for consistency)
+
+Then confirm:
+- Naming convention matches the table below exactly
+- Point (No Filter) applied to all 8 sprites
+- Pixels Per Unit is 16 on all sprites
+- What you will NOT import this session (monsters, UI — 7-D/E)
 
 ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 ============================================================ -->
 
-# Stage 7-C: Art Batch — All 8 Character Base Sprites
+# Stage 7-C: Art Batch — Import All 8 Character Base Sprites
 
-**Resuming from:** Stage 7-B complete — locked prompt template approved  
-**Done when:** All 8 approved character idle sprites saved with correct import settings  
-**Commit:** `"7C: All 8 character base sprites generated and saved"`  
+**Resuming from:** Stage 7-B complete — import pipeline verified  
+**Done when:** All 8 approved character idle sprites imported with correct settings  
+**Commit:** `"7C: All 8 character base sprites imported with Point filtering verified"`  
 **Next session:** STAGE_07_D.md  
 
 ---
 
-## Characters to Generate
+## Sprites to Import
 
-Use the LOCKED PROMPT from Stage 7-B for each. Vary only the build description.
+Place your finished PNG files in `Assets/_Game/Art/Generated/Characters/` using the Art Importer window (Window → MnM → Art Importer), then apply import settings.
 
-| File Name | Build | Sex | Build Description |
+All filenames include the south (`_s`) direction token. This is the default facing (toward camera). North/east/west variants are out of scope until animation work begins.
+
+| File Name | Build | Sex | Canvas Size |
 |---|---|---|---|
-| `char_aethel_idle.png` | Aethel | Male | lean, narrow shoulders, wiry frame |
-| `char_beorn_idle.png` | Beorn | Male | stocky, broad chest, thick arms, short neck |
-| `char_cyne_idle.png` | Cyne | Male | average build, balanced proportions |
-| `char_duna_idle.png` | Duna | Male | muscular, wide shoulders, powerful legs |
-| `char_eira_idle.png` | Eira | Female | lean, narrow hips, long limbs |
-| `char_freya_idle.png` | Freya | Female | athletic, defined muscle, balanced frame |
-| `char_gerd_idle.png` | Gerd | Female | average female build, sturdy |
-| `char_hild_idle.png` | Hild | Female | muscular female, broad shoulders, powerful |
+| `char_aethel_idle_s.png` | Aethel | Male | 32×64 |
+| `char_beorn_idle_s.png` | Beorn | Male | 32×64 |
+| `char_cyne_idle_s.png` | Cyne | Male | 32×64 |
+| `char_duna_idle_s.png` | Duna | Male | 32×64 |
+| `char_eira_idle_s.png` | Eira | Female | 32×64 |
+| `char_freya_idle_s.png` | Freya | Female | 32×64 |
+| `char_gerd_idle_s.png` | Gerd | Female | 32×64 |
+| `char_hild_idle_s.png` | Hild | Female | 32×64 |
 
 **Save path:** `Assets/_Game/Art/Generated/Characters/`
 
+> ⚑ `char_aethel_idle_s.png` was already imported in Stage 7-B. Verify its settings match before continuing.
+
 ---
 
-## Sprite Import Settings
+## Build Visual Reference
 
-After saving each sprite, set these import settings in the Unity Inspector:
+Each build should be visually distinct when laid out side by side in the Project window:
+
+| Build | Key Silhouette Trait |
+|---|---|
+| Aethel (M) | Lean, narrow shoulders, wiry frame |
+| Beorn (M) | Stocky, broad chest, short neck |
+| Cyne (M) | Average build, balanced proportions |
+| Duna (M) | Muscular, wide shoulders, powerful legs |
+| Eira (F) | Lean, narrow hips, long limbs |
+| Freya (F) | Athletic, defined muscle, balanced frame |
+| Gerd (F) | Average female build, sturdy |
+| Hild (F) | Muscular female, broad shoulders, powerful |
+
+---
+
+## Import Settings (Apply to All 8)
+
+Select each sprite in the Project window and set in the Inspector:
 
 ```
 Texture Type:     Sprite (2D and UI)
-Pixels Per Unit:  16   (32px sprite = 2 Unity units tall)
-Filter Mode:      Point (No Filter)   ← Critical for pixel art
+Pixels Per Unit:  16
+Filter Mode:      Point (No Filter)   ← Never Bilinear or Trilinear
 Compression:      None
 Max Size:         64
 ```
 
-> ⚑ Filter Mode **must** be Point (No Filter). Any other setting blurs pixel art at game resolution.
+Click **Apply** after each sprite.
 
 ---
 
 ## Verification Test
 
-- [ ] All 8 sprite files exist in `Assets/_Game/Art/Generated/Characters/`
-- [ ] All import settings set to Point (No Filter)
-- [ ] Sprites visible in Unity Sprite Editor without blurring
-- [ ] Male builds look visually distinct from each other
-- [ ] Female builds look visually distinct from each other
+- [ ] All 8 sprite files (`char_*_idle_s.png`) exist in `Assets/_Game/Art/Generated/Characters/`
+- [ ] All 8 sprites have Filter Mode: Point (No Filter)
+- [ ] All 8 sprites have Pixels Per Unit: 16
+- [ ] All 8 sprites visible in Sprite Editor without blurring
+- [ ] Male builds are visually distinct from each other
+- [ ] Female builds are visually distinct from each other
 
 ---
 
 ## Next Session
 
 **File:** `_Docs/Stage_07/STAGE_07_D.md`  
-**Covers:** All monster sprites — Gaunt, Thornback, Pack Wolf, Gilded Serpent, Pale Stag, Suture
+**Covers:** Import all monster sprites — Gaunt, Thornback, Pack Wolf, Gilded Serpent, Pale Stag, Suture
