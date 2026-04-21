@@ -19,7 +19,8 @@ namespace MnM.Editor
     /// </summary>
     public class SpriteImportPostprocessor : AssetPostprocessor
     {
-        private const string GeneratedPath = "Assets/_Game/Art/Generated/";
+        private const string GeneratedPath    = "Assets/_Game/Art/Generated/";
+        private const string OverlordsSubpath = "Assets/_Game/Art/Generated/Overlords/";
 
         private void OnPreprocessTexture()
         {
@@ -33,7 +34,8 @@ namespace MnM.Editor
             importer.spritePixelsPerUnit = 16f;
             importer.filterMode          = FilterMode.Point;
             importer.mipmapEnabled       = false;
-            importer.maxTextureSize      = 64;
+            // Overlords are 96×96 — need maxTextureSize 128; standard sprites are 64 or smaller
+            importer.maxTextureSize      = assetPath.StartsWith(OverlordsSubpath) ? 128 : 64;
 
             var settings = importer.GetDefaultPlatformTextureSettings();
             settings.format      = TextureImporterFormat.RGBA32;
