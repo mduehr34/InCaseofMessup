@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 80d24c57add11994498e228b4e1ecd1b
+guid: 521d29cf4767a6648885b4302b47eaa8
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -3730562033860667475
-    second: char_aethel_idle_s_0
+      213: 6106110773189875263
+    second: char_beorn_idle_s_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,7 +100,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: char_aethel_idle_s_0
+      name: char_beorn_idle_s_0
       rect:
         serializedVersion: 2
         x: 2
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: da71d2778916a3cc0800000000000000
-      internalID: -3730562033860667475
+      spriteID: f361b2b85634db450800000000000000
+      internalID: 6106110773189875263
       vertices: []
       indices: 
       edges: []
