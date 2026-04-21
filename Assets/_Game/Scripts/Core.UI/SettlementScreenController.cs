@@ -42,6 +42,7 @@ namespace MnM.Core.UI
             WireButtons();
             RefreshEraHeader();
             RefreshResourceSummary();
+            RefreshSettlementScene();
             BuildCharactersTab();  // Default tab
 
             // Apply any pending hunt result
@@ -257,6 +258,7 @@ namespace MnM.Core.UI
                 Debug.Log($"[Settlement] Unlocked: {crafter.crafterName}");
                 BuildCraftersTab();
                 RefreshResourceSummary();
+                RefreshSettlementScene();
             }
         }
 
@@ -372,8 +374,46 @@ namespace MnM.Core.UI
             _drawnInnovations = null; // Year boundary — innovations refresh
             RefreshEraHeader();
             RefreshResourceSummary();
+            RefreshSettlementScene();
             BuildCharactersTab();
             Debug.Log($"[Settlement] Year advanced to {state.currentYear}");
+        }
+
+        // ── Settlement Scene ──────────────────────────────────────
+        private void RefreshSettlementScene()
+        {
+            var scene = _root.Q<VisualElement>("settlement-scene");
+            if (scene == null || _campaignSO?.crafterPool == null) return;
+
+            scene.Clear();
+
+            var state = GameStateManager.Instance.CampaignState;
+            if (state.builtCrafterNames == null || state.builtCrafterNames.Length == 0)
+            {
+                var placeholder = new Label("SETTLEMENT");
+                placeholder.AddToClassList("settlement-scene-placeholder");
+                scene.Add(placeholder);
+                return;
+            }
+
+            foreach (var crafter in _campaignSO.crafterPool)
+            {
+                if (crafter == null || crafter.structureSprite == null) continue;
+                bool isBuilt = System.Array.IndexOf(
+                    state.builtCrafterNames, crafter.crafterName) >= 0;
+                if (!isBuilt) continue;
+
+                var img = new UnityEngine.UIElements.Image { sprite = crafter.structureSprite };
+                img.style.position = Position.Absolute;
+                img.style.left     = crafter.settlementScenePosition.x;
+                img.style.top      = crafter.settlementScenePosition.y;
+                img.style.width    = crafter.structureSprite.texture.width;
+                img.style.height   = crafter.structureSprite.texture.height;
+                scene.Add(img);
+
+                Debug.Log($"[Settlement] Structure placed: {crafter.crafterName} " +
+                          $"at ({crafter.settlementScenePosition.x}, {crafter.settlementScenePosition.y})");
+            }
         }
 
         // ── Chronicle Event Flow ──────────────────────────────────
