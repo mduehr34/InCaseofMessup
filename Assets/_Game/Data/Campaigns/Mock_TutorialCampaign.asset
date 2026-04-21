@@ -29,8 +29,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: fa6b8cefa0110914aa47184b179fb78b, type: 2}
   - {fileID: 11400000, guid: cf3c5ce1ef9124549b54c08e2489eb29, type: 2}
   crafterPool:
-  - {fileID: 11400000, guid: ac69920ca30fdb747a28eec370f29667, type: 2}
-  - {fileID: 11400000, guid: 1e2744b08c1d26545b940445766e5e06, type: 2}
+  - {fileID: 11400000, guid: ac5448effe75c2f46b0f8fb1e25990c8, type: 2}
+  - {fileID: 11400000, guid: ee6e84d0a0d456a409b6654c20262f66, type: 2}
+  - {fileID: 11400000, guid: 8e2a6dfd0efbfb54bac24f1bd1a42862, type: 2}
+  - {fileID: 11400000, guid: 5dae203c7f90db74bbdf5dbc59112d2a, type: 2}
+  - {fileID: 11400000, guid: 776896fa4683e4140ad353ecfede7b65, type: 2}
+  - {fileID: 11400000, guid: 424eb69048211e645ba1e365404a3fe1, type: 2}
+  - {fileID: 11400000, guid: 3759cc0e73dca3b4ba65923182233bb1, type: 2}
+  - {fileID: 11400000, guid: c54b938ec53fe8045962f063258d0236, type: 2}
   guidingPrincipals:
   - {fileID: 11400000, guid: 263e128a493feb84586b8a21ed698b85, type: 2}
   retirementHuntCount: 10

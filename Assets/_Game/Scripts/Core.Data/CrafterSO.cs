@@ -13,6 +13,6 @@ namespace MnM.Core.Data
         public int[] unlockCostAmounts;         // Parallel array with unlockCost
         // Settlement scene placement
         public Vector2 settlementScenePosition;
-        public string spriteAssetPath;
+        public Sprite structureSprite;
     }
 }

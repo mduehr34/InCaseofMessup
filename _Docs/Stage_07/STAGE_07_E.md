@@ -5,10 +5,10 @@
 
 ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
 
-Stage 7-E | Art Batch — UI Elements & Settlement Structures
-Status: Stage 7-D complete. All monster sprites saved and
-imported with Point filtering.
-Task: Generate UI art (stone panel texture, card frame,
+Stage 7-E | Art Batch — Import UI Elements & Settlement Structures
+Status: Stage 7-D complete. All monster sprites imported
+with Point filtering verified.
+Task: Import UI art (stone panel texture, card frame,
 button states, aggro token) and all 5 settlement structure
 sprites. Then wire structure sprites into SettlementScreenController.
 
@@ -22,48 +22,55 @@ Read these files before doing anything:
 ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 ============================================================ -->
 
-# Stage 7-E: Art Batch — UI Elements & Settlement Structures
+# Stage 7-E: Art Batch — Import UI Elements & Settlement Structures
 
-**Resuming from:** Stage 7-D complete — all monster sprites saved  
-**Done when:** All 5 UI element sprites and all 5 settlement structure sprites saved; Boneworks appears in settlement scene when built in a test playthrough  
+**Resuming from:** Stage 7-D complete — all monster sprites imported  
+**Done when:** All 5 UI element sprites and all 8 settlement structure sprites imported; The Ossuary appears in settlement scene when built in a test playthrough  
 **Commit:** `"7E: UI textures and settlement structure sprites — wired into settlement scene"`  
 **Next session:** STAGE_07_F.md  
 
 ---
 
-## UI Elements to Generate
+## UI Elements to Import
+
+Use the Art Importer (Window → MnM → Art Importer), subfolder: **UI**.
 
 **Save path:** `Assets/_Game/Art/Generated/UI/`
 
-| File | Size | Prompt Key Details |
+| File | Canvas Size | Key Visual Check |
 |---|---|---|
-| `ui_stone_panel_bg.png` | 64×64 (tileable) | Stone tablet surface, fine chisel marks, relief texture, dark grey, seamless tile |
-| `ui_card_frame.png` | 160×220 | Stone-carved card border, relief-cut inner frame, worn edges, transparent interior fill |
-| `ui_button_normal.png` | 200×48 | Stone button, carved border, slightly raised, dark grey |
-| `ui_button_hover.png` | 200×48 | Same as normal but Marrow gold (#B8860B) carved border highlight |
-| `ui_aggro_token.png` | 32×32 | Skull-and-flame icon, bone white, pixelated, simple clear silhouette |
+| `ui_stone_panel_bg.png` | 64×64 (tileable) | Stone tablet surface, fine chisel marks, relief texture, no seams |
+| `ui_card_frame.png` | 160×220 | Stone-carved border, transparent interior — only the border is opaque |
+| `ui_button_normal.png` | 200×48 | Stone button, carved border, slightly raised look |
+| `ui_button_hover.png` | 200×48 | Same as normal with Marrow gold (#B8860B) border highlight |
+| `ui_aggro_token.png` | 32×32 | Skull-and-flame icon, bone white, clear silhouette |
 
 ---
 
-## Settlement Structures to Generate
+## Settlement Structures to Import
 
-**Save path:** `Assets/_Game/Art/Generated/Settlement/`
+Use subfolder: **Settlement**.
+
+**Save path:** `Assets/_Game/Art/Generated/Settlement/`  
+*(Sprites are assigned directly on each CrafterSO via the `structureSprite` Inspector field — no Resources folder required.)*
 
 Each structure appears additively in the settlement scene when unlocked.
 
-| File | Structure | Size | Key Details |
-|---|---|---|---|
-| `building_boneworks.png` | Boneworks | 80×96 | Workshop built from bones and sinew, crude but sturdy, faint smoke |
-| `building_herbalist.png` | Herbalist | 64×80 | Small hut with dried plants hanging from eaves, rough stone |
-| `building_forge.png` | Forge | 80×96 | Stone forge with chimney, orange glow from fire visible in opening |
-| `building_tannery.png` | Tannery | 64×80 | Hide-stretching frames visible outside, crude wooden structure |
-| `building_armory.png` | Armory | 80×96 | Stone building, weapon silhouettes carved on exterior wall |
+| File | Crafter Name | Unlocked By | Canvas Size | Key Visual Check |
+|---|---|---|---|---|
+| `the_ossuary.png` | The Ossuary | The Gaunt | 80×96 | Stone chamber with bone racks and marrow extraction tools. Faint smoke from rendering pot. |
+| `the_carapace_forge.png` | The Carapace Forge | Thornback | 80×96 | Heavy stone forge with shell plates stacked outside. Chimney with orange glow at opening. |
+| `the_mire_apothecary.png` | The Mire Apothecary | Bog Caller | 64×80 | Small hut, vines/reeds on exterior, hanging bundles of swamp herbs at eaves. |
+| `the_membrane_loft.png` | The Membrane Loft | The Shriek | 64×80 | Tall narrow building, stretched membranes visible on exterior drying frames. |
+| `the_ichor_works.png` | The Ichor Works | The Spite | 64×80 | Low dark building, dripping vials/vessels on exterior, ominous dark-stained walls. |
+| `the_auric_scales.png` | The Auric Scales | Gilded Serpent | 80×96 | Refined stone workshop, gilded scale decorations on exterior, warm lamplight glow. |
+| `the_rot_garden.png` | The Rot Garden | Rotmother | 64×80 | Open-sided structure with fungal growths and hanging decay matter visible. Sickly green ambient. |
+| `the_ivory_hall.png` | The Ivory Hall | The Ivory Stampede | 96×96 | Grand wide building, massive ivory tusks flanking the entrance, heaviest structure. |
 
 **Shared style notes for all structures:**
 - Side-profile view (not top-down) — consistent with settlement scene perspective
-- Dark pixel art matching game palette
+- Dark pixel art matching game palette (ash grey, bone white, dried blood brown, Marrow gold)
 - Warm torch-glow light from windows and openings
-- Crude but intentional — these settlers are survivors, not architects
 - No text or labels in the sprite
 
 ---
@@ -124,9 +131,7 @@ Also call `RefreshSettlementScene()` inside `OnEndYearClicked()` so the scene up
 
 ---
 
-## Sprite Import Settings
-
-All UI and settlement sprites:
+## Import Settings (Apply to All UI and Settlement Sprites)
 
 ```
 Texture Type:     Sprite (2D and UI)
@@ -141,9 +146,11 @@ Compression:      None
 
 - [ ] Stone panel texture tiles correctly in UI Builder (no seams visible)
 - [ ] Card frame has transparent interior — only the border is opaque
-- [ ] All 5 settlement structures visually distinct from each other
+- [ ] All 8 settlement structures exist in `Assets/_Game/Art/Generated/Settlement/`
+- [ ] Each CrafterSO has its `structureSprite` field assigned in the Inspector
+- [ ] All 8 settlement structures are visually distinct from each other
 - [ ] All sprites imported with Point (No Filter)
-- [ ] Unlock Boneworks in a test playthrough → building_boneworks.png appears in settlement scene
+- [ ] Unlock The Ossuary in a test playthrough → the_ossuary.png appears in settlement scene
 - [ ] Settlement scene placeholder text hidden when at least one structure is present
 
 ---
