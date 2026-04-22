@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a96144f70a6ad64e89a7fd39a53aa6e, type: 3}
+  m_Name: FistWeapon
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.WeaponSO
+  weaponName: Fist Weapon
+  weaponType: 0
+  elementTag: 0
+  accuracyMod: 0
+  strengthMod: 0
+  attacksPerTurn: 1
+  range: 0
+  isAlwaysLoud: 0
+  signatureCard: {fileID: 11400000, guid: 62d2055d76461e341a8bd8a2ec249163, type: 2}
+  tier1Cards:
+  - {fileID: 11400000, guid: bb0652e65d3bc37458a4ed58a693be7f, type: 2}
+  - {fileID: 11400000, guid: d2da7cf36c6ff684e8ed6333091c8120, type: 2}
+  - {fileID: 11400000, guid: e43c9cc19f9e43d4aa01f65776ff8085, type: 2}
+  tier2Cards:
+  - {fileID: 11400000, guid: 543e0bb53acb24c4f93ee0f73be13329, type: 2}
+  - {fileID: 11400000, guid: add42598bb671484e821dbd74044be4e, type: 2}
+  - {fileID: 11400000, guid: 5f219b8e6ce3423429245a0d8070e52d, type: 2}
+  - {fileID: 11400000, guid: b03edf64621c62b42ad19365b3153528, type: 2}
+  tier3Cards:
+  - {fileID: 11400000, guid: 6d990140bc5424b4eb0c6c6668f11135, type: 2}
+  - {fileID: 11400000, guid: cc12795f74583d2439a33e599d18dddb, type: 2}
+  - {fileID: 11400000, guid: 0d4ab969e6034164c9ee5aa53ce05d36, type: 2}
+  - {fileID: 11400000, guid: a5f7ae9b0abd0bd4e86f71cbb9473517, type: 2}
+  tier4Cards:
+  - {fileID: 11400000, guid: d998eb2672661bf48818ab542b5d08e9, type: 2}
+  - {fileID: 11400000, guid: 66dd6a53f9338aa4faaa2a3ebbcf5e09, type: 2}
+  - {fileID: 11400000, guid: 7a5c1342686eab148a82a9d9f9cfee96, type: 2}
+  tier5Cards:
+  - {fileID: 11400000, guid: 9da284d09d3ac2449b31fa115c81cdf4, type: 2}
+  - {fileID: 11400000, guid: ef2e8a13098df0147a5f158ee8d996f3, type: 2}
+  - {fileID: 11400000, guid: a5cf336079185074ab65915eb7216fcc, type: 2}
+  uniqueCapability: "Combo system: Opener \u2192 Linker \u2192 Finisher chains unlock
+    bonus effects. No range restriction."
+  genuineCost: Adjacent range only. No Shell damage on basic attacks. Relies on status
+    stacking for pressure.

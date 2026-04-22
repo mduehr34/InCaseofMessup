@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a96144f70a6ad64e89a7fd39a53aa6e, type: 3}
+  m_Name: Spear
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.WeaponSO
+  weaponName: Spear
+  weaponType: 5
+  elementTag: 0
+  accuracyMod: 0
+  strengthMod: 0
+  attacksPerTurn: 1
+  range: 2
+  isAlwaysLoud: 0
+  signatureCard: {fileID: 11400000, guid: 2363f0b0cbe504640a8346596e4c1fa5, type: 2}
+  tier1Cards:
+  - {fileID: 11400000, guid: c98a16f69a0f4f040a374fa2f082462b, type: 2}
+  - {fileID: 11400000, guid: 2363f0b0cbe504640a8346596e4c1fa5, type: 2}
+  - {fileID: 11400000, guid: 941af84ddda530940b4ae0d5e574584e, type: 2}
+  - {fileID: 11400000, guid: e5f1bf9241dc95848b233e0add727054, type: 2}
+  tier2Cards:
+  - {fileID: 11400000, guid: 48cb81249abdb1d4ca420fc79bc2a233, type: 2}
+  - {fileID: 11400000, guid: 3e562b0551f85a240944dfb35b8e0738, type: 2}
+  - {fileID: 11400000, guid: 381153788ef1c0d48bbeee2d75f377ec, type: 2}
+  - {fileID: 11400000, guid: 808eb0fbe9b783d4abfb8f047b0c4a75, type: 2}
+  tier3Cards:
+  - {fileID: 11400000, guid: c39970bd1c99d8e4882f48d68f94801b, type: 2}
+  - {fileID: 11400000, guid: a83016de30f103347a6160119b835ae3, type: 2}
+  - {fileID: 11400000, guid: de513b231699f61449d627d13b9ad8bd, type: 2}
+  - {fileID: 11400000, guid: eabd2b6798bfe124f87e497debee0235, type: 2}
+  tier4Cards:
+  - {fileID: 11400000, guid: 3b72678e83dfc6f48a2435591ff55898, type: 2}
+  - {fileID: 11400000, guid: 65bbdf77a4416b04cad002575a94e664, type: 2}
+  - {fileID: 11400000, guid: 0d880874016672247b4e13ea15e1bcd7, type: 2}
+  tier5Cards:
+  - {fileID: 11400000, guid: bfc1f4787a24f894e989cc88989f10eb, type: 2}
+  - {fileID: 11400000, guid: a93bd7341b1c01744b05515b2496fbf1, type: 2}
+  - {fileID: 11400000, guid: 53e5f45a3d4d43b458250ff520d15ceb, type: 2}
+  uniqueCapability: 'Zone control: movement-denied squares punish monster positioning.
+    Interceptor provides reactive threat.'
+  genuineCost: Cannot attack adjacent targets. Overextend and Brace Position self-impose
+    movement restrictions.
