@@ -25,7 +25,9 @@ namespace MnM.Editor
             // Characters — char_[buildname]_idle_[dir]  (_s = south/default)
             new[] { "char_aethel_idle_s", "char_beorn_idle_s", "char_eira_idle_s", "char_freya_idle_s" },
             // Monsters — monster_[name]_[dir]  (_s = south/default)
-            new[] { "monster_gaunt_s", "monster_thornback_s", "monster_pack_wolf_s", "monster_suture_s" },
+            new[] { "monster_gaunt_s", "monster_thornback_s", "monster_ivory_stampede_s", "monster_spite_s" },
+            // Overlords — overlord_[name]_[dir]  (_s = south/default)
+            new[] { "overlord_siltborn_s", "overlord_penitent_s", "overlord_pale_stag_ascendant_s", "overlord_suture_s" },
             // UI — ui_[descriptor]
             new[] { "ui_stone_panel_bg", "ui_card_frame", "ui_button_normal", "ui_icon_bone" },
             // Settlement — building_[name]
@@ -33,7 +35,7 @@ namespace MnM.Editor
         };
 
         // ── Subfolder options (must match Generated/ subfolders) ────────────────────
-        private static readonly string[] Subfolders = { "Characters", "Monsters", "UI", "Settlement" };
+        private static readonly string[] Subfolders = { "Characters", "Monsters", "Overlords", "UI", "Settlement" };
 
         // ── Window State ─────────────────────────────────────────────────────────────
         private string    _saveName      = "new_sprite";
