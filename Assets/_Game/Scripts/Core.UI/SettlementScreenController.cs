@@ -36,6 +36,7 @@ namespace MnM.Core.UI
 
             _settlement = new SettlementManager();
             _settlement.Initialize(state, _campaignSO);
+            AudioManager.Instance?.SetContextForYear(state.currentYear);
 
             _tabContent = _root.Q<ScrollView>("tab-content");
 

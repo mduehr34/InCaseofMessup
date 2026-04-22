@@ -61,6 +61,7 @@ namespace MnM.Core.UI
             _root = _uiDocument.rootVisualElement;
             CacheElements();
             WireEvents();
+            AudioManager.Instance?.SetMusicContext(AudioContext.CombatStandard);
             Debug.Log("[CombatUI] Controller enabled — elements cached and events wired");
         }
 
@@ -154,6 +155,7 @@ namespace MnM.Core.UI
         private void OnDamageDealt(string targetId, int amount, DamageType type)
         {
             Debug.Log($"[CombatUI] Damage: {amount} {type} → {targetId}");
+            AudioManager.Instance?.OnDamageDealt(type);
             RefreshAll();
             // Flash effect deferred to Stage 6 polish pass
         }
@@ -161,12 +163,14 @@ namespace MnM.Core.UI
         private void OnEntityCollapsed(string entityId)
         {
             Debug.Log($"[CombatUI] Entity collapsed: {entityId}");
+            AudioManager.Instance?.OnEntityCollapsed(entityId);
             RefreshAll();
         }
 
         private void OnCombatEnded(CombatResult result)
         {
             Debug.Log($"[CombatUI] Combat ended — Victory:{result.isVictory}");
+            if (result.isVictory) AudioManager.Instance?.OnMonsterDefeated();
 
             if (_resultModalAsset == null)
             {
