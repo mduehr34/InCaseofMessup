@@ -42,10 +42,20 @@ MonoBehaviour:
   standardParts: []
   hardenedParts: []
   apexParts: []
-  openingCards: []
-  escalationCards: []
-  apexCards: []
-  permanentCards: []
+  openingCards:
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a1, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a2, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a3, type: 2}
+  escalationCards:
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a4, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a5, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a6, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a7, type: 2}
+  apexCards:
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a8, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a9, type: 2}
+  permanentCards:
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000aa, type: 2}
   weaknesses: 
   resistances: 
   frontFacing:
