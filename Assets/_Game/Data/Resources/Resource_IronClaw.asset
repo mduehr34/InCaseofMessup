@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6369dcf026182d9468f1400f7b5ddead, type: 3}
-  m_Name: Mock_GauntFang
+  m_Name: Resource_IronClaw
   m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.ResourceSO
-  resourceName: Gaunt Fang
+  resourceName: Iron Claw
   type: 3
-  tier: 1
+  tier: 3
   conversionRate: 1
