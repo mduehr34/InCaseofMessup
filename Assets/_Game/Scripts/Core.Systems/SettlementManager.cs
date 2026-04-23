@@ -80,6 +80,24 @@ namespace MnM.Core.Systems
         // ── STEP 2: Chronicle Event Draw ─────────────────────────────────────
         public EventSO DrawChronicleEvent()
         {
+            // Pending events (e.g. EVT-14 queued by death) fire first, bypassing year/tag filters
+            if (_campaign.pendingEventIds != null && _campaign.pendingEventIds.Length > 0)
+            {
+                string pendingId = _campaign.pendingEventIds[0];
+                var pendingEvt   = System.Array.Find(_campaignData.eventPool, e => e.eventId == pendingId);
+                var remaining    = new List<string>(_campaign.pendingEventIds);
+                remaining.RemoveAt(0);
+                _campaign.pendingEventIds = remaining.ToArray();
+
+                if (pendingEvt != null)
+                {
+                    Debug.Log($"[Settlement] Pending event fires: {pendingEvt.eventId} — {pendingEvt.eventName}");
+                    return pendingEvt;
+                }
+
+                Debug.LogWarning($"[Settlement] Pending event '{pendingId}' not found in event pool — skipped");
+            }
+
             var eligible = GetEligibleEvents();
 
             if (eligible.Count == 0)
@@ -155,6 +173,14 @@ namespace MnM.Core.Systems
             // Per .cursorrules: do NOT interpret mechanicalEffect strings — log for manual application
             if (!string.IsNullOrEmpty(choice.mechanicalEffect))
                 Debug.Log($"[Settlement] Event mechanical effect (apply manually): {choice.mechanicalEffect}");
+
+            // EVT-21: gate-unlock The Spite for hunt selection
+            if (evt.eventId == "EVT-21")
+            {
+                var unlocked = new List<string>(_campaign.unlockedCodexEntryIds) { "TheSpite_Unlocked" };
+                _campaign.unlockedCodexEntryIds = unlocked.ToArray();
+                Debug.Log("[Settlement] EVT-21 resolved — The Spite added to hunt roster");
+            }
 
             Debug.Log($"[Settlement] Event resolved: {evt.eventId}");
         }
@@ -513,6 +539,52 @@ namespace MnM.Core.Systems
             var snapshot = (RuntimeCharacterState[])_campaign.characters.Clone();
             foreach (var ch in snapshot)
                 CheckRetirement(ch);
+        }
+
+        // ── Permanent Character Death ─────────────────────────────────────────
+        public void OnPermanentCharacterDeath(string characterId)
+        {
+            var character = GetCharacter(characterId);
+            if (character == null)
+            {
+                Debug.LogWarning($"[Settlement] OnPermanentCharacterDeath: character '{characterId}' not found");
+                return;
+            }
+
+            // Move from active roster to deceased
+            var active   = new List<RuntimeCharacterState>(_campaign.characters);
+            var deceased = new List<RuntimeCharacterState>(_campaign.deceasedCharacters);
+            active.Remove(character);
+            deceased.Add(character);
+            _campaign.characters         = active.ToArray();
+            _campaign.deceasedCharacters = deceased.ToArray();
+
+            AddToChronicle($"Year {_campaign.currentYear}: {character.characterName} has died.");
+            Debug.Log($"[Settlement] *** PERMANENT DEATH: {character.characterName} ***");
+
+            // Queue EVT-14 (The Grief) — fires next settlement phase regardless of year/tag
+            var evt14 = System.Array.Find(_campaignData.eventPool, e => e.eventId == "EVT-14");
+            if (evt14 == null)
+            {
+                Debug.LogWarning("[Settlement] EVT-14 not found in event pool — cannot queue The Grief");
+                return;
+            }
+
+            if (_campaign.resolvedEventIds.Contains("EVT-14"))
+            {
+                Debug.Log("[Settlement] EVT-14 already resolved — The Grief will not fire again");
+                return;
+            }
+
+            if (_campaign.pendingEventIds.Contains("EVT-14"))
+            {
+                Debug.Log("[Settlement] EVT-14 already pending");
+                return;
+            }
+
+            var pending = new List<string>(_campaign.pendingEventIds) { "EVT-14" };
+            _campaign.pendingEventIds = pending.ToArray();
+            Debug.Log("[Settlement] EVT-14 (The Grief) queued — will fire next settlement phase");
         }
 
         // ── Character Birth ───────────────────────────────────────────────────

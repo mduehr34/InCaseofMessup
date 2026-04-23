@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b42b211e5ee878468687a6229d4bd67, type: 3}
+  m_Name: Event_EVT21
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.EventSO
+  eventId: EVT-21
+  eventName: The Ironhide Sighting
+  yearRangeMin: 12
+  yearRangeMax: 16
+  isMandatory: 1
+  campaignTag:
+  monsterTag:
+  seasonTag:
+  difficultyTag:
+  narrativeText: "The traps were sprung but nothing was taken. The bait untouched. Then we found the prints — the size of a hunter's torso. Something out there has been watching us claim this land. It does not seem concerned."
+  choices:
+  - choiceLabel: A
+    outcomeText: We recorded the tracks. Whatever it is, it knows we're here.
+    mechanicalEffect: The Spite added to hunt roster (flag TheSpite_Unlocked set by SettlementManager)
+    artifactUnlockId:
+    codexEntryId: CodexEntry_TheSpite
+    guidingPrincipalTrigger:

@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b42b211e5ee878468687a6229d4bd67, type: 3}
+  m_Name: Event_EVT20
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.EventSO
+  eventId: EVT-20
+  eventName: Harvest Festival
+  yearRangeMin: 14
+  yearRangeMax: 19
+  isMandatory: 0
+  campaignTag:
+  monsterTag:
+  seasonTag:
+  difficultyTag:
+  narrativeText: "Someone thought to celebrate. It had been a while since anyone had thought that."
+  choices:
+  - choiceLabel: A
+    outcomeText: We drank what we had and didn't count it. The next hunt, everyone moved a little lighter.
+    mechanicalEffect: +1 Grit next hunt, all hunters (apply manually)
+    artifactUnlockId:
+    codexEntryId:
+    guidingPrincipalTrigger:
+  - choiceLabel: B
+    outcomeText: I used the time instead. Something good came of it.
+    mechanicalEffect: Craft 1 item free this Settlement Phase (apply manually)
+    artifactUnlockId:
+    codexEntryId:
+    guidingPrincipalTrigger:

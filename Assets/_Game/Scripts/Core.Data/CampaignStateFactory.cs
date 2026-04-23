@@ -20,7 +20,8 @@ namespace MnM.Core.Data
                     BuildMockCharacter("char_aldric",   "Aldric",   "Male",   "Aethel"),
                     BuildMockCharacter("char_brunhild", "Brunhild", "Female", "Eira"),
                 },
-                retiredCharacters    = new RuntimeCharacterState[0],
+                retiredCharacters     = new RuntimeCharacterState[0],
+                deceasedCharacters    = new RuntimeCharacterState[0],
 
                 resources            = new ResourceEntry[0],
                 builtCrafterNames    = new string[0],
@@ -29,6 +30,7 @@ namespace MnM.Core.Data
                 adoptedInnovationIds        = new string[0],
                 availableInnovationIds      = new[] { "INN-01", "INN-02", "INN-03" },
                 resolvedEventIds            = new string[0],
+                pendingEventIds             = new string[0],
                 unlockedArtifactIds         = new string[0],
                 unlockedCodexEntryIds       = new string[0],
                 activeGuidingPrincipalIds   = new string[0],

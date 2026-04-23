@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a96144f70a6ad64e89a7fd39a53aa6e, type: 3}
+  m_Name: Dagger
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.WeaponSO
+  weaponName: Dagger
+  weaponType: 1
+  elementTag: 0
+  accuracyMod: 0
+  strengthMod: 0
+  attacksPerTurn: 1
+  range: 0
+  isAlwaysLoud: 0
+  signatureCard: {fileID: 11400000, guid: ac32d3deb17fb234caba1f6fd64e65b4, type: 2}
+  tier1Cards:
+  - {fileID: 11400000, guid: a2c470be4f956364d863d124dfd326bb, type: 2}
+  - {fileID: 11400000, guid: a2c470be4f956364d863d124dfd326bb, type: 2}
+  - {fileID: 11400000, guid: a6e91fba1bdef964bbaee4b234fbb253, type: 2}
+  tier2Cards:
+  - {fileID: 11400000, guid: 0abe0a952a64fc049bbdd6205bc4455d, type: 2}
+  - {fileID: 11400000, guid: c16976397f38b95479f2b2e6087c1db5, type: 2}
+  - {fileID: 11400000, guid: d34ef0082a075184a890597f3af676f6, type: 2}
+  - {fileID: 11400000, guid: 2e2394cd8ffe8df43bdaaf21580193e0, type: 2}
+  tier3Cards:
+  - {fileID: 11400000, guid: c8ae25682159e154c9066e62bc95460d, type: 2}
+  - {fileID: 11400000, guid: 79ff81b5c381841439fad5eee3a6e14f, type: 2}
+  - {fileID: 11400000, guid: 3a2a65555b981bb43ad0924b5d5aa023, type: 2}
+  - {fileID: 11400000, guid: 58624745716328e4f9955067bcf225a0, type: 2}
+  tier4Cards:
+  - {fileID: 11400000, guid: 96aa86fed0dc2f24cb5a96d99752065e, type: 2}
+  - {fileID: 11400000, guid: ae4598fd3801ba84d9897f883f37b140, type: 2}
+  - {fileID: 11400000, guid: 652eaac2d18759e48bd334b93470de0b, type: 2}
+  tier5Cards:
+  - {fileID: 11400000, guid: 40a7b9843810b4d4885e5358b9e5aeef, type: 2}
+  - {fileID: 11400000, guid: 6c38f93f5a3990345b9a70b2f33f7410, type: 2}
+  - {fileID: 11400000, guid: 45da2a29f524d8848b85a005424e4d81, type: 2}
+  uniqueCapability: Full Accuracy bonus from Rear arc. Crit threshold permanently
+    -1. -2 Accuracy from Front arc.
+  genuineCost: 
