@@ -174,6 +174,14 @@ namespace MnM.Core.Systems
             if (!string.IsNullOrEmpty(choice.mechanicalEffect))
                 Debug.Log($"[Settlement] Event mechanical effect (apply manually): {choice.mechanicalEffect}");
 
+            // EVT-21: gate-unlock The Spite for hunt selection
+            if (evt.eventId == "EVT-21")
+            {
+                var unlocked = new List<string>(_campaign.unlockedCodexEntryIds) { "TheSpite_Unlocked" };
+                _campaign.unlockedCodexEntryIds = unlocked.ToArray();
+                Debug.Log("[Settlement] EVT-21 resolved — The Spite added to hunt roster");
+            }
+
             Debug.Log($"[Settlement] Event resolved: {evt.eventId}");
         }
 

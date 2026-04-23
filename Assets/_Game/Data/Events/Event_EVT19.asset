@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b42b211e5ee878468687a6229d4bd67, type: 3}
+  m_Name: Event_EVT19
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.EventSO
+  eventId: EVT-19
+  eventName: The Broken Mind
+  yearRangeMin: 13
+  yearRangeMax: 18
+  isMandatory: 0
+  campaignTag:
+  monsterTag:
+  seasonTag:
+  difficultyTag:
+  narrativeText: "They've been sitting alone more. Not sleeping. We've all been through things. But this is different."
+  choices:
+  - choiceLabel: A
+    outcomeText: We kept them back from the hunt. They didn't argue. That worried me more than anything.
+    mechanicalEffect: Hunter skips hunt; Disorder removed (apply manually)
+    artifactUnlockId:
+    codexEntryId:
+    guidingPrincipalTrigger:
+  - choiceLabel: B
+    outcomeText: There's nothing left to spare, not even time. They said they'd manage. I hope they were right.
+    mechanicalEffect: Disorder remains; risk of worsening (apply manually)
+    artifactUnlockId:
+    codexEntryId:
+    guidingPrincipalTrigger:

@@ -45,9 +45,14 @@ namespace MnM.Core.UI
             var content = scroll.contentContainer;
             content.Clear();
 
+            var campaignState = GameStateManager.Instance.CampaignState;
             foreach (var monster in _campaignSO.monsterRoster)
             {
                 if (monster == null) continue;
+                // The Spite is hidden until EVT-21 sets the unlock flag
+                if (monster.monsterName == "The Spite" &&
+                    !campaignState.unlockedCodexEntryIds.Contains("TheSpite_Unlocked"))
+                    continue;
 
                 var row = new VisualElement();
                 row.AddToClassList("character-row");

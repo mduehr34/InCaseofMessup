@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b42b211e5ee878468687a6229d4bd67, type: 3}
+  m_Name: Event_EVT26
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.EventSO
+  eventId: EVT-26
+  eventName: Veteran's Wisdom
+  yearRangeMin: 22
+  yearRangeMax: 28
+  isMandatory: 0
+  campaignTag:
+  monsterTag:
+  seasonTag:
+  difficultyTag:
+  narrativeText: "The old ones gathered. They've seen more of this land than any of us will. I sat and listened."
+  choices:
+  - choiceLabel: A
+    outcomeText: We listened. That was enough.
+    mechanicalEffect: Choose next Chronicle draw from 2 options (apply manually)
+    artifactUnlockId:
+    codexEntryId:
+    guidingPrincipalTrigger:
+  - choiceLabel: B
+    outcomeText: Respect them. Keep moving. Eyes on what's coming.
+    mechanicalEffect: +1 Accuracy all hunters next hunt (apply manually)
+    artifactUnlockId:
+    codexEntryId:
+    guidingPrincipalTrigger:
