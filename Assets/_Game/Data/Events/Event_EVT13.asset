@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b42b211e5ee878468687a6229d4bd67, type: 3}
+  m_Name: Event_EVT13
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.EventSO
+  eventId: EVT-13
+  eventName: Marrow Seep
+  yearRangeMin: 8
+  yearRangeMax: 12
+  isMandatory: 0
+  campaignTag:
+  monsterTag:
+  seasonTag:
+  difficultyTag:
+  narrativeText: "A fissure opens in the settlement floor. Something viscous and warm seeps upward. It smells alive."
+  choices:
+  - choiceLabel: A
+    outcomeText: Seal it. Whatever is down there, keep it down there.
+    mechanicalEffect: 'Costs 3 Dense Bone; no further effect (apply manually)'
+    artifactUnlockId:
+    codexEntryId:
+    guidingPrincipalTrigger:
+  - choiceLabel: B
+    outcomeText: Study it. This is what everything has been leading to.
+    mechanicalEffect: 'Unlock Codex: Marrow Exposed; trigger GP-03 (apply manually)'
+    artifactUnlockId:
+    codexEntryId: MarrowExposed
+    guidingPrincipalTrigger: GP-03
