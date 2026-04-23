@@ -13,6 +13,7 @@ namespace MnM.Core.Data
         // Characters
         public RuntimeCharacterState[] characters;
         public RuntimeCharacterState[] retiredCharacters;
+        public RuntimeCharacterState[] deceasedCharacters;
 
         // Resources — flat inventory, one entry per resource type
         public ResourceEntry[] resources;
@@ -25,6 +26,7 @@ namespace MnM.Core.Data
         public string[] adoptedInnovationIds;
         public string[] availableInnovationIds;  // Current Innovation Deck pool
         public string[] resolvedEventIds;        // EVT-XX IDs already seen
+        public string[] pendingEventIds;         // Queued to fire next settlement regardless of year/tag filter
         public string[] unlockedArtifactIds;
         public string[] unlockedCodexEntryIds;
         public string[] activeGuidingPrincipalIds;
