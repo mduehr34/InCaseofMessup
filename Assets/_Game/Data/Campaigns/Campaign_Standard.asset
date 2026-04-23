@@ -10,35 +10,31 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb3acb8d3a2864a498d05c70f2bd0a2c, type: 3}
-  m_Name: Mock_TutorialCampaign
+  m_Name: Campaign_Standard
   m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.CampaignSO
-  campaignName: Tutorial Campaign
+  campaignName: Standard Campaign
   difficulty: 1
-  campaignLengthYears: 3
+  campaignLengthYears: 30
   startingCharacterCount: 8
   baseMovement: 3
   startingGrit: 3
   ironmanMode: 0
-  monsterRoster:
-  - {fileID: 11400000, guid: 9b47334a3da03b445b364fb050f2479d, type: 2}
-  eventPool:
-  - {fileID: 11400000, guid: 43c0a06fd9864e14c99ec8da88c51591, type: 2}
-  - {fileID: 11400000, guid: 3bc76cab91f05054db4481d29836eb2d, type: 2}
+  monsterRoster: []
+  eventPool: []
   startingInnovations:
   - {fileID: 11400000, guid: 9e082aa0030da364b9794b30dc597f80, type: 2}
   - {fileID: 11400000, guid: 3720c18bf9d5def40814b4a0a8734736, type: 2}
   - {fileID: 11400000, guid: 05bb53c7b4cd07d44af4e61944bd4a91, type: 2}
-  crafterPool:
-  - {fileID: 11400000, guid: ac5448effe75c2f46b0f8fb1e25990c8, type: 2}
-  - {fileID: 11400000, guid: ee6e84d0a0d456a409b6654c20262f66, type: 2}
-  - {fileID: 11400000, guid: 8e2a6dfd0efbfb54bac24f1bd1a42862, type: 2}
-  - {fileID: 11400000, guid: 5dae203c7f90db74bbdf5dbc59112d2a, type: 2}
-  - {fileID: 11400000, guid: 776896fa4683e4140ad353ecfede7b65, type: 2}
-  - {fileID: 11400000, guid: 424eb69048211e645ba1e365404a3fe1, type: 2}
-  - {fileID: 11400000, guid: 3759cc0e73dca3b4ba65923182233bb1, type: 2}
-  - {fileID: 11400000, guid: c54b938ec53fe8045962f063258d0236, type: 2}
+  - {fileID: 11400000, guid: 03b3c5f3e95b4cf4ebf92a0e76c626b9, type: 2}
+  - {fileID: 11400000, guid: 0570ffce9a2af2643adb82b729230e47, type: 2}
+  - {fileID: 11400000, guid: 87f7f38413dc5464ba7578cd8ce9626b, type: 2}
+  crafterPool: []
   guidingPrincipals:
   - {fileID: 11400000, guid: 65a01f650d3b89646a32c02b46b5d027, type: 2}
+  - {fileID: 11400000, guid: 3228b8ef99253e342b536f25cef02571, type: 2}
+  - {fileID: 11400000, guid: a4d3e07486a604c46a179bc270c422e0, type: 2}
+  - {fileID: 11400000, guid: 4490595112f72a14b83dbdda8d8007be, type: 2}
+  - {fileID: 11400000, guid: 8a90cd7261994434d92be526b437dce5, type: 2}
   retirementHuntCount: 10
   birthConditionAge: 0
   overlordMonster: {fileID: 0}

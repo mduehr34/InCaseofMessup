@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67e88b8fa6374084aafcee11468762a5, type: 3}
+  m_Name: GP01_LifeorStrength
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.GuidingPrincipalSO
+  principalId: GP-01
+  principalName: Life or Strength
+  triggerCondition: Year 1, automatic.
+  choiceA:
+    choiceLabel: Life
+    outcomeText: 'Settlement grows cautiously: +2 starting characters next campaign.'
+    mechanicalEffect: +2 starting characters (apply in next campaign setup)
+    artifactUnlockId: 
+    codexEntryId: 
+    guidingPrincipalTrigger: 
+  choiceB:
+    choiceLabel: Strength
+    outcomeText: 'Hunters are forged harder: all hunters start with +1 Strength.'
+    mechanicalEffect: +1 Strength to all hunters at campaign start (apply manually)
+    artifactUnlockId: 
+    codexEntryId: 
+    guidingPrincipalTrigger: 
