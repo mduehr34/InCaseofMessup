@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67e88b8fa6374084aafcee11468762a5, type: 3}
+  m_Name: GP02_BloodPrice
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.GuidingPrincipalSO
+  principalId: GP-02
+  principalName: Blood Price
+  triggerCondition: After first permanent character death.
+  choiceA:
+    choiceLabel: Honor
+    outcomeText: 'Build a memorial: unlock Artifact ''The First Stone,'' chronicle
+      entry.'
+    mechanicalEffect: UnlockArtifact:TheFirstStone;AddChronicleEntry
+    artifactUnlockId: TheFirstStone
+    codexEntryId: 
+    guidingPrincipalTrigger: 
+  choiceB:
+    choiceLabel: Drive
+    outcomeText: 'Channel grief: all remaining hunters gain +1 Accuracy permanently.'
+    mechanicalEffect: +1 Accuracy to all surviving hunters (apply manually)
+    artifactUnlockId: 
+    codexEntryId: 
+    guidingPrincipalTrigger: 

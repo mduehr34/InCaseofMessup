@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6071152ebdd0ba14cb15e551fd926e47, type: 3}
+  m_Name: INN04_IronWill
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.InnovationSO
+  innovationId: INN-04
+  innovationName: Iron Will
+  effect: 'Spend 2 Grit: ignore one drawn Injury Card effect.'
+  addsToDeck:
+  - {fileID: 11400000, guid: 202068562ebf79748af55a4246290f87, type: 2}
+  - {fileID: 11400000, guid: 7d07199fa255be44fb735054ec356f1a, type: 2}
+  gritSkillUnlocked: Endure
+  guidingPrincipalTag: 0

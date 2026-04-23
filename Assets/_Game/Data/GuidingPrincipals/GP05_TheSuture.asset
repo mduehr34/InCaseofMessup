@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67e88b8fa6374084aafcee11468762a5, type: 3}
+  m_Name: GP05_TheSuture
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.GuidingPrincipalSO
+  principalId: GP-05
+  principalName: The Suture
+  triggerCondition: Year 26+, approaching end.
+  choiceA:
+    choiceLabel: Stand Firm
+    outcomeText: All hunters start Year 30 with maximum Grit.
+    mechanicalEffect: MaxGrit:AllHunters:Year30
+    artifactUnlockId: 
+    codexEntryId: 
+    guidingPrincipalTrigger: 
+  choiceB:
+    choiceLabel: Prepare
+    outcomeText: Unlock all remaining locked Innovations in the pool immediately.
+    mechanicalEffect: UnlockAllInnovations
+    artifactUnlockId: 
+    codexEntryId: 
+    guidingPrincipalTrigger: 

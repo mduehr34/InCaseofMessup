@@ -11,6 +11,5 @@ namespace MnM.Core.Data
         // Cards added to the Innovation Deck pool when this is adopted
         public InnovationSO[] addsToDeck;
         public string gritSkillUnlocked;    // Empty if none
-        public GuidingPrincipalTag guidingPrincipalTag;
     }
 }
