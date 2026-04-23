@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 300dc82b24791a649aa02231751f085c, type: 3}
+  m_Name: Hammer_T2_Momentum
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.ActionCardSO
+  cardName: Momentum
+  weaponType: 4
+  category: 1
+  apCost: 1
+  apRefund: 1
+  isLoud: 1
+  isReaction: 0
+  proficiencyTierRequired: 2
+  flavorText:
+  effectDescription: 'Move 3 squares in a straight line. Hunters in path must pass Evasion 5 or gain Shaken. Continues combo. Costs 0 net AP.'
