@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: Gall Bite
   cardType: 0
   group: 1
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: Hunter is in Front arc and adjacent
+  effectDescription: "Standard attack at +1 Strength. On hit, apply Bleeding. Venom
+    has no effect on The Spite \u2014 Bleeding is its own toxin."
   removalCondition: 
   stanceTag: 
   groupTag: 

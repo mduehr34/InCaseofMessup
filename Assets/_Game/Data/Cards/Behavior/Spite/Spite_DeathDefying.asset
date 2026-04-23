@@ -15,8 +15,10 @@ MonoBehaviour:
   cardName: Death Defying
   cardType: 0
   group: 2
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: The Spite receives a wound that would bring it to its final wound
+    track
+  effectDescription: Move 4 squares toward Aggro holder. Standard attack. Triggers
+    once per hunt.
   removalCondition: 
   stanceTag: 
   groupTag: 

@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: Marrow Sense
   cardType: 0
   group: 2
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: End of round if any hunter has used a fire element this round
+  effectDescription: Transfer Aggro to that hunter. Move full Movement toward them.
+    +2 Accuracy on next standard attack.
   removalCondition: 
   stanceTag: 
   groupTag: 

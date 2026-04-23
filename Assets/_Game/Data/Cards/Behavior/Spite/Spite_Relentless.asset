@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: Relentless
   cardType: 0
   group: 0
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: End of round
+  effectDescription: Move 3 squares toward Aggro holder. If a wound was applied to
+    The Spite this round, move 5 squares instead.
   removalCondition: 
   stanceTag: 
   groupTag: 

@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: Blood Ignore
   cardType: 0
   group: 1
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: End of round if The Spite has 1 or more wounds
+  effectDescription: Move full Movement toward Aggro holder. Standard attack at +1
+    Accuracy.
   removalCondition: 
   stanceTag: 
   groupTag: 

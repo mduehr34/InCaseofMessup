@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: Wound Through
   cardType: 0
   group: 1
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: Hunter deals a wound to The Spite
+  effectDescription: Immediately move 2 squares toward that hunter. Apply Shaken
+    to them. The wound is not cancelled.
   removalCondition: 
   stanceTag: 
   groupTag: 

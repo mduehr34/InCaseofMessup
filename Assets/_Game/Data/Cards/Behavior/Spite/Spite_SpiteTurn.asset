@@ -15,8 +15,8 @@ MonoBehaviour:
   cardName: Spite Turn
   cardType: 0
   group: 1
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: End of round if The Spite's back is to a hunter
+  effectDescription: Immediately rotate to face that hunter. Transfer Aggro. No movement.
   removalCondition: 
   stanceTag: 
   groupTag: 

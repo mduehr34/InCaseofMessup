@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: No Quarter
   cardType: 0
   group: 0
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: Hunter plays a Reaction card
+  effectDescription: Ignore the Reaction card's effect. Transfer Aggro to that hunter.
+    Move 2 squares toward them.
   removalCondition: 
   stanceTag: 
   groupTag: 

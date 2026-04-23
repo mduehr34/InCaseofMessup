@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: Iron Hide
   cardType: 0
   group: 1
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: End of round if no wound was applied to The Spite this round
+  effectDescription: The Spite's wound resistance threshold increases by 1 until
+    a wound is applied (max +2, resets on wound).
   removalCondition: 
   stanceTag: 
   groupTag: 

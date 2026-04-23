@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: Final Fury
   cardType: 0
   group: 2
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: End of round if The Spite has 3 or more wounds
+  effectDescription: Move full Movement toward Aggro holder. Standard attack against
+    all hunters in Front arc on arrival. Apply Shaken to all hit.
   removalCondition: 
   stanceTag: 
   groupTag: 

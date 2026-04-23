@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: Venom Rage
   cardType: 0
   group: 2
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: Hunter applies Bleeding or Venom to The Spite
+  effectDescription: Status is ignored. The Spite immediately makes a standard attack
+    against that hunter at +1 Accuracy.
   removalCondition: 
   stanceTag: 
   groupTag: 

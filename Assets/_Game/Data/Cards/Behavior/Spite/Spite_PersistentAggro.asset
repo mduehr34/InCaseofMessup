@@ -15,8 +15,8 @@ MonoBehaviour:
   cardName: Persistent Aggro
   cardType: 0
   group: 1
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: Hunter moves away from The Spite
+  effectDescription: Transfer Aggro to that hunter. Move 3 squares toward them.
   removalCondition: 
   stanceTag: 
   groupTag: 

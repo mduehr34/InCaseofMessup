@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: Tenacity
   cardType: 1
   group: 0
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: End of every round
+  effectDescription: If no wound was applied to The Spite this round, increase the
+    wound resistance threshold by 1 (max +3). Resets to base on any wound.
   removalCondition: 
   stanceTag: 
   groupTag: 

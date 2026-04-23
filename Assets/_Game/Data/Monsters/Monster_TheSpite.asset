@@ -18,8 +18,8 @@ MonoBehaviour:
     in the hide and jaw
   combatEmotion: "Relentless \u2014 does not retreat, does not hesitate, continues
     through wounds that would collapse anything else"
-  coreSkillTaught: "TBD \u2014 pending combat identity selection (Option A: shell
-    regen vs Option B: wound resistance)"
+  coreSkillTaught: Wound resistance — wounds require a higher Force Check threshold
+    to apply; fire weapons provide the key angle to bypass it
   gridFootprintStandard: {x: 2, y: 3}
   gridFootprintHardened: {x: 2, y: 3}
   gridFootprintApex: {x: 3, y: 4}
@@ -213,8 +213,8 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3d10b7cfb5d23e04f9e7c477c2a04f4f, type: 2}
   permanentCards:
   - {fileID: 11400000, guid: 710cfb2273ca4e647be6d08f1b27d2c0, type: 2}
-  weaknesses: 
-  resistances: 
+  weaknesses: 01000000
+  resistances: 03000000
   frontFacing:
     primaryZone: 0
     secondaryZone: 2

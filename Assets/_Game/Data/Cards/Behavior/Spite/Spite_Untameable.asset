@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: Untameable
   cardType: 0
   group: 2
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: Hunter attempts to apply Pinned or Slowed to The Spite
+  effectDescription: Status is ignored. Transfer Aggro to that hunter. The Spite
+    moves 2 squares toward them.
   removalCondition: 
   stanceTag: 
   groupTag: 

@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: Sheds Blood
   cardType: 0
   group: 2
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: End of round if The Spite has 2 or more wounds
+  effectDescription: Move full Movement toward Aggro holder. Standard attack at +2
+    Accuracy and +1 Strength. The Spite does not slow down.
   removalCondition: 
   stanceTag: 
   groupTag: 

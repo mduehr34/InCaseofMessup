@@ -15,8 +15,9 @@ MonoBehaviour:
   cardName: Relentless Charge
   cardType: 0
   group: 1
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: End of round if The Spite has not attacked this round
+  effectDescription: Move 6 squares toward Aggro holder in a straight line. Standard
+    attack on arrival.
   removalCondition: 
   stanceTag: 
   groupTag: 

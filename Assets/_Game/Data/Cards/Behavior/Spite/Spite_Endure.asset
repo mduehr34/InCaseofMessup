@@ -15,8 +15,8 @@ MonoBehaviour:
   cardName: Endure
   cardType: 0
   group: 0
-  triggerCondition: 
-  effectDescription: 
+  triggerCondition: End of round if The Spite has no wounds
+  effectDescription: The Spite gains +1 Toughness until the start of next round.
   removalCondition: 
   stanceTag: 
   groupTag: 
