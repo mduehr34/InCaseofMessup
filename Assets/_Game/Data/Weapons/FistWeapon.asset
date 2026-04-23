@@ -43,7 +43,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 9da284d09d3ac2449b31fa115c81cdf4, type: 2}
   - {fileID: 11400000, guid: ef2e8a13098df0147a5f158ee8d996f3, type: 2}
   - {fileID: 11400000, guid: a5cf336079185074ab65915eb7216fcc, type: 2}
-  uniqueCapability: "Combo system: Opener \u2192 Linker \u2192 Finisher chains unlock
-    bonus effects. No range restriction."
+  uniqueCapability: Shield absorbs 1 Shell hit per round free.
   genuineCost: Adjacent range only. No Shell damage on basic attacks. Relies on status
     stacking for pressure.

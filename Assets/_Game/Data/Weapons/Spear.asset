@@ -23,7 +23,6 @@ MonoBehaviour:
   signatureCard: {fileID: 11400000, guid: 2363f0b0cbe504640a8346596e4c1fa5, type: 2}
   tier1Cards:
   - {fileID: 11400000, guid: c98a16f69a0f4f040a374fa2f082462b, type: 2}
-  - {fileID: 11400000, guid: 2363f0b0cbe504640a8346596e4c1fa5, type: 2}
   - {fileID: 11400000, guid: 941af84ddda530940b4ae0d5e574584e, type: 2}
   - {fileID: 11400000, guid: e5f1bf9241dc95848b233e0add727054, type: 2}
   tier2Cards:
@@ -44,7 +43,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: bfc1f4787a24f894e989cc88989f10eb, type: 2}
   - {fileID: 11400000, guid: a93bd7341b1c01744b05515b2496fbf1, type: 2}
   - {fileID: 11400000, guid: 53e5f45a3d4d43b458250ff520d15ceb, type: 2}
-  uniqueCapability: 'Zone control: movement-denied squares punish monster positioning.
-    Interceptor provides reactive threat.'
+  uniqueCapability: Range 2. Cannot attack adjacent targets.
   genuineCost: Cannot attack adjacent targets. Overextend and Brace Position self-impose
     movement restrictions.

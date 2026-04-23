@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a96144f70a6ad64e89a7fd39a53aa6e, type: 3}
+  m_Name: Bow
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.WeaponSO
+  weaponName: Bow
+  weaponType: 7
+  elementTag: 0
+  accuracyMod: 0
+  strengthMod: 0
+  attacksPerTurn: 1
+  range: 3
+  isAlwaysLoud: 0
+  signatureCard: {fileID: 11400000, guid: 9efe47c0ee2fa1f419c890dfbd3494a3, type: 2}
+  tier1Cards:
+  - {fileID: 11400000, guid: 6e58977d5367964428bb95b9622404b2, type: 2}
+  - {fileID: 11400000, guid: 8283fe50756f6e94fa6fce821a5fc9e9, type: 2}
+  - {fileID: 11400000, guid: 6c49db9059e87e44b81a604a79a2653b, type: 2}
+  tier2Cards:
+  - {fileID: 11400000, guid: a40ee68eca30f0d4aab8835e687da8eb, type: 2}
+  - {fileID: 11400000, guid: b02f1568a6c54c447965a6553fc0e1e6, type: 2}
+  - {fileID: 11400000, guid: 9ca9843b48e11f146a4dedcf6e4624e0, type: 2}
+  - {fileID: 11400000, guid: ac48436786240724ca77f8d94fbe6b34, type: 2}
+  tier3Cards:
+  - {fileID: 11400000, guid: ee7c68bc1f4be4442963dbf86e1873d3, type: 2}
+  - {fileID: 11400000, guid: 580dbfca2f714e44482c874767abaf10, type: 2}
+  - {fileID: 11400000, guid: a83cc66d63af75a45b8b9da0e82b572c, type: 2}
+  - {fileID: 11400000, guid: 9265e4f158f902c4b82339ad8f48a41d, type: 2}
+  tier4Cards:
+  - {fileID: 11400000, guid: f5fb2182125b0e845b1139344170bf6f, type: 2}
+  - {fileID: 11400000, guid: e9ac6539f88d81a4380cf1ee2f854234, type: 2}
+  - {fileID: 11400000, guid: e1a831141f0c58d4ca5aa1bcde3e2c85, type: 2}
+  tier5Cards:
+  - {fileID: 11400000, guid: 6291ab5a1d6a6ad4fa8c26adcac7b293, type: 2}
+  - {fileID: 11400000, guid: 58fe56f56da70d44292e27a3cea359fc, type: 2}
+  - {fileID: 11400000, guid: bf02e6251e8fb624498b1377b4018f32, type: 2}
+  uniqueCapability: Range 3-6 tiles. Cannot attack adjacent. Proximity behavior cards
+    never trigger from this hunter.
+  genuineCost: 

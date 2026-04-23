@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a96144f70a6ad64e89a7fd39a53aa6e, type: 3}
+  m_Name: SwordAndShield
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.WeaponSO
+  weaponName: Sword & Shield
+  weaponType: 2
+  elementTag: 0
+  accuracyMod: 0
+  strengthMod: 0
+  attacksPerTurn: 1
+  range: 0
+  isAlwaysLoud: 0
+  signatureCard: {fileID: 11400000, guid: 1ce1745ac4548ce43a8835a4b0b60ee7, type: 2}
+  tier1Cards:
+  - {fileID: 11400000, guid: 5b70cdd06a1a28e4a833023417dd6102, type: 2}
+  - {fileID: 11400000, guid: 5402f61efe2d4dc449ffe40b3a563785, type: 2}
+  - {fileID: 11400000, guid: b77150ac717e47c4db43f8b9b5309a9d, type: 2}
+  tier2Cards:
+  - {fileID: 11400000, guid: 3fbbcc85351ffde47abd37315174bee6, type: 2}
+  - {fileID: 11400000, guid: 9f53afc9a161d28459d9576d1cbbbdf3, type: 2}
+  - {fileID: 11400000, guid: cd76d4e8ec6601344ae6353e57fbf730, type: 2}
+  - {fileID: 11400000, guid: e23da47c84316d44daf3430c4ff0a7f0, type: 2}
+  tier3Cards:
+  - {fileID: 11400000, guid: 358419756970b5a4182ccf22cba47053, type: 2}
+  - {fileID: 11400000, guid: 350ea7a22ae41fb4b83b4b28859e0308, type: 2}
+  - {fileID: 11400000, guid: 35eae5982f4dd3648a2d0ce384e4a931, type: 2}
+  - {fileID: 11400000, guid: f2c7cb92be4c0b743a80595a61cb17be, type: 2}
+  tier4Cards:
+  - {fileID: 11400000, guid: 6f6e6c07ca1247047a7b568cd1b4bb29, type: 2}
+  - {fileID: 11400000, guid: bad38cf8a35e6674ca3de054ea593d41, type: 2}
+  - {fileID: 11400000, guid: cbb6985942aaacf4a97c96820ebd23d6, type: 2}
+  tier5Cards:
+  - {fileID: 11400000, guid: 847badb0f993514408cd04593fd18ba0, type: 2}
+  - {fileID: 11400000, guid: 54088cf20b7e1a344bd2c91461aff665, type: 2}
+  - {fileID: 11400000, guid: 58f25fec648f0e544819797132c86e78, type: 2}
+  uniqueCapability: Only 1 attack per turn. Shield absorbs 1 Shell hit per round
+    free. No Strength modifier.
+  genuineCost: 
