@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 300dc82b24791a649aa02231751f085c, type: 3}
+  m_Name: Axe_T3_RelentlessChop
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.ActionCardSO
+  cardName: Relentless Chop
+  weaponType: 3
+  category: 3
+  apCost: 1
+  apRefund: 0
+  isLoud: 1
+  isReaction: 0
+  proficiencyTierRequired: 3
+  flavorText:
+  effectDescription: 'Attack the same part twice at -1 Strength each. Resolve separately.'
