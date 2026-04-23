@@ -1,0 +1,253 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fca2cbac5ab82747a30962a8672c4c0, type: 3}
+  m_Name: Monster_TheSpite
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.MonsterSO
+  monsterName: The Spite
+  materialTier: 3
+  animalBasis: Massive Marrow-enhanced honey badger, Marrow saturation concentrated
+    in the hide and jaw
+  combatEmotion: "Relentless \u2014 does not retreat, does not hesitate, continues
+    through wounds that would collapse anything else"
+  coreSkillTaught: "TBD \u2014 pending combat identity selection (Option A: shell
+    regen vs Option B: wound resistance)"
+  gridFootprintStandard: {x: 2, y: 3}
+  gridFootprintHardened: {x: 2, y: 3}
+  gridFootprintApex: {x: 3, y: 4}
+  statBlocks:
+  - movement: 9
+    accuracy: 3
+    strength: 3
+    toughness: 2
+    evasion: 4
+    behaviorDeckSizeRemovable: 10
+  - movement: 11
+    accuracy: 4
+    strength: 4
+    toughness: 3
+    evasion: 5
+    behaviorDeckSizeRemovable: 13
+  - movement: 13
+    accuracy: 5
+    strength: 5
+    toughness: 4
+    evasion: 6
+    behaviorDeckSizeRemovable: 16
+  standardParts:
+  - partName: Head
+    partTag: 0
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Jaw
+    partTag: 1
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Neck
+    partTag: 10
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Torso
+    partTag: 2
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Left Flank
+    partTag: 3
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Right Flank
+    partTag: 4
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Hindquarters
+    partTag: 5
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  hardenedParts:
+  - partName: Head
+    partTag: 0
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Jaw
+    partTag: 1
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Neck
+    partTag: 10
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Torso
+    partTag: 2
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Left Flank
+    partTag: 3
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Right Flank
+    partTag: 4
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Hindquarters
+    partTag: 5
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  apexParts:
+  - partName: Head
+    partTag: 0
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Jaw
+    partTag: 1
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Neck
+    partTag: 10
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Torso
+    partTag: 2
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Left Flank
+    partTag: 3
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Right Flank
+    partTag: 4
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Hindquarters
+    partTag: 5
+    shellDurability: 2
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  openingCards:
+  - {fileID: 11400000, guid: c5e2d016ada5df94bb23f9cbcd1597e1, type: 2}
+  - {fileID: 11400000, guid: 1053352e236429d4fb7e097f2ce65ccb, type: 2}
+  - {fileID: 11400000, guid: 1ec29620f7477cd44aed44735902e414, type: 2}
+  escalationCards:
+  - {fileID: 11400000, guid: d057b835259b47146b258a1571baec8e, type: 2}
+  - {fileID: 11400000, guid: 6e6e5f9a7555d1a4fa4123af39727d51, type: 2}
+  - {fileID: 11400000, guid: 50e12096dde22614082af2ab8243dd2e, type: 2}
+  - {fileID: 11400000, guid: 0e10ab53c3cd56043823bdbec5d71fa1, type: 2}
+  - {fileID: 11400000, guid: b8c0408af5b5e2f40a8374442f8e27ea, type: 2}
+  - {fileID: 11400000, guid: 28e7114545dc32c47be7e80a75a51a92, type: 2}
+  - {fileID: 11400000, guid: 599e903eff08c2549b182c365c7759ca, type: 2}
+  apexCards:
+  - {fileID: 11400000, guid: 3fc8b2594ef269048a06a5f06bdf9ea8, type: 2}
+  - {fileID: 11400000, guid: 7049cdaa0417d9d4d8fb5c19db4af1e3, type: 2}
+  - {fileID: 11400000, guid: dbfe716efe3f53a4b9136eac0071493a, type: 2}
+  - {fileID: 11400000, guid: 9288ab66bbc5eb844b56c455c3ab6ac1, type: 2}
+  - {fileID: 11400000, guid: 4f5fec6fc47323d42aa50577a8d4fafc, type: 2}
+  - {fileID: 11400000, guid: 3d10b7cfb5d23e04f9e7c477c2a04f4f, type: 2}
+  permanentCards:
+  - {fileID: 11400000, guid: 710cfb2273ca4e647be6d08f1b27d2c0, type: 2}
+  weaknesses: 
+  resistances: 
+  frontFacing:
+    primaryZone: 0
+    secondaryZone: 2
+    tertiaryZone: 1
+    primaryZoneWeight: 50
+    secondaryZoneWeight: 30
+    tertiaryZoneWeight: 20
+  flankFacing:
+    primaryZone: 3
+    secondaryZone: 2
+    tertiaryZone: 5
+    primaryZoneWeight: 50
+    secondaryZoneWeight: 30
+    tertiaryZoneWeight: 20
+  rearFacing:
+    primaryZone: 5
+    secondaryZone: 10
+    tertiaryZone: 2
+    primaryZoneWeight: 50
+    secondaryZoneWeight: 30
+    tertiaryZoneWeight: 20
+  trapZoneParts: []
+  lootTable:
+  - resource: {fileID: 11400000, guid: c2b4539e4471a1648814edd9fa0dde96, type: 2}
+    minAmount: 2
+    maxAmount: 3
+    weight: 60
+  - resource: {fileID: 11400000, guid: f609e138e25eefb43a7e5bd9acb71315, type: 2}
+    minAmount: 1
+    maxAmount: 2
+    weight: 40
+  - resource: {fileID: 11400000, guid: d39e44a3987630948baa9e670af44e5d, type: 2}
+    minAmount: 0
+    maxAmount: 1
+    weight: 20
+  stances: []

@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46fd15b58f04f9642be9b7748f4fea95, type: 3}
+  m_Name: Serpent_MassToxin
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.BehaviorCardSO
+  cardName: Mass Toxin
+  cardType: 0
+  group: 1
+  triggerCondition: End of round if 2 or more hunters are adjacent to each other
+  effectDescription: Venom cloud in a 2x2 area centered between them. All hunters
+    in area apply Bleeding.
+  removalCondition: 
+  stanceTag: 
+  groupTag: 

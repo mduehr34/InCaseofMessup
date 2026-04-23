@@ -1,0 +1,261 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fca2cbac5ab82747a30962a8672c4c0, type: 3}
+  m_Name: Monster_Thornback
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.MonsterSO
+  monsterName: Thornback
+  materialTier: 2
+  animalBasis: Marrow-enhanced wild boar, armored with calcified bone spikes from
+    dorsal ridge
+  combatEmotion: "Aggression \u2014 charges and tramples, does not retreat"
+  coreSkillTaught: 
+  gridFootprintStandard: {x: 3, y: 2}
+  gridFootprintHardened: {x: 3, y: 2}
+  gridFootprintApex: {x: 4, y: 3}
+  statBlocks:
+  - movement: 7
+    accuracy: 2
+    strength: 3
+    toughness: 2
+    evasion: 1
+    behaviorDeckSizeRemovable: 10
+  - movement: 9
+    accuracy: 3
+    strength: 4
+    toughness: 3
+    evasion: 2
+    behaviorDeckSizeRemovable: 13
+  - movement: 11
+    accuracy: 4
+    strength: 5
+    toughness: 4
+    evasion: 3
+    behaviorDeckSizeRemovable: 16
+  standardParts:
+  - partName: Skull
+    partTag: 0
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Snout
+    partTag: 1
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 1
+  - partName: Left Shoulder
+    partTag: 3
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Right Shoulder
+    partTag: 4
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Dorsal Ridge
+    partTag: 10
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 1
+  - partName: Haunches
+    partTag: 5
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Tail Bone
+    partTag: 6
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  hardenedParts:
+  - partName: Skull
+    partTag: 0
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Snout
+    partTag: 1
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 1
+  - partName: Left Shoulder
+    partTag: 3
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Right Shoulder
+    partTag: 4
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Dorsal Ridge
+    partTag: 10
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 1
+  - partName: Haunches
+    partTag: 5
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Tail Bone
+    partTag: 6
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  apexParts:
+  - partName: Skull
+    partTag: 0
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Snout
+    partTag: 1
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 1
+  - partName: Left Shoulder
+    partTag: 3
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Right Shoulder
+    partTag: 4
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Dorsal Ridge
+    partTag: 10
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 1
+  - partName: Haunches
+    partTag: 5
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Tail Bone
+    partTag: 6
+    shellDurability: 3
+    fleshDurability: 3
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  openingCards:
+  - {fileID: 11400000, guid: 9175176f54676b94ba6ec08e3859219e, type: 2}
+  - {fileID: 11400000, guid: c99efc5af53227e479b5ea3520ddf764, type: 2}
+  - {fileID: 11400000, guid: 2aea4740ed31c7f45a99af956bdfb0d8, type: 2}
+  escalationCards:
+  - {fileID: 11400000, guid: f4daf6315e306d743b74b77e8e5e7d4f, type: 2}
+  - {fileID: 11400000, guid: c13b78e15f73a5b4c9af959d7d627d6d, type: 2}
+  - {fileID: 11400000, guid: 83226eb033751184d8e71dd05f694333, type: 2}
+  - {fileID: 11400000, guid: 910ef8d46c88f1749b4ebea4e9ebde22, type: 2}
+  - {fileID: 11400000, guid: 4e15f7fa88f10fd48b2cda9c3c776b04, type: 2}
+  - {fileID: 11400000, guid: 8d315d88c702f694f83f92f7ef096cf1, type: 2}
+  - {fileID: 11400000, guid: 40a2d5fed3a0bfe4dbe1f14602a37c5e, type: 2}
+  apexCards:
+  - {fileID: 11400000, guid: 7f9fe99c11c8dd1488691654866fa467, type: 2}
+  - {fileID: 11400000, guid: 950b33f36f87a604995445e3d62fabab, type: 2}
+  - {fileID: 11400000, guid: 85e5ad4212dc71a45ad0662c129386ce, type: 2}
+  - {fileID: 11400000, guid: 2f6f67c9ec9da1b4bb3336b463137fa9, type: 2}
+  - {fileID: 11400000, guid: 8ab2e514054aaeb4cb89fba8b4955a29, type: 2}
+  - {fileID: 11400000, guid: ec3f7a8ce12bc14429ca467a78739658, type: 2}
+  permanentCards:
+  - {fileID: 11400000, guid: ed1d81cf861498947834f760a3bb5aaa, type: 2}
+  weaknesses: 
+  resistances: 
+  frontFacing:
+    primaryZone: 0
+    secondaryZone: 1
+    tertiaryZone: 3
+    primaryZoneWeight: 50
+    secondaryZoneWeight: 30
+    tertiaryZoneWeight: 20
+  flankFacing:
+    primaryZone: 3
+    secondaryZone: 10
+    tertiaryZone: 5
+    primaryZoneWeight: 50
+    secondaryZoneWeight: 30
+    tertiaryZoneWeight: 20
+  rearFacing:
+    primaryZone: 5
+    secondaryZone: 6
+    tertiaryZone: 10
+    primaryZoneWeight: 50
+    secondaryZoneWeight: 30
+    tertiaryZoneWeight: 20
+  trapZoneParts:
+  - Snout
+  - Dorsal Ridge
+  lootTable:
+  - resource: {fileID: 11400000, guid: adcab74ce8168f04397ffe66a63fe8fd, type: 2}
+    minAmount: 3
+    maxAmount: 5
+    weight: 40
+  - resource: {fileID: 11400000, guid: 5c758e53d6d414e41abd1f1e5d9bea44, type: 2}
+    minAmount: 3
+    maxAmount: 4
+    weight: 30
+  - resource: {fileID: 11400000, guid: 194735fe0c9b11948a266de17c868522, type: 2}
+    minAmount: 2
+    maxAmount: 3
+    weight: 50
+  - resource: {fileID: 11400000, guid: 1af88fb4aa9938a4eae914fa54a526fe, type: 2}
+    minAmount: 1
+    maxAmount: 2
+    weight: 30
+  - resource: {fileID: 11400000, guid: d9940711bb75d65479ddf4957f6f72f9, type: 2}
+    minAmount: 0
+    maxAmount: 1
+    weight: 15
+  stances: []

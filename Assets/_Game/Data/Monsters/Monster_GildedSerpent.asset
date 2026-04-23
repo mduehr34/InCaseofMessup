@@ -1,0 +1,210 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fca2cbac5ab82747a30962a8672c4c0, type: 3}
+  m_Name: Monster_GildedSerpent
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.MonsterSO
+  monsterName: The Gilded Serpent
+  materialTier: 3
+  animalBasis: Vast serpent, Marrow-saturated, gold luminescent scales
+  combatEmotion: "Patient menace \u2014 coils, controls terrain, strikes with precision"
+  coreSkillTaught: 
+  gridFootprintStandard: {x: 4, y: 1}
+  gridFootprintHardened: {x: 4, y: 1}
+  gridFootprintApex: {x: 5, y: 1}
+  statBlocks:
+  - movement: 5
+    accuracy: 3
+    strength: 3
+    toughness: 3
+    evasion: 2
+    behaviorDeckSizeRemovable: 10
+  - movement: 7
+    accuracy: 4
+    strength: 4
+    toughness: 4
+    evasion: 3
+    behaviorDeckSizeRemovable: 13
+  - movement: 9
+    accuracy: 5
+    strength: 5
+    toughness: 5
+    evasion: 4
+    behaviorDeckSizeRemovable: 16
+  standardParts:
+  - partName: Head
+    partTag: 0
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Upper Coil
+    partTag: 3
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 1
+  - partName: Mid Coil
+    partTag: 2
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Lower Coil
+    partTag: 4
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 1
+  - partName: Tail Tip
+    partTag: 6
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  hardenedParts:
+  - partName: Head
+    partTag: 0
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Upper Coil
+    partTag: 3
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 1
+  - partName: Mid Coil
+    partTag: 2
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Lower Coil
+    partTag: 4
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 1
+  - partName: Tail Tip
+    partTag: 6
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  apexParts:
+  - partName: Head
+    partTag: 0
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Upper Coil
+    partTag: 3
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 1
+  - partName: Mid Coil
+    partTag: 2
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  - partName: Lower Coil
+    partTag: 4
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 1
+  - partName: Tail Tip
+    partTag: 6
+    shellDurability: 3
+    fleshDurability: 4
+    breakRemovesCardNames: []
+    woundRemovesCardNames: []
+    isTrapZone: 0
+  openingCards:
+  - {fileID: 11400000, guid: bdba5572fbca23e44909d1377ba1eedd, type: 2}
+  - {fileID: 11400000, guid: 2d7f1567de9b5954db86fe505c9bc1b5, type: 2}
+  - {fileID: 11400000, guid: 5c5e2a728d8614a49a716a1c2e5b45ca, type: 2}
+  escalationCards:
+  - {fileID: 11400000, guid: add26aeda15a8294ca45cf16ce6d035b, type: 2}
+  - {fileID: 11400000, guid: ade34e9af269ed44db098213ebff6a44, type: 2}
+  - {fileID: 11400000, guid: 63545afaccea8c64da8970461809e551, type: 2}
+  - {fileID: 11400000, guid: cc662c53fd918da46a2a0b63951fab64, type: 2}
+  - {fileID: 11400000, guid: 9fb2894d4f2161045b66b9cf37dfcd40, type: 2}
+  - {fileID: 11400000, guid: 251e2f9f706952d4b9c6aa90a534084d, type: 2}
+  - {fileID: 11400000, guid: 9ef740d75caba074e97dcad5ab905b9d, type: 2}
+  apexCards:
+  - {fileID: 11400000, guid: 3c791eda954cc644fbea46ab1da7ca20, type: 2}
+  - {fileID: 11400000, guid: 7f9ea68d4d852ff4197954977bb7b042, type: 2}
+  - {fileID: 11400000, guid: c39f88c3dc9a6884c990a1640e51b751, type: 2}
+  - {fileID: 11400000, guid: 3d646d51ba1c65a42af5d263cf69bd7e, type: 2}
+  - {fileID: 11400000, guid: 8e5df309c2103f84d8d5823f426fe948, type: 2}
+  - {fileID: 11400000, guid: aba84862e29afc540835f3a9c034247d, type: 2}
+  permanentCards:
+  - {fileID: 11400000, guid: b91c061012b0b9b499b4e93f3da7eb0f, type: 2}
+  weaknesses: 02000000
+  resistances: 01000000
+  frontFacing:
+    primaryZone: 0
+    secondaryZone: 2
+    tertiaryZone: 3
+    primaryZoneWeight: 50
+    secondaryZoneWeight: 30
+    tertiaryZoneWeight: 20
+  flankFacing:
+    primaryZone: 3
+    secondaryZone: 2
+    tertiaryZone: 6
+    primaryZoneWeight: 50
+    secondaryZoneWeight: 30
+    tertiaryZoneWeight: 20
+  rearFacing:
+    primaryZone: 6
+    secondaryZone: 4
+    tertiaryZone: 2
+    primaryZoneWeight: 50
+    secondaryZoneWeight: 30
+    tertiaryZoneWeight: 20
+  trapZoneParts:
+  - Upper Coil
+  - Lower Coil
+  lootTable:
+  - resource: {fileID: 11400000, guid: 5da360bf6fd4b7c46a92359c854b4d38, type: 2}
+    minAmount: 2
+    maxAmount: 3
+    weight: 60
+  - resource: {fileID: 11400000, guid: 71ec2d95633035d4f94cc142d3f1594c, type: 2}
+    minAmount: 1
+    maxAmount: 2
+    weight: 40
+  - resource: {fileID: 11400000, guid: 71780d90f40b90b4b9c4e33ebc3f4336, type: 2}
+    minAmount: 0
+    maxAmount: 1
+    weight: 20
+  stances: []
