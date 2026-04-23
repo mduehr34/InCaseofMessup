@@ -33,7 +33,7 @@ Read these files before doing anything:
 # Stage 7-N: All Monster SO Assets — Complete Data
 
 **Resuming from:** Stage 7-M complete  
-**Done when:** 5 monster SOs fully populated (Gaunt, Thornback, Pack, Serpent, Pale Stag); Suture skeleton created with stat blocks only; behavior deck fields empty and flagged  
+**Done when:** 5 monster SOs fully populated (Gaunt, Thornback, Ivory Stampede, Gilded Serpent, The Spite); Suture skeleton created with stat blocks only; behavior deck fields empty and flagged  
 **Commit:** `"7N: All monster SO assets complete — Suture behavior deck pending design"`  
 **Next session:** STAGE_07_O.md  
 
@@ -76,7 +76,7 @@ Rename `Mock_GauntStandard.asset` → `Monster_Gaunt.asset`. Populate all remain
 
 ---
 
-## Thornback Patriarch
+## Thornback
 
 **Save:** `Assets/_Game/Data/Monsters/Monster_Thornback.asset`
 
@@ -104,22 +104,22 @@ Rename `Mock_GauntStandard.asset` → `Monster_Gaunt.asset`. Populate all remain
 
 ---
 
-## The Pack — PackMonsterSO
+## The Ivory Stampede — PackMonsterSO
 
-**Save:** `Assets/_Game/Data/Monsters/Monster_ThePack.asset`
+**Save:** `Assets/_Game/Data/Monsters/Monster_TheIvoryStampede.asset`
 
 > ⚑ Must use `PackMonsterSO`, not `MonsterSO`. This is the ONLY monster that uses PackMonsterSO.
 
-`wolfCount = 3`. One shared behavior deck. Each wolf has its own health pool tracked at runtime.
+`unitCount = 3`. One shared behavior deck. Each elephant has its own health pool tracked at runtime.
 
-**Individual wolf stats (Standard):** Movement 8, Accuracy 2, Strength 2, Toughness 1, Evasion 3, footprint 1×1  
+**Individual elephant stats (Standard):** Movement 8, Accuracy 2, Strength 2, Toughness 1, Evasion 3, footprint 1×1  
 **Shared deck (Standard):** 9 removable, 1 permanent
 
-**Pack body parts per wolf (Standard Shell 2 / Flesh 2):** Head, Neck, Body, Legs (4 parts × 3 wolves = 12 tracked independently, but removed from SHARED deck)
+**Herd body parts per elephant (Standard Shell 2 / Flesh 2):** Head, Neck, Body, Legs (4 parts × 3 elephants = 12 tracked independently, but removed from SHARED deck)
 
-**Create Pack behavior cards** in `Assets/_Game/Data/Cards/Behavior/Pack/`. All 3 wolves execute the same drawn card simultaneously each Monster Phase.
+**Create Stampede behavior cards** in `Assets/_Game/Data/Cards/Behavior/IvoryStampede/`. All 3 elephants execute the same drawn card simultaneously each Monster Phase.
 
-**Loot table (Standard):** Bone 2–4, Hide 2–3, PackFang 2–3 (Common), PackPelt 1–2 (Uncommon), PackEye 0–1 (Rare)
+**Loot table (Standard):** Bone 2–4, Hide 2–3, IvoryTusk 2–3 (Common), HerdHide 1–2 (Uncommon), HerdEye 0–1 (Rare)
 
 ---
 
@@ -150,11 +150,15 @@ Rename `Mock_GauntStandard.asset` → `Monster_Gaunt.asset`. Populate all remain
 
 ---
 
-## The Pale Stag
+## The The Spite
 
-**Save:** `Assets/_Game/Data/Monsters/Monster_PaleStag.asset`
+**Save:** `Assets/_Game/Data/Monsters/Monster_TheSpite.asset`
 
-**Identity:** Material Tier 3. Year 12+ (gate-locked behind EVT-21). `animalBasis`: Enormous albino stag, antlers glow faintly with Marrow energy. `combatEmotion`: Alien calm — the Stag does not fear. It simply acts.
+**Identity:** Material Tier 3. Year 12+ (gate-locked behind EVT-21). `animalBasis`: Massive Marrow-enhanced honey badger (in-world name: The Spite), Marrow saturation concentrated in the hide and jaw. `combatEmotion`: Relentless — does not retreat, does not hesitate, continues through wounds that would collapse anything else.
+
+> ⚑ Combat identity to be fully defined in development stage. Two candidate mechanics under consideration:
+> - **Option A:** Shell regeneration — Shell values recover partially at the start of each Monster Phase, forcing hunters to manage break order carefully
+> - **Option B:** Wound resistance — wounds require a higher Force Check threshold to apply; hunters must commit harder to each strike
 
 **Stat Blocks:**
 
@@ -168,12 +172,12 @@ Rename `Mock_GauntStandard.asset` → `Monster_Gaunt.asset`. Populate all remain
 | Grid Footprint | 2×3 | 2×3 | 3×4 |
 | Removable Cards | 10 | 13 | 16 |
 
-**Standard body parts (Shell 2 / Flesh 4):** Crown (antlers), Head, Neck, Chest, Left Flank, Right Flank, Haunches  
-**weaknesses:** Venom. **resistances:** None.
+**Standard body parts (Shell 2 / Flesh 4):** Head, Jaw, Neck, Torso, Left Flank, Right Flank, Hindquarters  
+**weaknesses:** TBD at development stage. **resistances:** TBD at development stage.
 
-**Create Stag behavior cards** in `Assets/_Game/Data/Cards/Behavior/Stag/`. Design around high mobility, blinding Marrow effects, and reactions to Loud cards.
+**Create The Spite behavior cards** in `Assets/_Game/Data/Cards/Behavior/Spite/`. Design to be defined at development stage alongside combat identity selection.
 
-**Loot table (Standard):** StagAntler 2–3 (Common), StagPelt 1–2 (Uncommon), CrownShard 0–1 (Rare)
+**Loot table (Standard):** IronClaw 2–3 (Common), IronhidePelt 1–2 (Uncommon), GallShard 0–1 (Rare)
 
 ---
 
@@ -198,12 +202,51 @@ Fill stat blocks only:
 
 ---
 
+## The Penitent — Overlord Skeleton (OVR-02)
+
+**Save:** `Assets/_Game/Data/Monsters/Overlord_Penitent.asset`
+
+**Identity:** Overlord. Year 15. `animalBasis`: Massive Marrow-corrupted primate, twisted into a permanent hunched posture by Marrow saturation. `combatEmotion`: Does not attack out of hunger or territory — it senses harvested Marrow on the hunters and is drawn to whoever carries the most. Deliberate, ancient, wrong.
+
+**Targeting Rule:** At the start of each Monster Phase, The Penitent targets the hunter carrying the `MarrowBeacon` status if present. Otherwise targets the hunter with the highest total Shell across all equipped armor. This is resolved by a new `AggroManager.GetPenitentTarget()` method.
+
+> ⚑ `ExecuteCard()` and `EvaluateTrigger()` are currently stubs — targeting logic slots in when those are implemented (scheduled for Stage 3-C).
+
+**Loot table:** Bone 3–5, Hide 3–4, PenitentGland 1 (always, Rare — required for Marrow Lure recipe)
+
+**Drops:** First Tier 3 materials
+
+---
+
+### Marrow Lure — Design Spec (Item, Tier 3)
+
+> ⚑ Full ItemSO definition belongs in the crafting stage. This section is a design anchor — do not build the SO here.
+
+**Unlock:** Craftable after first Penitent kill. Requires `PenitentGland`.  
+**Recipe (proposed):** PenitentGland × 1, Bone × 4, Hide × 3, any Tier 3 unique × 1  
+**Effect:** Hunter equipped with this item receives `MarrowBeacon` status at hunt start. All Marrow-sensitive monsters (The Penitent, The Suture, any future monsters flagged `marrowSensitive = true`) lock this hunter as primary target.  
+**Design note:** Intentional risk/reward — equipping hunter acts as a permanent taunt. Pairs with the Draw the Hunt card to manage where the beacon sits mid-combat.
+
+---
+
+### Draw the Hunt — Design Spec (Hunter Action Card)
+
+> ⚑ Full card SO definition belongs in the hunter card design stage. This section is a design anchor only.
+
+**Source:** Unlocked alongside the Marrow Lure — granted when the recipe is first crafted.  
+**Type:** Hunter action card (played from hand during Hunter Phase).  
+**Effect:** Transfer `MarrowBeacon` status from the current carrier to another hunter in range for 1 round. At the start of the next round the status returns to the equipped hunter.  
+**Cost:** 1 AP  
+**Design note:** Converts the Lure from a passive taunt into a tactical tool. Lets the party bait a specific attack onto a hunter who is better positioned to absorb it, then return aggro to the tank.
+
+---
+
 ## Verification Test
 
 - [ ] Monster_Gaunt.asset has all body parts, break/wound removals, facing tables, loot table
 - [ ] breakRemovesCardNames strings exactly match BehaviorCardSO asset names
-- [ ] Monster_ThePack.asset uses PackMonsterSO (confirmed in Inspector Type field)
-- [ ] EVT-21 correctly gates Pale Stag — not in hunt roster until event fires
+- [ ] Monster_TheIvoryStampede.asset uses PackMonsterSO (confirmed in Inspector Type field)
+- [ ] EVT-21 correctly gates The Spite — not in hunt roster until event fires
 - [ ] Monster_Suture.asset exists with stat blocks but empty behavior fields
 - [ ] Suture NOT in Standard CampaignSO monsterRoster
 

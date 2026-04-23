@@ -5,6 +5,7 @@
 * Before starting a new feature or logic block, ensure the current state is stable.
 * Suggest a Git commit point after every successful sub-feature implementation (e.g., "Movement logic working").
 * Generate the exact terminal command needed to enter for the git commit point.
+* Provide the validation testing for each session once you complete your changes.
 
 ## Testing \& Mock Data
 
@@ -18,6 +19,7 @@
 
 * When creating complex ScriptableObject structures, suggest a custom Inspector or Editor Window if the default Unity view becomes difficult to manage.
 * Art generation (Anthropic image API) is an **Editor tool only** — not runtime. Build a custom Editor Window to trigger generation, preview results, and save approved sprites to the correct asset folder.
+* You have access to the Unity Editor via CoPlay MCP, you should be able to modify everything in the project without me manually having to generate anything.
 
 ## Stage Gates
 
@@ -35,7 +37,7 @@ Before implementing any of the following, stop and ask for explicit confirmation
 * Any deviation from the Assembly Definition structure (no new assemblies without approval)
 * Any interpretation of a Chronicle Event's "mechanicalEffect" string that isn't obviously a stat or resource change
 * Any art generation prompt not derived from Appendix B of the GDD
-* Any monster created using PackMonsterSO (only The Pack uses this)
+* Any monster created using PackMonsterSO (only The Ivory Stampede uses this)
 
 ## Session Opening Checklist
 

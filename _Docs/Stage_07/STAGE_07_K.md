@@ -65,8 +65,8 @@ Asset naming convention: `Event_EVT01`, `Event_EVT02`, etc.
 |---|---|---|---|---|---|---|---|
 | EVT-09 | `Event_EVT09` | Foundation Stones | 6 | 8 | true | None | Mandatory first time Tier 1 Crafter built. Dig reveals worked stone. Codex: "First Ruins." narrativeText: "These stones are too regular to be natural. Someone put them here. Long before us." |
 | EVT-10 | `Event_EVT10` | The Old Tools | 7 | 10 | false | A: Reverse engineer (unlock 1 random Innovation immediately) / B: Smelt down (gain 3 Dense Bone equivalent materials) | |
-| EVT-11 | `Event_EVT11` | Pack Survivor | varies | varies | false | A: Hunt it down (gain 2 Pack materials) / B: Leave it (30% chance triggers EVT-12) | `monsterTag = "The Pack"`. Fires after any Pack hunt. |
-| EVT-12 | `Event_EVT12` | The Lone Wolf | varies | varies | false | A: Attempt contact (Codex unlock "Pack Shard", wolf moves on) / B: Kill it (gain 3 Pack materials) | Triggered by EVT-11 Choice B (30% chance). |
+| EVT-11 | `Event_EVT11` | Stampede Survivor | varies | varies | false | A: Hunt it down (gain 2 Ivory Stampede materials) / B: Leave it (30% chance triggers EVT-12) | `monsterTag = "The Ivory Stampede"`. Fires after any Ivory Stampede hunt. |
+| EVT-12 | `Event_EVT12` | The Lone Elephant | varies | varies | false | A: Attempt contact (Codex unlock "Ivory Shard", elephant moves on) / B: Kill it (gain 3 Ivory Stampede materials) | Triggered by EVT-11 Choice B (30% chance). |
 | EVT-13 | `Event_EVT13` | Marrow Seep | 8 | 12 | false | A: Seal it (costs 3 Dense Bone, no further effect) / B: Study it (unlock Codex "Marrow Exposed", trigger GP-03) | `choice.guidingPrincipalTrigger = "GP-03"` on Choice B |
 | EVT-14 | `Event_EVT14` | The Grief | varies | varies | true | None | Mandatory after any permanent character death. mechanicalEffect: "One hunter chosen by player gains Disorder: Grief (-1 Accuracy for 3 hunts, auto-removes)." narrativeText: "Grief comes. It always comes." |
 | EVT-15 | `Event_EVT15` | Hard Winter | 6 | 10 | false | A: Ration supplies (lose 4 generic resources) / B: Hunt early (next hunt forces specific monster) | `seasonTag = "winter"` |

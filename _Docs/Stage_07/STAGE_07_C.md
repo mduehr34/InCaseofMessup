@@ -106,4 +106,4 @@ Click **Apply** after each sprite.
 ## Next Session
 
 **File:** `_Docs/Stage_07/STAGE_07_D.md`  
-**Covers:** Import all monster sprites — Gaunt, Thornback, Pack Wolf, Gilded Serpent, Pale Stag, Suture
+**Covers:** Import all monster sprites — Gaunt, Bog Caller, Thornback, Ivory Stampede (single), Shriek, Rotmother, Gilded Serpent, The Spite + 4 overlords

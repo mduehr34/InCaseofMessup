@@ -5,22 +5,22 @@
 
 ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
 
-Stage 7-F | Character Animation Frames & AudioManager
-Status: Stage 7-E complete. UI and settlement art saved.
-Task: Generate animation frames for Aldric (Walk 4f, Attack
-3f, Collapse 2f) using the locked prompt template.
-Then implement AudioManager.cs with full music context
-switching and SFX playback.
+Stage 7-F | Aldric Animation Frames & AudioManager
+Status: Stage 7-E complete. UI and settlement art imported.
+Task: Import the Aldric animation sprite sheet (or individual
+frames) and slice them into Unity sprite frames. Then implement
+AudioManager.cs with full music context switching and SFX.
 
 Read these files before doing anything:
 - .cursorrules
 - claude.md
 - _Docs/Stage_07/STAGE_07_F.md
-- Assets/_Game/Art/Generated/Characters/aldric_approved.png
+- Assets/_Game/Art/Generated/Characters/char_aethel_idle.png
 - Assets/_Game/Scripts/Core.Data/Enums.cs
 
 Then confirm:
-- Animation frames match the Aldric approved idle sprite
+- Whether the art is delivered as a sprite sheet or individual
+  frames (this determines the import method below)
 - AudioManager uses Unity AudioMixer
 - Death sting: brief mournful sound, then 2s silence before
   music resumes
@@ -29,46 +29,86 @@ Then confirm:
 ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 ============================================================ -->
 
-# Stage 7-F: Character Animation Frames & AudioManager
+# Stage 7-F: Aldric Animation Frames & AudioManager
 
 **Resuming from:** Stage 7-E complete  
-**Done when:** Aldric walk/attack/collapse frames generated; AudioManager compiles and logs context switches correctly  
-**Commit:** `"7F: Aldric animation frames, AudioManager with death sting and context switching"`  
+**Done when:** All 11 Aldric animation frames sliced and named correctly in Unity; AudioManager compiles and logs context switches correctly  
+**Commit:** `"7F: Aldric animation frames imported and sliced, AudioManager with death sting and context switching"`  
 **Next session:** STAGE_07_G.md  
 
 ---
 
 ## Part 1: Animation Frames
 
-Per GDD Appendix B.2, each character needs:
+Per GDD Appendix B.2, Aldric (Aethel build) needs:
 - Idle: 2 frames
 - Walk: 4 frames
 - Attack: 3 frames
 - Collapse: 2 frames
 
-Total per build: 11 frames. Generate Aldric (Aethel) as the template — other builds follow the same structure in a later session.
-
-**Frame naming convention:**
-```
-aldric_idle_01.png, aldric_idle_02.png
-aldric_walk_01.png ... aldric_walk_04.png
-aldric_attack_01.png ... aldric_attack_03.png
-aldric_collapse_01.png, aldric_collapse_02.png
-```
-
-**Prompt modifications per animation state:**
-
-| State | Add to locked prompt |
-|---|---|
-| Idle 2 | `subtle weight shift, slightly different arm position from frame 1` |
-| Walk 1-4 | `mid-stride walking pose frame N of 4, legs in walking cycle` |
-| Attack 1 | `windup pose, weapon raised or fist drawn back` |
-| Attack 2 | `mid-swing, weapon/fist extended forward` |
-| Attack 3 | `follow-through, slight recoil` |
-| Collapse 1 | `stumbling backward, knees buckling` |
-| Collapse 2 | `collapsed on ground, face down or side, motionless` |
+**Total: 11 frames.**
 
 **Save path:** `Assets/_Game/Art/Generated/Characters/Aldric/`
+
+---
+
+### Option A — Sprite Sheet Import
+
+If the art is delivered as a single horizontal sprite sheet with all 11 frames:
+
+1. Import the sheet PNG using the Art Importer → subfolder `Characters`, name `aldric_sheet`
+2. In the Inspector set:
+   ```
+   Texture Type:     Sprite (2D and UI)
+   Sprite Mode:      Multiple
+   Pixels Per Unit:  16
+   Filter Mode:      Point (No Filter)
+   Compression:      None
+   ```
+3. Click **Sprite Editor** → **Slice** → **Grid By Cell Size** → Width: 32, Height: 64
+4. Rename each sliced cell in the Sprite Editor to match the convention below
+5. Click **Apply**
+
+---
+
+### Option B — Individual Frame Import
+
+If the art is delivered as separate PNG files per frame:
+
+1. Import each frame individually with the Art Importer → subfolder `Characters`
+2. Use this exact naming convention:
+
+```
+aldric_idle_01.png     aldric_idle_02.png
+aldric_walk_01.png     aldric_walk_02.png
+aldric_walk_03.png     aldric_walk_04.png
+aldric_attack_01.png   aldric_attack_02.png   aldric_attack_03.png
+aldric_collapse_01.png aldric_collapse_02.png
+```
+
+3. Apply import settings to each frame:
+   ```
+   Texture Type:     Sprite (2D and UI)
+   Pixels Per Unit:  16
+   Filter Mode:      Point (No Filter)
+   Compression:      None
+   Max Size:         64
+   ```
+
+---
+
+### Frame Content Reference
+
+| Frame | Pose Description |
+|---|---|
+| Idle 1 | Resting stance |
+| Idle 2 | Subtle weight shift, slightly different arm position |
+| Walk 1–4 | Full walk cycle, legs progressing through stride |
+| Attack 1 | Windup — weapon raised or fist drawn back |
+| Attack 2 | Mid-swing — weapon/fist extended forward |
+| Attack 3 | Follow-through — slight recoil |
+| Collapse 1 | Stumbling backward, knees buckling |
+| Collapse 2 | On the ground, motionless |
 
 ---
 
@@ -296,8 +336,10 @@ AudioManager.Instance?.SetContextForYear(
 ## Verification Test
 
 **Art:**
-- [ ] 11 Aldric frames generated and saved with consistent style
-- [ ] Walk cycle looks like coherent motion when viewed sequentially
+- [ ] 11 Aldric frames exist in `Assets/_Game/Art/Generated/Characters/Aldric/`
+- [ ] All frames use correct naming convention (aldric_[state]_[NN].png)
+- [ ] All frames have Point (No Filter) import setting
+- [ ] Walk cycle looks like coherent motion when viewed sequentially in Sprite Editor
 - [ ] Collapse frame 2 is clearly defeated / on ground
 
 **Audio:**

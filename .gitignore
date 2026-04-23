@@ -97,3 +97,8 @@ InitTestScene*.unity*
 
 # Auto-generated scenes by play mode tests
 /[Aa]ssets/[Ii]nit[Tt]est[Ss]cene*.unity*
+
+# MCP tool output artifacts
+/[Aa]ssets/Editor/aseprite_inspect.txt*
+/[Aa]ssets/Editor/audio_verify.txt*
+/[Aa]ssets/_Recovery*
