@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.MonsterSO
   monsterName: The Gilded Serpent
   materialTier: 3
+  availableFromYear: 8
   animalBasis: Vast serpent, Marrow-saturated, gold luminescent scales
   combatEmotion: "Patient menace \u2014 coils, controls terrain, strikes with precision"
   coreSkillTaught: 

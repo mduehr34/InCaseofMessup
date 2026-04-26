@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.MonsterSO
   monsterName: The Gaunt
   materialTier: 1
+  availableFromYear: 1
   animalBasis: "Marrow-starved wolf, enormous, blind \u2014 hunts by sound and vibration"
   combatEmotion: "Tension \u2014 the monster reacts to noise and movement, not sight"
   coreSkillTaught: Positioning and facing

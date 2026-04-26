@@ -12,15 +12,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb3acb8d3a2864a498d05c70f2bd0a2c, type: 3}
   m_Name: Campaign_Standard
   m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.CampaignSO
-  campaignName: Standard Campaign
+  campaignName: The Standard Campaign
   difficulty: 1
   campaignLengthYears: 30
   startingCharacterCount: 8
   baseMovement: 3
   startingGrit: 3
   ironmanMode: 0
-  monsterRoster: []
-  eventPool: []
+  monsterRoster:
+  - {fileID: 11400000, guid: 9b47334a3da03b445b364fb050f2479d, type: 2}
+  - {fileID: 11400000, guid: 754f3eb646938d246abd58afb97105a0, type: 2}
+  - {fileID: 11400000, guid: d7f5ae66858232e4ca8693fa67a67e0d, type: 2}
+  - {fileID: 11400000, guid: 478172f8285f1b34da3ad9033541e11d, type: 2}
+  - {fileID: 11400000, guid: b8b8a52ecb5028448b24a2bb5978a4a1, type: 2}
+  eventPool:
+  - {fileID: 11400000, guid: ee01000000000000ee01000000000000, type: 2}
+  - {fileID: 11400000, guid: ee02000000000000ee02000000000000, type: 2}
+  - {fileID: 11400000, guid: ee03000000000000ee03000000000000, type: 2}
+  - {fileID: 11400000, guid: ee04000000000000ee04000000000000, type: 2}
+  - {fileID: 11400000, guid: ee05000000000000ee05000000000000, type: 2}
+  - {fileID: 11400000, guid: ee06000000000000ee06000000000000, type: 2}
+  - {fileID: 11400000, guid: ee07000000000000ee07000000000000, type: 2}
+  - {fileID: 11400000, guid: ee08000000000000ee08000000000000, type: 2}
+  - {fileID: 11400000, guid: ee09000000000000ee09000000000000, type: 2}
+  - {fileID: 11400000, guid: ee0a000000000000ee0a000000000000, type: 2}
+  - {fileID: 11400000, guid: ee0b000000000000ee0b000000000000, type: 2}
+  - {fileID: 11400000, guid: ee0c000000000000ee0c000000000000, type: 2}
+  - {fileID: 11400000, guid: ee0d000000000000ee0d000000000000, type: 2}
+  - {fileID: 11400000, guid: ee0e000000000000ee0e000000000000, type: 2}
+  - {fileID: 11400000, guid: ee0f000000000000ee0f000000000000, type: 2}
+  - {fileID: 11400000, guid: 0d7960d2252b97d4bb7ed66f840719cf, type: 2}
+  - {fileID: 11400000, guid: 8509c711fd422d248a73ec47c6a8afc7, type: 2}
+  - {fileID: 11400000, guid: f5902f7afc6199d419d8a93c47cce777, type: 2}
+  - {fileID: 11400000, guid: bad2db61f36a732419a93ac58debdefc, type: 2}
+  - {fileID: 11400000, guid: 73cc365e3a99a164c9972767cf3432c6, type: 2}
+  - {fileID: 11400000, guid: bd9d90af931d1fa458f62f2576a9e245, type: 2}
+  - {fileID: 11400000, guid: 505a665fc4869e84dacd56752400500b, type: 2}
+  - {fileID: 11400000, guid: ccd14570df10df44f8d842992c5ab79b, type: 2}
+  - {fileID: 11400000, guid: f2a07fd7e2d5c4347a543832dfac2c59, type: 2}
+  - {fileID: 11400000, guid: b8ce0c6df0bd347428a3f5ef4a070b4a, type: 2}
+  - {fileID: 11400000, guid: 0a9e791681d96ef4d92027033b942468, type: 2}
+  - {fileID: 11400000, guid: d1983b607658aae4dabbc05645945323, type: 2}
+  - {fileID: 11400000, guid: 27b29898f9f338944894f2affaf5f357, type: 2}
+  - {fileID: 11400000, guid: 6a85523b0acc3914faa9c28102910ab2, type: 2}
+  - {fileID: 11400000, guid: 96bce25b375fac448bd303f758d4631a, type: 2}
   startingInnovations:
   - {fileID: 11400000, guid: 9e082aa0030da364b9794b30dc597f80, type: 2}
   - {fileID: 11400000, guid: 3720c18bf9d5def40814b4a0a8734736, type: 2}
@@ -28,7 +63,12 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 03b3c5f3e95b4cf4ebf92a0e76c626b9, type: 2}
   - {fileID: 11400000, guid: 0570ffce9a2af2643adb82b729230e47, type: 2}
   - {fileID: 11400000, guid: 87f7f38413dc5464ba7578cd8ce9626b, type: 2}
-  crafterPool: []
+  crafterPool:
+  - {fileID: 11400000, guid: ac5448effe75c2f46b0f8fb1e25990c8, type: 2}
+  - {fileID: 11400000, guid: ee6e84d0a0d456a409b6654c20262f66, type: 2}
+  - {fileID: 11400000, guid: c54b938ec53fe8045962f063258d0236, type: 2}
+  - {fileID: 11400000, guid: 424eb69048211e645ba1e365404a3fe1, type: 2}
+  - {fileID: 11400000, guid: 776896fa4683e4140ad353ecfede7b65, type: 2}
   guidingPrincipals:
   - {fileID: 11400000, guid: 65a01f650d3b89646a32c02b46b5d027, type: 2}
   - {fileID: 11400000, guid: 3228b8ef99253e342b536f25cef02571, type: 2}
@@ -37,5 +77,16 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 8a90cd7261994434d92be526b437dce5, type: 2}
   retirementHuntCount: 10
   birthConditionAge: 0
-  overlordMonster: {fileID: 0}
-  overlordApproachYears: 
+  overlordSchedule:
+  - overlordMonster: {fileID: 11400000, guid: e05fabe656914e342881dc00e49f8cd9, type: 2}
+    arrivalYear: 5
+    approachYears: 0300000004000000
+  - overlordMonster: {fileID: 11400000, guid: 79d31b42e397e5d498a80b1ed868f0f4, type: 2}
+    arrivalYear: 15
+    approachYears: 0c0000000e000000
+  - overlordMonster: {fileID: 11400000, guid: 210a1200392677745ac4ccfd702e9d9a, type: 2}
+    arrivalYear: 25
+    approachYears: 1600000018000000
+  - overlordMonster: {fileID: 11400000, guid: 8de2f802ffd8e044f9ae8878f66c34c5, type: 2}
+    arrivalYear: 30
+    approachYears: 190000001b0000001d000000

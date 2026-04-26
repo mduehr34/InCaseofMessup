@@ -46,10 +46,14 @@ namespace MnM.Core.UI
             content.Clear();
 
             var campaignState = GameStateManager.Instance.CampaignState;
+            int currentYear = campaignState.currentYear;
             foreach (var monster in _campaignSO.monsterRoster)
             {
                 if (monster == null) continue;
-                // The Spite is hidden until EVT-21 sets the unlock flag
+                // Year gate — monster not yet available
+                if (monster.availableFromYear > 0 && currentYear < monster.availableFromYear)
+                    continue;
+                // The Spite additionally requires EVT-21 to have fired
                 if (monster.monsterName == "The Spite" &&
                     !campaignState.unlockedCodexEntryIds.Contains("TheSpite_Unlocked"))
                     continue;

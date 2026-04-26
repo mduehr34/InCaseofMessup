@@ -27,7 +27,8 @@ Read these files before doing anything:
 
 **Resuming from:** Stage 7-P complete  
 **Done when:** All GDD A.13 balance scenarios pass within expected ranges; AudioManager verified; Stage 7 Definition of Done fully checked off  
-**Commit:** `"7Q: Balance pass complete — Stage 7 and full game complete"`  
+**Commit:** `"7Q: Balance pass complete — gear logic and final Stage 7 DoD in 7-R"`  
+**Next session:** STAGE_07_R.md  
 
 ---
 
@@ -167,6 +168,7 @@ These items are intentionally deferred — they require design decisions before 
 
 | Item | Status | Next Step |
 |---|---|---|
+| Gear link/set/consumable logic | Scoped — see STAGE_07_R.md | Implement in 7-R before Stage 8 |
 | The Suture behavior deck | Stat blocks created, deck empty | Design session with developer |
 | Remaining Crafter buildings (Herbalist, Forge, Tannery, Armory) | spriteAssetPath not yet set | Design item lists per crafter |
 | Thornback/Pack/Serpent/Stag craft item sets | Not yet created | Design items following Gaunt template |
@@ -181,8 +183,7 @@ These items are intentionally deferred — they require design decisions before 
 ## Final Commit
 
 ```
-"Stage 7 complete — full game verified: Tutorial and Standard Campaign, 
-all Gaunt content, art pipeline, AudioManager, balance pass passed"
+"7Q: Balance pass complete — gear logic and final Stage 7 DoD in 7-R"
 ```
 
-Congratulations. Marrow & Myth is playable.
+Continue to **STAGE_07_R.md** to implement gear link resolution, set bonuses, once-per-hunt tracking, and consumable logic before closing Stage 7.

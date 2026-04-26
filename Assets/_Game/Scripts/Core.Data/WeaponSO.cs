@@ -23,6 +23,10 @@ namespace MnM.Core.Data
         public ActionCardSO[] tier4Cards;
         public ActionCardSO[] tier5Cards;
 
+        [Header("Crafting")]
+        public ResourceSO[] craftingCost;
+        public int[] craftingCostAmounts;       // Parallel array with craftingCost
+
         [Header("Identity")]
         [TextArea] public string uniqueCapability;
         [TextArea] public string genuineCost;

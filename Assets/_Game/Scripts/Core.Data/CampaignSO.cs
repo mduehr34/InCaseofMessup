@@ -2,6 +2,14 @@ using UnityEngine;
 
 namespace MnM.Core.Data
 {
+    [System.Serializable]
+    public struct OverlordScheduleEntry
+    {
+        public MonsterSO overlordMonster;
+        public int arrivalYear;
+        public int[] approachYears;     // Years where warning events fire before arrival
+    }
+
     [CreateAssetMenu(menuName = "MnM/Campaign", fileName = "New Campaign")]
     public class CampaignSO : ScriptableObject
     {
@@ -27,8 +35,7 @@ namespace MnM.Core.Data
         public int retirementHuntCount;
         public int birthConditionAge;
 
-        [Header("Overlord")]
-        public MonsterSO overlordMonster;           // Year 30 final boss
-        public int[] overlordApproachYears;         // Years where Overlord warning events fire
+        [Header("Overlord Schedule")]
+        public OverlordScheduleEntry[] overlordSchedule;    // Ordered list of overlord encounters
     }
 }

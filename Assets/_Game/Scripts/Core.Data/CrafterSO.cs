@@ -9,6 +9,7 @@ namespace MnM.Core.Data
         public string monsterTag;               // Monster materials that unlock this
         public int materialTier;
         public ItemSO[] recipeList;
+        public WeaponSO[] weaponRecipeList;
         public ResourceSO[] unlockCost;
         public int[] unlockCostAmounts;         // Parallel array with unlockCost
         // Settlement scene placement

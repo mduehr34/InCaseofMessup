@@ -20,6 +20,7 @@ namespace MnM.Core.Data
 
         // Settlement
         public string[] builtCrafterNames;       // CrafterSO asset names of built Crafters
+        public string[] defeatedMonsterNames;    // Monster names defeated at least once — gates crafter unlock
         public string[] availableRecipeNames;    // ItemSO names currently craftable
 
         // Campaign progression — all IDs stored as strings
@@ -31,6 +32,9 @@ namespace MnM.Core.Data
         public string[] unlockedCodexEntryIds;
         public string[] activeGuidingPrincipalIds;
         public string[] resolvedGuidingPrincipalIds;
+
+        // Event condition flags — set by event resolution or settlement logic
+        public bool birthConditionMet;
 
         // Chronicle — human-readable log of all events and decisions
         public string[] chronicleLog;

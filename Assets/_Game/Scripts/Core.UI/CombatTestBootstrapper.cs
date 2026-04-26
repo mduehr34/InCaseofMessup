@@ -11,6 +11,7 @@ namespace MnM.Core.UI
     public class CombatTestBootstrapper : MonoBehaviour
     {
         [SerializeField] private CombatManager _combatManager;
+        [SerializeField] private MnM.Core.Data.MonsterSO _mockMonsterSO;
 
         private void Start()
         {
@@ -20,12 +21,16 @@ namespace MnM.Core.UI
                 return;
             }
 
-            // Prefer the real CombatState built by GameStateManager (normal hunt flow).
-            // Fall back to mock only when entering CombatScene directly (editor testing).
-            var realState = GameStateManager.Instance?.CombatState;
+            var gsm = GameStateManager.Instance;
+            var realState = gsm?.CombatState;
+
             if (realState != null && realState.hunters != null && realState.hunters.Length > 0)
             {
                 _combatManager.StartCombat(realState);
+                if (gsm.SelectedMonster != null)
+                    _combatManager.InitializeMonsterAI(gsm.SelectedMonster, gsm.SelectedDifficulty ?? "Standard");
+                else
+                    Debug.LogWarning("[Bootstrapper] Real state found but SelectedMonster is null — MonsterAI not initialized");
                 Debug.Log($"[Bootstrapper] Real combat started — " +
                           $"{realState.hunters.Length} hunters vs {realState.monster.monsterName}");
             }
@@ -33,6 +38,10 @@ namespace MnM.Core.UI
             {
                 var mockState = CombatStateFactory.BuildMockCombatState();
                 _combatManager.StartCombat(mockState);
+                if (_mockMonsterSO != null)
+                    _combatManager.InitializeMonsterAI(_mockMonsterSO, "Standard");
+                else
+                    Debug.LogWarning("[Bootstrapper] _mockMonsterSO not assigned — MonsterAI not initialized. Assign Monster_Gaunt in Inspector.");
                 Debug.Log("[Bootstrapper] Mock combat started — Aldric vs The Gaunt Standard " +
                           "(no real CombatState found — enter via Settlement→Hunt for real data)");
             }

@@ -9,7 +9,6 @@ namespace MnM.Core.UI
     public class SettlementScreenController : MonoBehaviour
     {
         [SerializeField] private UIDocument       _uiDocument;
-        [SerializeField] private CampaignSO       _campaignSO;
         [SerializeField] private VisualTreeAsset  _eventModalAsset;
         [SerializeField] private VisualTreeAsset  _gpModalAsset;
         [SerializeField] private VisualTreeAsset  _huntSelectModalAsset;
@@ -20,6 +19,7 @@ namespace MnM.Core.UI
         private string             _activeTab = "characters";
         private VisualElement      _activeModal = null;
         private InnovationSO[]     _drawnInnovations = null;
+        private bool               _innovationAdoptedThisPhase = false;
         private HuntSelectionModal _huntModal = new HuntSelectionModal();
 
         private void OnEnable()
@@ -35,7 +35,7 @@ namespace MnM.Core.UI
             }
 
             _settlement = new SettlementManager();
-            _settlement.Initialize(state, _campaignSO);
+            _settlement.Initialize(state, GameStateManager.Instance.CampaignData);
             AudioManager.Instance?.SetContextForYear(state.currentYear);
 
             _tabContent = _root.Q<ScrollView>("tab-content");
@@ -191,16 +191,24 @@ namespace MnM.Core.UI
         {
             _tabContent.Clear();
             var state = GameStateManager.Instance.CampaignState;
-            if (_campaignSO?.crafterPool == null)
+            if (GameStateManager.Instance.CampaignData?.crafterPool == null)
             {
                 _tabContent.Add(new Label("No crafters defined in CampaignSO"));
                 return;
             }
 
-            foreach (var crafter in _campaignSO.crafterPool)
+            foreach (var crafter in GameStateManager.Instance.CampaignData.crafterPool)
             {
                 if (crafter == null) continue;
                 bool isBuilt = System.Array.IndexOf(state.builtCrafterNames, crafter.crafterName) >= 0;
+                // Hide monster-tagged crafters until the associated monster has been defeated
+                if (!isBuilt && !string.IsNullOrEmpty(crafter.monsterTag))
+                {
+                    bool monsterDefeated = (state.defeatedMonsterNames ?? new string[0])
+                        .Select(n => n.Replace(" ", "").Replace("The", ""))
+                        .Any(n => n.Contains(crafter.monsterTag));
+                    if (!monsterDefeated) continue;
+                }
 
                 var row = new VisualElement();
                 row.AddToClassList("character-row");
@@ -319,6 +327,7 @@ namespace MnM.Core.UI
                 var innRef = inn;
                 var adoptBtn = new Button(() => OnAdoptInnovation(innRef)) { text = "ADOPT" };
                 adoptBtn.AddToClassList("small-btn");
+                adoptBtn.SetEnabled(!_innovationAdoptedThisPhase);
                 row.Add(adoptBtn);
 
                 _tabContent.Add(row);
@@ -328,7 +337,7 @@ namespace MnM.Core.UI
         private void OnAdoptInnovation(InnovationSO innovation)
         {
             _settlement.AdoptInnovation(innovation);
-            _drawnInnovations = null; // Reset — each settlement phase draws fresh
+            _innovationAdoptedThisPhase = true;
             BuildInnovationsTab();
             Debug.Log($"[Settlement] Adopted: {innovation.innovationName}");
         }
@@ -359,7 +368,7 @@ namespace MnM.Core.UI
                 Debug.LogWarning("[Settlement] Hunt select modal UXML not assigned");
                 return;
             }
-            _huntModal.Show(_root, _huntSelectModalAsset, _campaignSO);
+            _huntModal.Show(_root, _huntSelectModalAsset, GameStateManager.Instance.CampaignData);
         }
 
         private void OnCraftClicked()
@@ -372,7 +381,8 @@ namespace MnM.Core.UI
             var state = GameStateManager.Instance.CampaignState;
             _settlement.CheckAllRetirements();
             _settlement.AdvanceYear();
-            _drawnInnovations = null; // Year boundary — innovations refresh
+            _drawnInnovations = null;
+            _innovationAdoptedThisPhase = false;
             RefreshEraHeader();
             RefreshResourceSummary();
             RefreshSettlementScene();
@@ -384,7 +394,7 @@ namespace MnM.Core.UI
         private void RefreshSettlementScene()
         {
             var scene = _root.Q<VisualElement>("settlement-scene");
-            if (scene == null || _campaignSO?.crafterPool == null) return;
+            if (scene == null || GameStateManager.Instance.CampaignData?.crafterPool == null) return;
 
             scene.Clear();
 
@@ -397,7 +407,7 @@ namespace MnM.Core.UI
                 return;
             }
 
-            foreach (var crafter in _campaignSO.crafterPool)
+            foreach (var crafter in GameStateManager.Instance.CampaignData.crafterPool)
             {
                 if (crafter == null || crafter.structureSprite == null) continue;
                 bool isBuilt = System.Array.IndexOf(
@@ -462,7 +472,6 @@ namespace MnM.Core.UI
                 {
                     _settlement.ResolveEvent(evt, -1);
                     CloseModal();
-                    CheckAndFireChronicleEvent(); // Pick up next eligible event
                 };
             }
             else
@@ -481,7 +490,6 @@ namespace MnM.Core.UI
                         _settlement.ResolveEvent(evt, 0);
                         CloseModal();
                         CheckAndFireGuidingPrincipal();
-                        CheckAndFireChronicleEvent(); // Pick up next eligible event
                     };
                 }
 
@@ -493,7 +501,6 @@ namespace MnM.Core.UI
                         _settlement.ResolveEvent(evt, 1);
                         CloseModal();
                         CheckAndFireGuidingPrincipal();
-                        CheckAndFireChronicleEvent(); // Pick up next eligible event
                     };
                 }
                 else
@@ -561,8 +568,8 @@ namespace MnM.Core.UI
 
         private GuidingPrincipalSO FindGuidingPrincipal(string id)
         {
-            if (_campaignSO?.guidingPrincipals == null) return null;
-            return System.Array.Find(_campaignSO.guidingPrincipals, gp => gp.principalId == id);
+            if (GameStateManager.Instance.CampaignData?.guidingPrincipals == null) return null;
+            return System.Array.Find(GameStateManager.Instance.CampaignData.guidingPrincipals, gp => gp.principalId == id);
         }
     }
 }

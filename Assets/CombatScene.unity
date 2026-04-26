@@ -151,6 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MnM.Core.UI::MnM.Core.UI.CombatTestBootstrapper
   _combatManager: {fileID: 1066921340}
+  _mockMonsterSO: {fileID: 11400000, guid: 9b47334a3da03b445b364fb050f2479d, type: 2}
 --- !u!114 &1010199893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -165,6 +166,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: MnM.Core.UI::MnM.Core.UI.CombatScreenController
   _uiDocument: {fileID: 1010199894}
   _combatManager: {fileID: 1066921340}
+  _resultModalAsset: {fileID: 9197481963319205126, guid: 206abb6fb751bf442ae045797b1465cb, type: 3}
+  _gridManager: {fileID: 1980084148}
 --- !u!114 &1010199894
 MonoBehaviour:
   m_ObjectHideFlags: 0

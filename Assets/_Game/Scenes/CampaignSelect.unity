@@ -288,8 +288,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: MnM.Core.UI::MnM.Core.UI.CampaignSelectController
   _uiDocument: {fileID: 1371593996}
   _availableCampaigns:
-  - {fileID: 11400000, guid: 44e70e786c79f9547807517d8f3ccfb9, type: 2}
-  _tutorialCampaign: {fileID: 11400000, guid: 44e70e786c79f9547807517d8f3ccfb9, type: 2}
+  - {fileID: 11400000, guid: af12e9e5dc0b1b341a20f1508c51aaea, type: 2}
+  - {fileID: 11400000, guid: 4feece6ff1ed7aa46afedf4bb02465da, type: 2}
+  _tutorialCampaign: {fileID: 11400000, guid: af12e9e5dc0b1b341a20f1508c51aaea, type: 2}
 --- !u!114 &1371593996
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bddac852d8bb094cbc7caf7d420b3bc, type: 3}
+  m_Name: Item_GauntBoneBracers
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.ItemSO
+  itemName: Gaunt Bone Bracers
+  materialTier: 1
+  gridDimensions: {x: 1, y: 2}
+  isConsumable: 0
+  setNameTag: Gaunt Hunter's Set
+  accuracyMod: 0
+  strengthMod: 0
+  toughnessMod: 0
+  evasionMod: 0
+  luckMod: 0
+  movementMod: 0
+  affinityTags:
+  - GAUNT
+  linkPoints:
+  - affinityTag: GAUNT
+    direction: {x: 1, y: 0}
+  specialEffect: 'Link bonus: +1 Strength when linked to any GAUNT piece on right
+    side.'
+  craftingCost:
+  - {fileID: 11400000, guid: adcab74ce8168f04397ffe66a63fe8fd, type: 2}
+  - {fileID: 11400000, guid: f8a41f3cd8c25684ea616da3da854689, type: 2}
+  craftingCostAmounts: 0200000001000000
