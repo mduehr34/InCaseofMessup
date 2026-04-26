@@ -11,6 +11,7 @@ namespace MnM.Core.Systems
 
         // ── State ────────────────────────────────────────────────
         public CampaignState CampaignState { get; private set; }
+        public CampaignSO    CampaignData  { get; private set; }
         public CombatState   CombatState   { get; private set; }
         public HuntResult    LastHuntResult { get; private set; }
 
@@ -38,14 +39,16 @@ namespace MnM.Core.Systems
         // ── Campaign Lifecycle ────────────────────────────────────
         public void StartNewCampaign(CampaignSO campaignData)
         {
+            CampaignData  = campaignData;
             CampaignState = CampaignInitializer.CreateNewCampaign(campaignData);
             Debug.Log($"[GSM] New campaign started: {campaignData.campaignName} " +
                       $"Year:{CampaignState.currentYear}");
             SceneManager.LoadScene("Settlement");
         }
 
-        public void LoadCampaign(CampaignState state)
+        public void LoadCampaign(CampaignState state, CampaignSO campaignData)
         {
+            CampaignData  = campaignData;
             CampaignState = state;
             Debug.Log($"[GSM] Campaign loaded. Year:{state.currentYear}");
             SceneManager.LoadScene("Settlement");

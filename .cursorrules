@@ -47,13 +47,13 @@
 - Maximum 20 cards per hunter deck at any time
 - Late-game deck building requires actively removing Tier 1/2 cards to make room
 
-## Pack Special Rules (PackMonsterSO ONLY)
-- One shared behavior deck for all 3 wolves
-- Each Monster Phase: ONE card drawn; ALL three wolves execute that card's action simultaneously
-- Killing blow on any wolf → Aggro token transfers immediately to the hunter who dealt it
-- Win condition: all Removable cards removed from the shared deck (all 3 wolves defeated)
-- Part break/wound removals apply to the shared deck regardless of which wolf owns that part
-- ONLY The Pack uses PackMonsterSO. All other multi-difficulty variants use standard MonsterSO.
+## Herd Special Rules (PackMonsterSO ONLY)
+- One shared behavior deck for all 3 elephants
+- Each Monster Phase: ONE card drawn; ALL three elephants execute that card's action simultaneously
+- Killing blow on any elephant → Aggro token transfers immediately to the hunter who dealt it
+- Win condition: all Removable cards removed from the shared deck (all 3 elephants defeated)
+- Part break/wound removals apply to the shared deck regardless of which elephant owns that part
+- ONLY The Ivory Stampede uses PackMonsterSO. All other multi-difficulty variants use standard MonsterSO.
 
 ## ScriptableObject Asset Naming
 - General: [TypePrefix]_[ContentName] — e.g. Monster_Gaunt, Card_BracePosition, Event_EVT01
@@ -79,4 +79,4 @@
 - Adding any new Assembly Definition beyond the four defined in Stage 1
 - Interpreting a Chronicle Event's "mechanicalEffect" string that isn't an obvious stat or resource change
 - Writing any art generation prompt not derived from Appendix B of the GDD
-- Creating a new monster using PackMonsterSO (only The Pack uses this)
+- Creating a new monster using PackMonsterSO (only The Ivory Stampede uses this)

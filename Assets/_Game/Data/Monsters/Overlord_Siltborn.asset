@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fca2cbac5ab82747a30962a8672c4c0, type: 3}
+  m_Name: Overlord_Siltborn
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.MonsterSO
+  monsterName: The Siltborn
+  materialTier: 0
+  animalBasis: 
+  combatEmotion: 
+  coreSkillTaught: 
+  gridFootprintStandard: {x: 0, y: 0}
+  gridFootprintHardened: {x: 0, y: 0}
+  gridFootprintApex: {x: 0, y: 0}
+  statBlocks: []
+  standardParts: []
+  hardenedParts: []
+  apexParts: []
+  openingCards: []
+  escalationCards: []
+  apexCards: []
+  permanentCards: []
+  weaknesses: 
+  resistances: 
+  frontFacing:
+    primaryZone: 0
+    secondaryZone: 0
+    tertiaryZone: 0
+    primaryZoneWeight: 0
+    secondaryZoneWeight: 0
+    tertiaryZoneWeight: 0
+  flankFacing:
+    primaryZone: 0
+    secondaryZone: 0
+    tertiaryZone: 0
+    primaryZoneWeight: 0
+    secondaryZoneWeight: 0
+    tertiaryZoneWeight: 0
+  rearFacing:
+    primaryZone: 0
+    secondaryZone: 0
+    tertiaryZone: 0
+    primaryZoneWeight: 0
+    secondaryZoneWeight: 0
+    tertiaryZoneWeight: 0
+  trapZoneParts: []
+  lootTable: []
+  stances: []

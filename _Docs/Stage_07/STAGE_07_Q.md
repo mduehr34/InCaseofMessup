@@ -8,6 +8,7 @@
 Stage 7-Q | Final Balance Pass & Stage 7 Definition of Done
 Status: Stage 7-P complete. Tutorial 3-year playthrough
 verified. Standard Campaign starts to Year 5 without errors.
+All art sprites imported with Point filtering verified.
 Task: Run the GDD A.13 balance scenarios. Verify audio
 context switching. Complete the Stage 7 Definition of Done
 checklist. Document what remains for future sessions.
@@ -26,7 +27,8 @@ Read these files before doing anything:
 
 **Resuming from:** Stage 7-P complete  
 **Done when:** All GDD A.13 balance scenarios pass within expected ranges; AudioManager verified; Stage 7 Definition of Done fully checked off  
-**Commit:** `"7Q: Balance pass complete — Stage 7 and full game complete"`  
+**Commit:** `"7Q: Balance pass complete — gear logic and final Stage 7 DoD in 7-R"`  
+**Next session:** STAGE_07_R.md  
 
 ---
 
@@ -139,11 +141,11 @@ Work through this entire list. Every box must be checked before Stage 7 is consi
 - [ ] Tutorial Campaign SO and Standard Campaign SO fully populated
 
 **Art:**
-- [ ] All 8 character idle sprites — Point filtering applied
-- [ ] All 6 monster sprites + pack wolf — Point filtering applied
-- [ ] UI elements: stone panel texture, card frame, buttons, aggro token
-- [ ] All 5 settlement structure sprites — Boneworks appears in scene when built
-- [ ] Aldric animation frames: Idle ×2, Walk ×4, Attack ×3, Collapse ×2
+- [ ] All 8 character idle sprites imported — Point (No Filter) applied to all
+- [ ] All 8 standard monster sprites + 4 overlord sprites imported — Point (No Filter) applied to all
+- [ ] UI elements imported: stone panel texture, card frame, buttons, aggro token
+- [ ] All 5 settlement structure sprites imported — Boneworks appears in scene when built
+- [ ] Aldric animation frames imported and sliced: Idle ×2, Walk ×4, Attack ×3, Collapse ×2
 
 **Audio:**
 - [ ] AudioManager compiles; context switches log correctly
@@ -166,6 +168,7 @@ These items are intentionally deferred — they require design decisions before 
 
 | Item | Status | Next Step |
 |---|---|---|
+| Gear link/set/consumable logic | Scoped — see STAGE_07_R.md | Implement in 7-R before Stage 8 |
 | The Suture behavior deck | Stat blocks created, deck empty | Design session with developer |
 | Remaining Crafter buildings (Herbalist, Forge, Tannery, Armory) | spriteAssetPath not yet set | Design item lists per crafter |
 | Thornback/Pack/Serpent/Stag craft item sets | Not yet created | Design items following Gaunt template |
@@ -180,8 +183,7 @@ These items are intentionally deferred — they require design decisions before 
 ## Final Commit
 
 ```
-"Stage 7 complete — full game verified: Tutorial and Standard Campaign, 
-all Gaunt content, art pipeline, AudioManager, balance pass passed"
+"7Q: Balance pass complete — gear logic and final Stage 7 DoD in 7-R"
 ```
 
-Congratulations. Marrow & Myth is playable.
+Continue to **STAGE_07_R.md** to implement gear link resolution, set bonuses, once-per-hunt tracking, and consumable logic before closing Stage 7.

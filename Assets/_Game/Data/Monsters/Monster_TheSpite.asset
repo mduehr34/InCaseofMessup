@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.MonsterSO
   monsterName: The Spite
   materialTier: 3
+  availableFromYear: 0
   animalBasis: Massive Marrow-enhanced honey badger, Marrow saturation concentrated
     in the hide and jaw
   combatEmotion: "Relentless \u2014 does not retreat, does not hesitate, continues
     through wounds that would collapse anything else"
-  coreSkillTaught: Wound resistance — wounds require a higher Force Check threshold
-    to apply; fire weapons provide the key angle to bypass it
+  coreSkillTaught: "Wound resistance \u2014 wounds require a higher Force Check threshold
+    to apply; fire weapons provide the key angle to bypass it"
   gridFootprintStandard: {x: 2, y: 3}
   gridFootprintHardened: {x: 2, y: 3}
   gridFootprintApex: {x: 3, y: 4}

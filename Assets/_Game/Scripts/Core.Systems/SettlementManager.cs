@@ -73,6 +73,18 @@ namespace MnM.Core.Systems
                 }
             }
 
+            // Track defeated monster — gates crafter unlock availability (player still pays to build)
+            if (result.isVictory && !string.IsNullOrEmpty(result.monsterName))
+            {
+                var defeated = new List<string>(_campaign.defeatedMonsterNames ?? new string[0]);
+                if (!defeated.Contains(result.monsterName))
+                {
+                    defeated.Add(result.monsterName);
+                    _campaign.defeatedMonsterNames = defeated.ToArray();
+                    Debug.Log($"[Settlement] Monster recorded as defeated: {result.monsterName}");
+                }
+            }
+
             // Clear pending
             _campaign.pendingHuntResult = default;
         }
@@ -133,9 +145,20 @@ namespace MnM.Core.Systems
                 .ToList();
         }
 
-        private bool MatchesCampaignTag(EventSO evt) =>
-            string.IsNullOrEmpty(evt.campaignTag) ||
-            evt.campaignTag == _campaignData.campaignName;
+        private bool MatchesCampaignTag(EventSO evt)
+        {
+            if (string.IsNullOrEmpty(evt.campaignTag)) return true;
+
+            // Known condition tags evaluated against runtime state
+            if (evt.campaignTag == "afterFirstHunt")
+                return _campaign.characters.Any(c => c.huntCount > 0);
+
+            if (evt.campaignTag == "birthConditionMet")
+                return _campaign.birthConditionMet;
+
+            // Fallback: treat as campaign name filter
+            return evt.campaignTag == _campaignData.campaignName;
+        }
 
         private bool MatchesMonsterTag(EventSO evt)
         {

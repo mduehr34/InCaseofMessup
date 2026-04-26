@@ -21,7 +21,7 @@ Read these files before doing anything:
   (use as reference for correct field population)
 
 Then confirm:
-- EVT-21 must gate-lock the Pale Stag — stop and ask
+- EVT-21 must gate-lock The Spite — stop and ask
   how to implement this gate if unclear
 - EVT-30 requires checking win/loss state — explain
   your approach before implementing
@@ -33,7 +33,7 @@ Then confirm:
 # Stage 7-L: Chronicle Events EVT-16 through EVT-30
 
 **Resuming from:** Stage 7-K complete  
-**Done when:** All 15 EventSO assets created; EVT-21 unlocks Pale Stag from hunt roster; EVT-30 shows correct epilogue text based on Suture fight outcome  
+**Done when:** All 15 EventSO assets created; EVT-21 unlocks The Spite from hunt roster; EVT-30 shows correct epilogue text based on Suture fight outcome  
 **Commit:** `"7L: Chronicle Events EVT-16 through EVT-30 — full event pool complete"`  
 **Next session:** STAGE_07_M.md  
 
@@ -52,7 +52,7 @@ Then confirm:
 | EVT-18 | `Event_EVT18` | Serpent Cult | varies | varies | false | After first Gilded Serpent hunt. `monsterTag = "The Gilded Serpent"`. Choice A: Dismiss. Choice B: Investigate — unlock Artifact "Serpent Idol." `choice.artifactUnlockId = "Artifact_SerpentIdol"` |
 | EVT-19 | `Event_EVT19` | The Broken Mind | 13 | 18 | false | Trigger: harsh events accumulated. Choice A: Intervene (hunter skips hunt, Disorder removed). Choice B: Watch and wait (Disorder remains, risk of worsening). |
 | EVT-20 | `Event_EVT20` | Harvest Festival | 14 | 19 | false | Trigger: 3+ Crafters active. Choice A: Join (+1 Grit next hunt all hunters). Choice B: Work (craft 1 item free this phase). |
-| EVT-21 | `Event_EVT21` | Pale Stag Sighting | 12 | 16 | true | Mandatory. Unlocks Pale Stag as hunt target. Codex: "The Crowned Beast." `choice.codexEntryId = "CodexEntry_PaleStag"`. narrativeText: "At the forest's edge, standing still. Its antlers catch the moonlight and hold it. Something in us knows not to move." |
+| EVT-21 | `Event_EVT21` | The Ironhide Sighting | 12 | 16 | true | Mandatory. Unlocks The Spite as hunt target. Codex: "The Ironhide." `choice.codexEntryId = "CodexEntry_TheSpite"`. narrativeText: "The traps were sprung but nothing was taken. The bait untouched. Then we found the prints — the size of a hunter's torso. Something out there has been watching us claim this land. It does not seem concerned." |
 | EVT-22 | `Event_EVT22` | The Record | 15 | 20 | false | Choice A: Encourage (Chronicle draws 4 instead of 1, choose 1). Choice B: Forbid (settler +1 Accuracy). |
 
 ---
@@ -61,7 +61,7 @@ Then confirm:
 
 | ID | Asset | Name | yearMin | yearMax | mandatory | Key Content |
 |---|---|---|---|---|---|---|
-| EVT-23 | `Event_EVT23` | The Full Picture | 22 | 25 | true | After Thornback Patriarch killed. `monsterTag = "Thornback Patriarch"`. Major lore: settlers understand ruins were built deliberately. narrativeText: "We built on their bones. We always knew. I think we just didn't want to." |
+| EVT-23 | `Event_EVT23` | The Full Picture | 22 | 25 | true | After The Siltborn killed. `monsterTag = "The Siltborn"`. Major lore: settlers have spent years excavating the hollow beneath The Siltborn's nest — now they understand the ruins were built deliberately. narrativeText: "We built on their bones. We always knew. I think we just didn't want to." |
 | EVT-24 | `Event_EVT24` | The Last Birth | 23 | 27 | true | Mandatory if birth conditions met. Player names child. narrativeText: "What kind of world are we making this for?" |
 | EVT-25 | `Event_EVT25` | The Tremors Begin | 25 | 28 | true | Ground shakes — The Suture stirs. Codex: "The Suture Stirs." All hunters gain 1-time bonus Grit next hunt. narrativeText: "Not an earthquake. Something else. Something old." |
 | EVT-26 | `Event_EVT26` | Veteran's Wisdom | 22 | 28 | false | Trigger: 3+ retired characters. Choice A: Heed counsel (choose next Chronicle draw from 2 options). Choice B: Dismiss (+1 Accuracy all hunters next hunt). |
@@ -74,23 +74,23 @@ Then confirm:
 
 ## EVT-21 Gate Logic
 
-After EVT-21 resolves, the Pale Stag must be added to the hunt roster. Add to `SettlementManager.ResolveEvent()`:
+After EVT-21 resolves, the The Spite must be added to the hunt roster. Add to `SettlementManager.ResolveEvent()`:
 
 ```csharp
-// After resolving any event, check for Pale Stag unlock
+// After resolving any event, check for The Spite unlock
 if (evt.eventId == "EVT-21")
 {
-    // The Pale Stag MonsterSO is in the campaign's available pool
+    // The The Spite MonsterSO is in the campaign's available pool
     // but not in monsterRoster until this event fires.
     // Simplest approach: store a flag in CampaignState
     var unlocked = new System.Collections.Generic.List<string>(
-        _campaign.unlockedCodexEntryIds) { "PaleStag_Unlocked" };
+        _campaign.unlockedCodexEntryIds) { "TheSpite_Unlocked" };
     _campaign.unlockedCodexEntryIds = unlocked.ToArray();
-    Debug.Log("[Settlement] EVT-21 resolved — Pale Stag added to hunt roster");
+    Debug.Log("[Settlement] EVT-21 resolved — The Spite added to hunt roster");
 }
 ```
 
-Then in `HuntSelectionModal.BuildMonsterList()`, check for this flag before showing the Pale Stag.
+Then in `HuntSelectionModal.BuildMonsterList()`, check for this flag before showing the The Spite.
 
 ---
 
@@ -126,8 +126,8 @@ Short sentences. Plain words. The settlers don't have the full picture — their
 
 ## Verification Test
 
-- [ ] EVT-21 fires in Year 12–16 range; after resolution "PaleStag_Unlocked" flag is set
-- [ ] Pale Stag does NOT appear in hunt selection before EVT-21
+- [ ] EVT-21 fires in Year 12–16 range; after resolution "TheSpite_Unlocked" flag is set
+- [ ] The Spite does NOT appear in hunt selection before EVT-21
 - [ ] EVT-25 fires in Year 25–28; "The Suture Stirs" appears in Codex
 - [ ] EVT-28 fires mandatorily in Year 28–30 with no choices
 - [ ] EVT-30 shows both outcome choices as acknowledgement options

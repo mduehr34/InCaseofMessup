@@ -81,8 +81,9 @@ ironmanMode:            false
 retirementHuntCount:    10
 
 monsterRoster:          [ Monster_Gaunt, Monster_Thornback,
-                          Monster_ThePack, Monster_GildedSerpent,
-                          Monster_PaleStag ]
+                          Monster_TheIvoryStampede, Monster_GildedSerpent,
+                          Monster_TheSpite ]
+                        ← Monster_TheSpite gate-locked behind EVT-21
                         ← Monster_Suture NOT included until
                           behavior deck is designed
 
@@ -91,7 +92,13 @@ startingInnovations:    [ INN-01, INN-02, INN-03, INN-04, INN-05, INN-06 ]
 crafterPool:            [ Crafter_Boneworks ]
 guidingPrincipals:      [ GP-01, GP-02, GP-03, GP-04, GP-05 ]
 
-overlordApproachYears:  [ 25, 27, 29 ]
+overlordSchedule:
+  OVR-01 (The Siltborn, Year 5):           approachYears: [ 3, 4 ]
+  OVR-02 (The Penitent, Year 15):          approachYears: [ 12, 14 ]
+  OVR-03 (Pale Stag Ascendant, Year 25):   approachYears: [ 22, 24 ]
+  OVR-04 (The Suture, Year 30):            approachYears: [ 25, 27, 29 ]
+                        ← CampaignSO will need OverlordScheduleEntry[]
+                          struct to replace flat overlordApproachYears array
 birthConditionAge:      0
 ```
 
@@ -158,8 +165,8 @@ Work through this as a manual play session. Check each box as you go.
 Start a Standard Campaign and advance to Year 5 without errors:
 
 - [ ] Year 1–2: Same as Tutorial
-- [ ] Year 3+: Thornback Patriarch becomes available in hunt selection
-- [ ] Year 5: The Pack becomes available
+- [ ] Year 3+: Thornback becomes available in hunt selection
+- [ ] Year 5: The Ivory Stampede becomes available
 - [ ] No null reference errors in Console through Year 5
 - [ ] Chronicle log accumulates entries correctly
 

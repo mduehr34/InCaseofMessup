@@ -8,6 +8,7 @@ namespace MnM.Core.Data
         [Header("Identity")]
         public string monsterName;
         public int materialTier;
+        public int availableFromYear;   // First year this monster appears in hunt selection (0 = always)
         [TextArea] public string animalBasis;
         [TextArea] public string combatEmotion;
         [TextArea] public string coreSkillTaught;

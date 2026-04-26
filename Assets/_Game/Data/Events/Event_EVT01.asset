@@ -17,9 +17,9 @@ MonoBehaviour:
   yearRangeMin: 1
   yearRangeMax: 1
   isMandatory: 1
-  campaignTag: Year 1
-  monsterTag:
-  seasonTag:
-  difficultyTag:
-  narrativeText: "The darkness is absolute. Someone has to go first."
+  campaignTag: 
+  monsterTag: 
+  seasonTag: 
+  difficultyTag: 
+  narrativeText: The darkness is absolute. Someone has to go first.
   choices: []

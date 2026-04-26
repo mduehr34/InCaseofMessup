@@ -123,7 +123,7 @@ guidingPrincipals:   [ GP-01, GP-02, GP-03, GP-04, GP-05 ]                  (all
 ---
 
 ## Next Session: STAGE_07_N.md
-**Covers:** All 6 monster SO assets (complete data — Gaunt full, Thornback, Pack, Serpent, Pale Stag, Suture)
+**Covers:** All 6 monster SO assets (complete data — Gaunt full, Thornback, Ivory Stampede, Gilded Serpent, The Spite, Suture)
 
 ---
 ---

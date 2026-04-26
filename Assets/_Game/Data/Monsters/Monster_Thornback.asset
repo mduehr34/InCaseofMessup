@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.MonsterSO
   monsterName: Thornback
   materialTier: 2
+  availableFromYear: 3
   animalBasis: Marrow-enhanced wild boar, armored with calcified bone spikes from
     dorsal ridge
   combatEmotion: "Aggression \u2014 charges and tramples, does not retreat"

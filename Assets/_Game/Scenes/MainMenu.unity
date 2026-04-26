@@ -242,6 +242,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MnM.Core.UI::MnM.Core.UI.MainMenuController
   _uiDocument: {fileID: 1076261034}
+  _allCampaigns:
+  - {fileID: 11400000, guid: af12e9e5dc0b1b341a20f1508c51aaea, type: 2}
+  - {fileID: 11400000, guid: 4feece6ff1ed7aa46afedf4bb02465da, type: 2}
 --- !u!114 &1076261034
 MonoBehaviour:
   m_ObjectHideFlags: 0

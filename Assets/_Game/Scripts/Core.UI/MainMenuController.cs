@@ -1,13 +1,15 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
+using MnM.Core.Data;
 using MnM.Core.Systems;
 
 namespace MnM.Core.UI
 {
     public class MainMenuController : MonoBehaviour
     {
-        [SerializeField] private UIDocument _uiDocument;
+        [SerializeField] private UIDocument   _uiDocument;
+        [SerializeField] private CampaignSO[] _allCampaigns;  // All CampaignSOs — used to resolve save file back to its SO
 
         private void OnEnable()
         {
@@ -29,10 +31,10 @@ namespace MnM.Core.UI
             continueBtn.clicked += () =>
             {
                 var state = SaveManager.Load();
-                if (state != null)
-                    GameStateManager.Instance.LoadCampaign(state);
-                else
-                    Debug.LogError("[MainMenu] Continue clicked but save failed to load");
+                if (state == null) { Debug.LogError("[MainMenu] Continue clicked but save failed to load"); return; }
+                var so = System.Array.Find(_allCampaigns, c => c != null && c.name == state.campaignSoName);
+                if (so == null) Debug.LogWarning($"[MainMenu] CampaignSO '{state.campaignSoName}' not found in _allCampaigns — settlement will have no campaign data");
+                GameStateManager.Instance.LoadCampaign(state, so);
             };
 
             // Codex — stub
