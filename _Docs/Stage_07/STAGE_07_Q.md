@@ -156,8 +156,6 @@ Work through this entire list. Every box must be checked before Stage 7 is consi
 **Gameplay:**
 - [ ] Tutorial Campaign: 3-year playthrough completes in 45–60 minutes
 - [ ] Standard Campaign: starts and reaches Year 5 without Console errors
-- [ ] GDD A.13 Gaunt Standard balance: ~8 rounds, 1–2 collapses
-- [ ] GDD A.13 Gaunt Hardened balance: ~10 rounds, ~2 collapses
 - [ ] No uGUI components in any scene
 
 ---
@@ -177,6 +175,7 @@ These items are intentionally deferred — they require design decisions before 
 | Settings screen | Controller remapping, volume sliders | Post-MVP |
 | Online co-op networking | JSON state is ready | Post-MVP |
 | Hard / Easy campaign difficulty variants | Medium done | Post-MVP |
+| GDD A.13 balance scenarios (Gaunt Standard ~8r, Hardened ~10r, Apex ~12r) | Deferred — combat and MonsterAI not yet implemented | Run after combat stage; see GDD A.13 for expected round/collapse targets |
 
 ---
 
