@@ -20,7 +20,29 @@ namespace MnM.Core.Data
     public struct LinkPoint
     {
         public string affinityTag;
-        public Vector2Int direction;    // Which edge of the item the link point is on
+        public Vector2Int direction;    // Which edge of the item the link point is on (Y-down screen space)
+        // Stat bonus applied when this link is active
+        public int bonusAccuracy;
+        public int bonusStrength;
+        public int bonusToughness;
+        public int bonusEvasion;
+        public int bonusLuck;
+        public int bonusMovement;
+    }
+
+    [System.Serializable]
+    public struct SetBonusEntry
+    {
+        public int requiredPieceCount;
+        public int bonusAccuracy;
+        public int bonusStrength;
+        public int bonusToughness;
+        public int bonusEvasion;
+        public int bonusLuck;
+        public int bonusMovement;
+        // Non-stat effect resolved by CombatManager via string tag
+        public string effectTag;
+        [TextArea] public string effectDescription;
     }
 
     [System.Serializable]

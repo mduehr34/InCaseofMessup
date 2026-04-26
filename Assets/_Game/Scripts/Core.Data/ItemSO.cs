@@ -23,6 +23,9 @@ namespace MnM.Core.Data
         public string[] affinityTags;
         public LinkPoint[] linkPoints;
 
+        [Header("Set Bonuses")]
+        public SetBonusEntry[] setBonuses;      // Populated only on the anchor piece (e.g. HideVest)
+
         [Header("Effect & Crafting")]
         [TextArea] public string specialEffect;
         public ResourceSO[] craftingCost;

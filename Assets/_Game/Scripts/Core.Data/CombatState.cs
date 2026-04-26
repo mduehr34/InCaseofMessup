@@ -44,6 +44,10 @@ namespace MnM.Core.Data
         public string[] discardCardNames;
         // Active status effects as string tags e.g. ["Shaken", "Pinned"]
         public string[] activeStatusEffects;
+        // Gear effect tags from active set bonuses e.g. ["GAUNT_3PC_LOUD_SUPPRESS"]
+        public string[] activeGearEffectTags;
+        // Item names whose once-per-hunt ability has already fired this hunt
+        public string[] spentHuntAbilities;
     }
 
     [Serializable]

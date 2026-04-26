@@ -216,16 +216,26 @@ namespace MnM.Core.UI
             }
         }
 
+        private GearGridSlot[] BuildLoadout()
+        {
+            var slots = new System.Collections.Generic.List<GearGridSlot>();
+            for (int y = 0; y < 3; y++)
+            for (int x = 0; x < 3; x++)
+            {
+                int idx = x + y * 3;
+                if (string.IsNullOrEmpty(_gridContents[idx])) continue;
+                var so = LoadItemSO(_gridContents[idx]);
+                if (so == null) continue;
+                slots.Add(new GearGridSlot { item = so, cell = new UnityEngine.Vector2Int(x, y) });
+            }
+            return slots.ToArray();
+        }
+
         private void RefreshStatsSummary()
         {
-            var equippedSOs = _gridContents
-                .Where(n => !string.IsNullOrEmpty(n))
-                .Select(LoadItemSO)
-                .Where(s => s != null)
-                .ToArray();
-
-            var gearStats = GearLinkResolver.SumEquippedStats(equippedSOs);
-            var links     = GearLinkResolver.ResolveLinks(equippedSOs);
+            var loadout   = BuildLoadout();
+            var gearStats = GearLinkResolver.SumEquippedStats(loadout);
+            var links     = GearLinkResolver.ResolveLinks(loadout);
 
             _root.Q<Label>("stat-accuracy").text  = $"ACC {_character.accuracy}+{gearStats.accuracy}";
             _root.Q<Label>("stat-strength").text  = $"STR {_character.strength}+{gearStats.strength}";

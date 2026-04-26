@@ -27,9 +27,22 @@ MonoBehaviour:
   - GAUNT
   linkPoints:
   - affinityTag: GAUNT
-    direction: {x: 0, y: 1}
-  - affinityTag: GAUNT
     direction: {x: 0, y: -1}
+    bonusAccuracy: 0
+    bonusStrength: 0
+    bonusToughness: 0
+    bonusEvasion: 0
+    bonusLuck: 0
+    bonusMovement: 1
+  - affinityTag: GAUNT
+    direction: {x: 0, y: 1}
+    bonusAccuracy: 0
+    bonusStrength: 0
+    bonusToughness: 0
+    bonusEvasion: 0
+    bonusLuck: 0
+    bonusMovement: 1
+  setBonuses: []
   specialEffect: 'Link bonus: +1 Movement when linked above AND below simultaneously.'
   craftingCost:
   - {fileID: 11400000, guid: f8a41f3cd8c25684ea616da3da854689, type: 2}
