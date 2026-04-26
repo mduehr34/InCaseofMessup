@@ -330,6 +330,18 @@ namespace MnM.Core.Systems
             Debug.Log($"[Combat] ExecuteBehaviorCard: {behaviorCardName} — stub, implement Stage 3");
         }
 
+        // ── Injury / Scar Application ─────────────────────────────
+        // Stub — scar card draw happens post-combat during settlement.
+        // TODO: 7R — EyePendant scar intercept
+        // When applying an injury/scar card to a hunter:
+        //   1. Check HunterCombatState.equippedItemNames contains "Gaunt Eye Pendant"
+        //   2. Check spentHuntAbilities does NOT contain "Gaunt Eye Pendant"
+        //   3. If both: present discard option in UI; on confirm, skip card application
+        //      and add "Gaunt Eye Pendant" to spentHuntAbilities.
+        // TODO: 7R — handle GAUNT_3PC_LOUD_SUPPRESS
+        // When a Loud behavior card resolves, check activeGearEffectTags for
+        // "GAUNT_3PC_LOUD_SUPPRESS" and reduce that card's movement effect by 2 squares.
+
         // ── Collapse / Hunt Loss ──────────────────────────────────
         private void CheckHunterCollapse(HunterCombatState hunter)
         {
@@ -343,6 +355,10 @@ namespace MnM.Core.Systems
 
             if (headDead || torsoDead)
             {
+                // TODO: 7R — GAUNT_5PC_DEATH_CHEAT collapse intercept
+                // Check activeGearEffectTags contains "GAUNT_5PC_DEATH_CHEAT" AND
+                // spentHuntAbilities does NOT contain "GAUNT_5PC_DEATH_CHEAT".
+                // If both: set struck zone fleshCurrent = 1, add tag to spentHuntAbilities, return early.
                 hunter.isCollapsed = true;
                 string cause = headDead ? "Head Flesh = 0" : "Torso Flesh = 0";
                 Debug.Log($"[Combat] *** {hunter.hunterName} COLLAPSED ({cause}) ***");

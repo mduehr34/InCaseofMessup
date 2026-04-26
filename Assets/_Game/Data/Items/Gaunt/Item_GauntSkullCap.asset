@@ -27,7 +27,14 @@ MonoBehaviour:
   - GAUNT
   linkPoints:
   - affinityTag: GAUNT
-    direction: {x: 0, y: -1}
+    direction: {x: 0, y: 1}
+    bonusAccuracy: 1
+    bonusStrength: 0
+    bonusToughness: 0
+    bonusEvasion: 0
+    bonusLuck: 0
+    bonusMovement: 0
+  setBonuses: []
   specialEffect: 'Link bonus: +1 Accuracy when linked to any GAUNT piece below.'
   craftingCost:
   - {fileID: 11400000, guid: 76e94c4ced7a56b44901165377433820, type: 2}
