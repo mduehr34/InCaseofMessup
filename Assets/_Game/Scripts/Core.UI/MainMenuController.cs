@@ -65,6 +65,9 @@ namespace MnM.Core.UI
             var versionLabel = root.Q<Label>("version-label");
             if (versionLabel != null)
                 versionLabel.text = $"v{Application.version}";
+
+            if (AudioManager.Instance != null)
+                AudioManager.Instance.SetMusicContext(AudioContext.MainMenu);
         }
     }
 }

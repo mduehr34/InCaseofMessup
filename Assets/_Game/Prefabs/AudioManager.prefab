@@ -51,6 +51,7 @@ MonoBehaviour:
   _musicSource: {fileID: 7541479083992464145}
   _sfxSource: {fileID: 7353545121965943567}
   _ambientSource: {fileID: 6265537759837748057}
+  _mainMenuMusic: {fileID: 8300000, guid: fc6d672e347d9a242b4ab6e28abde832, type: 3}
   _settlementEarly: {fileID: 8300000, guid: 23bcd979d9300de4e8bedfb42126ac74, type: 3}
   _settlementLate: {fileID: 8300000, guid: 42b9a818159e2304989700827d3a9f7d, type: 3}
   _huntTravel: {fileID: 8300000, guid: 8949c6a40771943448de6bfb18b76476, type: 3}
@@ -64,6 +65,7 @@ MonoBehaviour:
   _sfxHunterCollapse: {fileID: 8300000, guid: b0eba5a378bd1694c9772cf7dcfca5f2, type: 3}
   _sfxMonsterDefeated: {fileID: 8300000, guid: ab5732062737b3542b70cbb8e2e6d746, type: 3}
   _sfxDeathSting: {fileID: 8300000, guid: 3c4d10bc8af357646bda42fba3b12cc4, type: 3}
+  _sfxUiClick: {fileID: 8300000, guid: 24946c85233cf1e48a7e44651f667bb8, type: 3}
 --- !u!1 &4034018865134982278
 GameObject:
   m_ObjectHideFlags: 0
