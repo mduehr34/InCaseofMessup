@@ -27,9 +27,51 @@ MonoBehaviour:
   - GAUNT
   linkPoints:
   - affinityTag: GAUNT
-    direction: {x: 0, y: 1}
-  - affinityTag: GAUNT
     direction: {x: 0, y: -1}
+    bonusAccuracy: 0
+    bonusStrength: 0
+    bonusToughness: 1
+    bonusEvasion: 0
+    bonusLuck: 0
+    bonusMovement: 0
+  - affinityTag: GAUNT
+    direction: {x: 0, y: 1}
+    bonusAccuracy: 0
+    bonusStrength: 0
+    bonusToughness: 1
+    bonusEvasion: 0
+    bonusLuck: 0
+    bonusMovement: 0
+  setBonuses:
+  - requiredPieceCount: 2
+    bonusAccuracy: 0
+    bonusStrength: 0
+    bonusToughness: 0
+    bonusEvasion: 1
+    bonusLuck: 0
+    bonusMovement: 0
+    effectTag: 
+    effectDescription: +1 Evasion flat while 2+ GAUNT pieces equipped
+  - requiredPieceCount: 3
+    bonusAccuracy: 0
+    bonusStrength: 0
+    bonusToughness: 0
+    bonusEvasion: 0
+    bonusLuck: 0
+    bonusMovement: 0
+    effectTag: GAUNT_3PC_LOUD_SUPPRESS
+    effectDescription: Behavior cards triggered by Loud card plays have movement
+      effect -2 squares
+  - requiredPieceCount: 5
+    bonusAccuracy: 0
+    bonusStrength: 0
+    bonusToughness: 0
+    bonusEvasion: 0
+    bonusLuck: 0
+    bonusMovement: 0
+    effectTag: GAUNT_5PC_DEATH_CHEAT
+    effectDescription: 'Once per hunt: when this hunter would collapse, survive with
+      1 Flesh on struck part'
   specialEffect: "Link bonus: +1 Toughness when linked above AND below simultaneously.\nSET
     BONUSES (anchor piece):\n2 piece: +1 Evasion (flat, while 2+ GAUNT pieces equipped)\n3
     piece: Behavior cards triggered by Loud card plays have movement effect -2 squares\n5

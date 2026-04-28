@@ -242,6 +242,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MnM.Core.UI::MnM.Core.UI.MainMenuController
   _uiDocument: {fileID: 1076261034}
+  _bgSprite: {fileID: 21300000, guid: d49996178f3939f419a71e142884008e, type: 3}
+  _logoSprite: {fileID: 21300000, guid: decf46ed0abb9ad45993dac46c5fa4eb, type: 3}
   _allCampaigns:
   - {fileID: 11400000, guid: af12e9e5dc0b1b341a20f1508c51aaea, type: 2}
   - {fileID: 11400000, guid: 4feece6ff1ed7aa46afedf4bb02465da, type: 2}
@@ -257,7 +259,7 @@ MonoBehaviour:
   m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
-  m_PanelSettings: {fileID: 11400000, guid: ba50985cc89fad747aaf1e3d1d30bafb, type: 2}
+  m_PanelSettings: {fileID: 11400000, guid: 2b87755a14e9fb24aa062aa0c3f3ddca, type: 2}
   m_ParentUI: {fileID: 0}
   sourceAsset: {fileID: 9197481963319205126, guid: 3730e75ffd275c746b6c82b48a67e29f, type: 3}
   m_SortingOrder: 0
