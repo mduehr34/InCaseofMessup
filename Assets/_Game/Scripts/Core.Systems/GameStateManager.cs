@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MnM.Core.Data;
@@ -57,6 +58,20 @@ namespace MnM.Core.Systems
             Debug.Log($"[GSM] New campaign started: {campaignData.campaignName} " +
                       $"Year:{CampaignState.currentYear}");
             SceneManager.LoadScene("Settlement");
+        }
+
+        // Called by CharacterCreationController after player confirms hunter names.
+        // Initialises CampaignState from PendingCampaign; character name override is a
+        // TODO deferred to the full runtime-character system (later stage).
+        public void StartNewCampaign(List<HunterGenerationData> hunters)
+        {
+            if (PendingCampaign != null)
+            {
+                CampaignData  = PendingCampaign;
+                CampaignState = CampaignInitializer.CreateNewCampaign(PendingCampaign);
+            }
+            Debug.Log($"[GSM] Campaign started with {hunters.Count} hunters");
+            // TODO: override CampaignState.characters with player-named hunter data
         }
 
         public void LoadCampaign(CampaignState state, CampaignSO campaignData)

@@ -1,0 +1,40 @@
+.hunter-card {
+    width: 110px;
+    align-items: center;
+    background-color: rgb(20, 15, 10);
+    border-color: rgb(80, 70, 50);
+    border-width: 2px;
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin: 8px;
+}
+
+.hunter-card__portrait {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+    -unity-background-scale-mode: scale-to-fit;
+    background-color: rgb(35, 28, 18);
+    border-color: rgb(80, 70, 50);
+    border-width: 1px;
+}
+
+.hunter-card__build-label {
+    color: rgb(138, 128, 112);
+    font-size: 12px;
+    margin-bottom: 6px;
+    -unity-text-align: upper-center;
+}
+
+.hunter-card__name-label {
+    color: rgb(212, 204, 186);
+    font-size: 16px;
+    -unity-text-align: upper-center;
+}
+
+.hunter-card__name-field {
+    width: 100px;
+    font-size: 14px;
+}
