@@ -18,6 +18,7 @@ namespace MnM.Core.Systems
 
         // ── Music Clips ──────────────────────────────────────────
         [Header("Music")]
+        [SerializeField] private AudioClip _mainMenuMusic;
         [SerializeField] private AudioClip _settlementEarly;
         [SerializeField] private AudioClip _settlementLate;
         [SerializeField] private AudioClip _huntTravel;
@@ -34,6 +35,7 @@ namespace MnM.Core.Systems
         [SerializeField] private AudioClip _sfxHunterCollapse;
         [SerializeField] private AudioClip _sfxMonsterDefeated;
         [SerializeField] private AudioClip _sfxDeathSting;
+        [SerializeField] private AudioClip _sfxUiClick;
 
         private AudioContext _currentContext = AudioContext.SettlementEarly;
         private Coroutine    _fadeCoroutine;
@@ -53,6 +55,7 @@ namespace MnM.Core.Systems
 
             AudioClip clip = context switch
             {
+                AudioContext.MainMenu        => _mainMenuMusic,
                 AudioContext.SettlementEarly => _settlementEarly,
                 AudioContext.SettlementLate  => _settlementLate,
                 AudioContext.HuntTravel      => _huntTravel,
@@ -112,6 +115,7 @@ namespace MnM.Core.Systems
                 "PartBreak"        => _sfxPartBreak,
                 "HunterCollapse"   => _sfxHunterCollapse,
                 "MonsterDefeated"  => _sfxMonsterDefeated,
+                "UI_Click"         => _sfxUiClick,
                 _                  => null,
             };
 

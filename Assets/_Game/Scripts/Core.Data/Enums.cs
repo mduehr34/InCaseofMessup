@@ -52,5 +52,5 @@ namespace MnM.Core.Data
     public enum CombatPhase { VitalityPhase, HunterPhase, BehaviorRefresh, MonsterPhase }
     public enum DamageType { Shell, Flesh }
     public enum FacingArc { Front, Flank, Rear }
-    public enum AudioContext { SettlementEarly, SettlementLate, HuntTravel, CombatStandard, CombatOverlord }
+    public enum AudioContext { MainMenu, SettlementEarly, SettlementLate, HuntTravel, CombatStandard, CombatOverlord }
 }
