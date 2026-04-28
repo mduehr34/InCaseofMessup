@@ -1,34 +1,60 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
-    <Style src="../USS/tokens.uss"/>
-    <Style src="../USS/stone-panel.uss"/>
-    <Style src="../USS/settlement-shared.uss"/>
+  <Style src="../USS/tokens.uss"/>
+  <Style src="../USS/stone-panel.uss"/>
+  <Style src="../USS/campaign-select.uss"/>
 
-    <ui:VisualElement name="campaign-select-root" class="fullscreen-bg">
+  <ui:VisualElement name="root" style="width:100%; height:100%; align-items:center;
+      justify-content:center; background-color:#0A0A0C; flex-direction:column;">
 
-        <!-- Header -->
-        <ui:VisualElement class="era-bar stone-panel--raised">
-            <ui:Label text="SELECT CAMPAIGN" class="era-year"/>
-            <ui:VisualElement style="flex:1"/>
-            <ui:Button name="btn-back" text="BACK" class="era-btn"/>
-        </ui:VisualElement>
+    <ui:Label name="header" text="CHOOSE YOUR CAMPAIGN"
+              style="color:#D4CCBA; font-size:32px; margin-bottom:48px; -unity-font-style:bold;" />
 
-        <!-- Campaign Options -->
-        <ui:VisualElement name="campaign-list" class="campaign-list"/>
+    <!-- Campaign cards row -->
+    <ui:VisualElement name="card-row" style="flex-direction:row; gap:48px; margin-bottom:48px;">
 
-        <!-- Detail Panel (populated on select) -->
-        <ui:VisualElement name="campaign-detail" class="campaign-detail stone-panel">
-            <ui:Label name="campaign-name"        text="---" class="stone-panel__header"/>
-            <ui:Label name="campaign-difficulty"  text="---" class="campaign-info-label"/>
-            <ui:Label name="campaign-description" text="---" class="campaign-description"/>
-            <ui:Label name="campaign-characters"  text="---" class="campaign-info-label"/>
-            <ui:Label name="campaign-length"      text="---" class="campaign-info-label"/>
-            <ui:Button name="btn-start-campaign"  text="BEGIN" class="action-btn action-btn--primary"/>
-        </ui:VisualElement>
+      <ui:VisualElement name="card-tutorial" class="campaign-card">
+        <ui:VisualElement name="card-tutorial-art" class="campaign-card-art" />
+        <ui:Label name="card-tutorial-title" text="TUTORIAL" class="campaign-card-title" />
+        <ui:Label name="card-tutorial-desc"
+                  text="3 years. Learn the hunt.&#10;One monster. No permanent death."
+                  class="campaign-card-desc" />
+      </ui:VisualElement>
 
-        <!-- Tutorial toggle -->
-        <ui:VisualElement class="action-bar stone-panel--raised">
-            <ui:Button name="btn-tutorial" text="PLAY TUTORIAL FIRST" class="action-btn"/>
-        </ui:VisualElement>
+      <ui:VisualElement name="card-standard" class="campaign-card">
+        <ui:VisualElement name="card-standard-art" class="campaign-card-art" />
+        <ui:Label name="card-standard-title" text="THE STANDARD CAMPAIGN" class="campaign-card-title" />
+        <ui:Label name="card-standard-desc"
+                  text="30 years. Build. Hunt. Survive.&#10;All monsters. Permanent consequences."
+                  class="campaign-card-desc" />
+      </ui:VisualElement>
 
     </ui:VisualElement>
+
+    <!-- Options row -->
+    <ui:VisualElement name="options-row" style="flex-direction:row; gap:80px; margin-bottom:48px; align-items:center;">
+
+      <ui:VisualElement name="difficulty-group" style="flex-direction:column; align-items:center;">
+        <ui:Label text="DIFFICULTY" style="color:#8A8A8A; font-size:14px; margin-bottom:12px;" />
+        <ui:VisualElement name="difficulty-buttons" style="flex-direction:row; gap:12px;">
+          <ui:Button name="btn-easy"   text="EASY"   class="diff-btn" />
+          <ui:Button name="btn-medium" text="MEDIUM" class="diff-btn diff-btn--selected" />
+          <ui:Button name="btn-hard"   text="HARD"   class="diff-btn" />
+        </ui:VisualElement>
+      </ui:VisualElement>
+
+      <ui:VisualElement name="ironman-group" style="flex-direction:column; align-items:center;">
+        <ui:Label text="IRONMAN MODE" style="color:#8A8A8A; font-size:14px; margin-bottom:12px;" />
+        <ui:Toggle name="toggle-ironman" label="" />
+        <ui:Label text="One save. No reloads." style="color:#4A2020; font-size:12px; margin-top:6px;" />
+      </ui:VisualElement>
+
+    </ui:VisualElement>
+
+    <!-- Navigation -->
+    <ui:VisualElement style="flex-direction:row; gap:32px;">
+      <ui:Button name="btn-back"    text="← BACK"   class="mnm-btn-secondary" />
+      <ui:Button name="btn-confirm" text="CONFIRM →" class="mnm-btn-primary" />
+    </ui:VisualElement>
+
+  </ui:VisualElement>
 </ui:UXML>
