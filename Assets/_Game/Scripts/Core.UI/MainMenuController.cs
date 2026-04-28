@@ -9,11 +9,25 @@ namespace MnM.Core.UI
     public class MainMenuController : MonoBehaviour
     {
         [SerializeField] private UIDocument   _uiDocument;
+        [SerializeField] private Sprite       _bgSprite;
+        [SerializeField] private Sprite       _logoSprite;
         [SerializeField] private CampaignSO[] _allCampaigns;  // All CampaignSOs — used to resolve save file back to its SO
 
         private void OnEnable()
         {
             var root = _uiDocument.rootVisualElement;
+
+            // Background art
+            if (_bgSprite != null)
+                root.Q("bg").style.backgroundImage = new StyleBackground(_bgSprite);
+            else
+                Debug.LogWarning("[MainMenu] _bgSprite not assigned on MainMenuController");
+
+            // Title logo
+            if (_logoSprite != null)
+                root.Q("title-logo").style.backgroundImage = new StyleBackground(_logoSprite);
+            else
+                Debug.LogWarning("[MainMenu] _logoSprite not assigned on MainMenuController");
 
             // New Campaign → Campaign Select
             root.Q<Button>("btn-new-campaign").clicked += () =>

@@ -21,6 +21,7 @@ namespace MnM.Editor
     {
         private const string GeneratedPath    = "Assets/_Game/Art/Generated/";
         private const string OverlordsSubpath = "Assets/_Game/Art/Generated/Overlords/";
+        private const string UISubpath        = "Assets/_Game/Art/Generated/UI/";
 
         private void OnPreprocessTexture()
         {
@@ -28,6 +29,23 @@ namespace MnM.Editor
                 return;
 
             var importer = (TextureImporter)assetImporter;
+
+            // UI background/logo images need full resolution + bilinear — skip pixel-art enforcement
+            if (assetPath.StartsWith(UISubpath))
+            {
+                importer.textureType         = TextureImporterType.Sprite;
+                importer.spriteImportMode    = SpriteImportMode.Single;
+                importer.spritePixelsPerUnit = 1f;
+                importer.filterMode          = FilterMode.Bilinear;
+                importer.mipmapEnabled       = false;
+                importer.maxTextureSize      = 2048;
+                var uiSettings = importer.GetDefaultPlatformTextureSettings();
+                uiSettings.format            = TextureImporterFormat.RGBA32;
+                uiSettings.textureCompression = TextureImporterCompression.Uncompressed;
+                importer.SetPlatformTextureSettings(uiSettings);
+                Debug.Log($"[SpritePostprocessor] Applied UI-art settings to: {assetPath}");
+                return;
+            }
 
             importer.textureType         = TextureImporterType.Sprite;
             importer.spriteImportMode    = SpriteImportMode.Single;

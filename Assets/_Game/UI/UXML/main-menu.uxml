@@ -5,10 +5,12 @@
 
     <ui:VisualElement name="main-menu-root" class="fullscreen-bg">
 
+        <!-- Background art — sprite set at runtime by MainMenuController -->
+        <ui:VisualElement name="bg" style="position:absolute; left:0; top:0; right:0; bottom:0; -unity-background-scale-mode:stretch-to-fill;" />
+
         <!-- Title Block -->
         <ui:VisualElement name="title-block" class="title-block">
-            <ui:Label text="MARROW"         class="title-marrow"/>
-            <ui:Label text="&amp; MYTH"     class="title-myth"/>
+            <ui:VisualElement name="title-logo" style="width:320px; height:64px; -unity-background-scale-mode:scale-to-fit;" />
             <ui:Label text="THE UNMADE AGE" class="title-subtitle"/>
         </ui:VisualElement>
 
