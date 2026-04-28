@@ -1,0 +1,20 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="../USS/tokens.uss"/>
+    <Style src="../USS/stone-panel.uss"/>
+    <Style src="../USS/settings.uss"/>
+
+    <!-- Full-screen dimmed overlay; display toggled by PauseMenuController -->
+    <ui:VisualElement name="pause-bg" class="pause-overlay">
+
+        <ui:VisualElement class="pause-panel stone-panel--raised">
+
+            <ui:Label text="PAUSED" class="pause-title" />
+
+            <ui:Button name="btn-resume"   text="RESUME"    class="mnm-btn pause-btn" />
+            <ui:Button name="btn-settings" text="SETTINGS"  class="mnm-btn pause-btn" />
+            <ui:Button name="btn-save"     text="SAVE GAME" class="mnm-btn pause-btn" />
+            <ui:Button name="btn-menu"     text="MAIN MENU" class="mnm-btn pause-btn" />
+
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

@@ -55,9 +55,8 @@ namespace MnM.Core.UI
             root.Q<Button>("btn-codex").clicked += () =>
                 Debug.Log("[MainMenu] Codex — implement in Stage 6-G");
 
-            // Settings / Credits — stubs
             root.Q<Button>("btn-settings").clicked += () =>
-                Debug.Log("[MainMenu] Settings — post-MVP");
+                SceneManager.LoadScene("Settings");
             root.Q<Button>("btn-credits").clicked += () =>
                 Debug.Log("[MainMenu] Credits — post-MVP");
 

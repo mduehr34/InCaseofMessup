@@ -1,0 +1,120 @@
+/* ============================================================
+   Marrow & Myth — Settings Screen & Pause Menu Styles
+   Import tokens.uss and stone-panel.uss before this file.
+   ============================================================ */
+
+/* ── Settings Screen Layout ───────────────────────────────── */
+.settings-center {
+    align-items:     center;
+    justify-content: center;
+}
+
+.settings-title {
+    color:             #B8860B;
+    font-size:         20px;
+    -unity-font-style: bold;
+    margin-bottom:     40px;
+}
+
+.settings-block {
+    width:          440px;
+    flex-direction: column;
+    gap:            24px;
+    margin-bottom:  48px;
+}
+
+.settings-back-btn {
+    width: 160px;
+}
+
+/* ── Pause Overlay ────────────────────────────────────────── */
+.pause-overlay {
+    position:         absolute;
+    left:             0;
+    top:              0;
+    right:            0;
+    bottom:           0;
+    background-color: rgba(0, 0, 0, 0.72);
+    align-items:      center;
+    justify-content:  center;
+    /* display controlled exclusively by PauseMenuController inline style */
+}
+
+.pause-panel {
+    width:           300px;
+    padding:         32px;
+    flex-direction:  column;
+    align-items:     center;
+    gap:             16px;
+    border-color:    #B8860B;
+    border-width:    2px;
+}
+
+.pause-title {
+    color:             #B8860B;
+    font-size:         20px;
+    -unity-font-style: bold;
+    margin-bottom:     16px;
+}
+
+.pause-btn {
+    width: 220px;
+}
+
+/* ── Settings Rows ────────────────────────────────────────── */
+.setting-row {
+    flex-direction: row;
+    align-items:    center;
+    gap:            16px;
+}
+
+.setting-label {
+    color:      var(--color-text-dim);
+    font-size:  var(--font-size-label);
+    width:      140px;
+    -unity-font-style: bold;
+}
+
+.setting-value {
+    color:             var(--color-text-primary);
+    font-size:         var(--font-size-label);
+    width:             32px;
+    -unity-text-align: middle-right;
+}
+
+/* ── Shared MnM Button ───────────────────────────────────── */
+/* Used by Settings back button and pause menu buttons.      */
+.mnm-btn {
+    background-color:  var(--color-bg-panel-raised);
+    border-color:      var(--color-border-accent);
+    border-width:      var(--panel-border-width);
+    border-radius:     0px;
+    color:             var(--color-text-primary);
+    font-size:         var(--font-size-body);
+    padding:           var(--spacing-sm) var(--spacing-md);
+    -unity-font-style: bold;
+}
+
+.mnm-btn:hover {
+    background-color: var(--color-bg-panel-active);
+    border-color:     var(--color-text-accent);
+}
+
+.mnm-btn:active {
+    background-color: var(--color-bg-deep);
+}
+
+.mnm-btn-secondary {
+    background-color:  var(--color-bg-deep);
+    border-color:      var(--color-border);
+    border-width:      1px;
+    border-radius:     0px;
+    color:             var(--color-text-dim);
+    font-size:         var(--font-size-body);
+    padding:           var(--spacing-sm) var(--spacing-md);
+}
+
+.mnm-btn-secondary:hover {
+    border-color: var(--color-border-accent);
+    color:        var(--color-text-primary);
+}
