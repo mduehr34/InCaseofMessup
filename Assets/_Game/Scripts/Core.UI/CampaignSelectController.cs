@@ -1,90 +1,101 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
-using MnM.Core.Systems;
 using MnM.Core.Data;
+using MnM.Core.Systems;
 
 namespace MnM.Core.UI
 {
     public class CampaignSelectController : MonoBehaviour
     {
-        [SerializeField] private UIDocument  _uiDocument;
-        // Assign all available CampaignSO assets in the Inspector
-        [SerializeField] private CampaignSO[] _availableCampaigns;
-        [SerializeField] private CampaignSO   _tutorialCampaign;
+        [SerializeField] private UIDocument _uiDocument;
+        [SerializeField] private CampaignSO _tutorialCampaign;
+        [SerializeField] private CampaignSO _standardCampaign;
+        [SerializeField] private Sprite     _tutorialArt;
+        [SerializeField] private Sprite     _standardArt;
 
-        private CampaignSO    _selectedCampaign;
-        private VisualElement _root;
+        private CampaignSO _selectedCampaign;
+        private string     _selectedDifficulty = "Medium";
+        private bool       _ironman            = false;
 
         private void OnEnable()
         {
-            _root = _uiDocument.rootVisualElement;
+            _selectedCampaign = _tutorialCampaign;
 
-            // Back → Main Menu (via GameStateManager — also auto-saves if campaign active)
-            _root.Q<Button>("btn-back").clicked += () =>
-                GameStateManager.Instance.GoToMainMenu();
+            var root = _uiDocument.rootVisualElement;
 
-            _root.Q<Button>("btn-start-campaign").clicked += OnStartCampaign;
+            // Populate card labels from SO data
+            root.Q<Label>("card-tutorial-title").text = _tutorialCampaign != null
+                ? $"{_tutorialCampaign.campaignName} ({_tutorialCampaign.campaignLengthYears}y)"
+                : "TUTORIAL";
+            root.Q<Label>("card-standard-title").text = _standardCampaign != null
+                ? $"{_standardCampaign.campaignName} ({_standardCampaign.campaignLengthYears}y)"
+                : "STANDARD";
 
-            _root.Q<Button>("btn-tutorial").clicked += () =>
-            {
-                if (_tutorialCampaign != null)
-                    GameStateManager.Instance.StartNewCampaign(_tutorialCampaign);
-                else
-                    Debug.LogError("[CampaignSelect] Tutorial CampaignSO not assigned");
-            };
+            // Card art
+            if (_tutorialArt != null)
+                root.Q("card-tutorial-art").style.backgroundImage = new StyleBackground(_tutorialArt);
+            if (_standardArt != null)
+                root.Q("card-standard-art").style.backgroundImage = new StyleBackground(_standardArt);
 
-            BuildCampaignList();
+            // Campaign card selection
+            root.Q("card-tutorial").RegisterCallback<ClickEvent>(_ => SelectCampaign(root, _tutorialCampaign));
+            root.Q("card-standard").RegisterCallback<ClickEvent>(_ => SelectCampaign(root, _standardCampaign));
+            HighlightCard(root, "card-tutorial");
 
-            // Pre-select first campaign
-            if (_availableCampaigns != null && _availableCampaigns.Length > 0)
-                SelectCampaign(_availableCampaigns[0]);
+            // Difficulty locked to Medium for Tutorial on start
+            root.Q("difficulty-group").SetEnabled(false);
+
+            // Difficulty buttons
+            root.Q<Button>("btn-easy")  .RegisterCallback<ClickEvent>(_ => SetDifficulty(root, "Easy"));
+            root.Q<Button>("btn-medium").RegisterCallback<ClickEvent>(_ => SetDifficulty(root, "Medium"));
+            root.Q<Button>("btn-hard")  .RegisterCallback<ClickEvent>(_ => SetDifficulty(root, "Hard"));
+
+            // Ironman toggle
+            root.Q<Toggle>("toggle-ironman").RegisterValueChangedCallback(evt => _ironman = evt.newValue);
+
+            // Navigation
+            root.Q<Button>("btn-back")   .RegisterCallback<ClickEvent>(_ => SceneManager.LoadScene("MainMenu"));
+            root.Q<Button>("btn-confirm").RegisterCallback<ClickEvent>(_ => OnConfirm());
         }
 
-        private void BuildCampaignList()
+        private void SelectCampaign(VisualElement root, CampaignSO campaign)
         {
-            var list = _root.Q<VisualElement>("campaign-list");
-            if (list == null || _availableCampaigns == null) return;
-            list.Clear();
+            _selectedCampaign = campaign;
+            bool isTutorial   = campaign == _tutorialCampaign;
+            string cardId     = isTutorial ? "card-tutorial" : "card-standard";
 
-            foreach (var campaign in _availableCampaigns)
+            HighlightCard(root, cardId);
+
+            // Difficulty locked to Medium for Tutorial
+            root.Q("difficulty-group").SetEnabled(!isTutorial);
+            if (isTutorial) SetDifficulty(root, "Medium");
+        }
+
+        private void HighlightCard(VisualElement root, string selectedId)
+        {
+            foreach (string id in new[] { "card-tutorial", "card-standard" })
             {
-                if (campaign == null) continue;
-                list.Add(BuildCampaignRow(campaign));
+                var card = root.Q(id);
+                if (id == selectedId) card.AddToClassList("campaign-card--selected");
+                else                  card.RemoveFromClassList("campaign-card--selected");
             }
         }
 
-        private VisualElement BuildCampaignRow(CampaignSO campaign)
+        private void SetDifficulty(VisualElement root, string diff)
         {
-            var row = new VisualElement();
-            row.AddToClassList("character-row");
-            row.AddToClassList("stone-panel");
-
-            var nameLabel = new Label(campaign.campaignName);
-            nameLabel.AddToClassList("character-name");
-            row.Add(nameLabel);
-
-            var diffLabel = new Label(campaign.difficulty.ToString());
-            diffLabel.AddToClassList("proficiency-label");
-            row.Add(diffLabel);
-
-            row.RegisterCallback<ClickEvent>(_ => SelectCampaign(campaign));
-            return row;
+            _selectedDifficulty = diff;
+            foreach (string id in new[] { "btn-easy", "btn-medium", "btn-hard" })
+            {
+                var btn = root.Q<Button>(id);
+                if (btn.text.Equals(diff.ToUpper()))
+                    btn.AddToClassList("diff-btn--selected");
+                else
+                    btn.RemoveFromClassList("diff-btn--selected");
+            }
         }
 
-        private void SelectCampaign(CampaignSO campaign)
-        {
-            _selectedCampaign = campaign;
-
-            _root.Q<Label>("campaign-name").text        = campaign.campaignName;
-            _root.Q<Label>("campaign-difficulty").text  = $"Difficulty: {campaign.difficulty}";
-            _root.Q<Label>("campaign-description").text = $"{campaign.campaignLengthYears}-year campaign";
-            _root.Q<Label>("campaign-characters").text  = $"Starting characters: {campaign.startingCharacterCount}";
-            _root.Q<Label>("campaign-length").text      = $"Ironman: {(campaign.ironmanMode ? "Yes" : "No")}";
-
-            Debug.Log($"[CampaignSelect] Selected: {campaign.campaignName}");
-        }
-
-        private void OnStartCampaign()
+        private void OnConfirm()
         {
             if (_selectedCampaign == null)
             {
@@ -95,11 +106,15 @@ namespace MnM.Core.UI
             if (GameStateManager.Instance == null)
             {
                 Debug.LogError("[CampaignSelect] GameStateManager not found. " +
-                               "Always enter play mode from the MainMenu scene so GSM is bootstrapped.");
+                               "Enter play mode from MainMenu so GSM bootstraps.");
                 return;
             }
 
-            GameStateManager.Instance.StartNewCampaign(_selectedCampaign);
+            Debug.Log($"[CampaignSelect] Confirmed: {_selectedCampaign.campaignName} / " +
+                      $"{_selectedDifficulty} / Ironman={_ironman}");
+            GameStateManager.Instance.PrepareNewCampaign(_selectedCampaign, _selectedDifficulty, _ironman);
+            SceneManager.LoadScene("CharacterCreation");
         }
+
     }
 }

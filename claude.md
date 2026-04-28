@@ -4,7 +4,6 @@
 
 * Before starting a new feature or logic block, ensure the current state is stable.
 * Suggest a Git commit point after every successful sub-feature implementation (e.g., "Movement logic working").
-* Generate the exact terminal command needed to enter for the git commit point.
 * Provide the validation testing for each session once you complete your changes.
 
 ## Testing \& Mock Data
@@ -20,6 +19,7 @@
 * When creating complex ScriptableObject structures, suggest a custom Inspector or Editor Window if the default Unity view becomes difficult to manage.
 * Art generation (Anthropic image API) is an **Editor tool only** — not runtime. Build a custom Editor Window to trigger generation, preview results, and save approved sprites to the correct asset folder.
 * You have access to the Unity Editor via CoPlay MCP, you should be able to modify everything in the project without me manually having to generate anything.
+* You wont actually generate the artwork, please provide me with the detailed explanation of what the needed asset(s) are and any creative suggestions for me to generate.
 
 ## Stage Gates
 

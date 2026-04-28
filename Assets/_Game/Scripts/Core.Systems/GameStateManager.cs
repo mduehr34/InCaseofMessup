@@ -36,7 +36,20 @@ namespace MnM.Core.Systems
             Debug.Log("[GSM] GameStateManager initialized — persisting across scenes");
         }
 
+        // Pending setup — populated by CampaignSelect, consumed by CharacterCreation
+        public CampaignSO PendingCampaign   { get; private set; }
+        public string     PendingDifficulty { get; private set; }
+        public bool       PendingIronman    { get; private set; }
+
         // ── Campaign Lifecycle ────────────────────────────────────
+        public void PrepareNewCampaign(CampaignSO campaign, string difficulty, bool ironman)
+        {
+            PendingCampaign   = campaign;
+            PendingDifficulty = difficulty;
+            PendingIronman    = ironman;
+            Debug.Log($"[GSM] Pending campaign: {campaign.campaignName} / {difficulty} / Ironman={ironman}");
+        }
+
         public void StartNewCampaign(CampaignSO campaignData)
         {
             CampaignData  = campaignData;
