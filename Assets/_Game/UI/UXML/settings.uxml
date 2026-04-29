@@ -1,0 +1,43 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="../USS/tokens.uss"/>
+    <Style src="../USS/stone-panel.uss"/>
+    <Style src="../USS/settings.uss"/>
+
+    <ui:VisualElement name="root" class="fullscreen-bg settings-center">
+
+        <ui:Label text="SETTINGS" class="settings-title" />
+
+        <ui:VisualElement class="settings-block">
+
+            <ui:VisualElement class="setting-row">
+                <ui:Label text="MASTER VOLUME" class="setting-label" />
+                <ui:Slider name="slider-master" low-value="0" high-value="1" value="1"
+                           style="flex-grow:1;" />
+                <ui:Label name="val-master" text="100" class="setting-value" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="setting-row">
+                <ui:Label text="MUSIC" class="setting-label" />
+                <ui:Slider name="slider-music" low-value="0" high-value="1" value="0.8"
+                           style="flex-grow:1;" />
+                <ui:Label name="val-music" text="80" class="setting-value" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="setting-row">
+                <ui:Label text="SFX" class="setting-label" />
+                <ui:Slider name="slider-sfx" low-value="0" high-value="1" value="1"
+                           style="flex-grow:1;" />
+                <ui:Label name="val-sfx" text="100" class="setting-value" />
+            </ui:VisualElement>
+
+            <ui:VisualElement class="setting-row">
+                <ui:Label text="FULLSCREEN" class="setting-label" />
+                <ui:Toggle name="toggle-fullscreen" label="" />
+            </ui:VisualElement>
+
+        </ui:VisualElement>
+
+        <ui:Button name="btn-back" text="← BACK" class="mnm-btn-secondary settings-back-btn" />
+
+    </ui:VisualElement>
+</ui:UXML>

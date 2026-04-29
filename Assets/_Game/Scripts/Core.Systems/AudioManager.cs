@@ -40,11 +40,43 @@ namespace MnM.Core.Systems
         private AudioContext _currentContext = AudioContext.SettlementEarly;
         private Coroutine    _fadeCoroutine;
 
+        // Saved base volumes — crossfade and death sting restore to these
+        private float _musicBaseVolume = 0.8f;
+        private float _sfxBaseVolume   = 1f;
+
         private void Awake()
         {
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
             DontDestroyOnLoad(gameObject);
+            ApplySavedVolumePrefs();
+        }
+
+        // ── Volume Control (no mixer exposed params required) ─────
+        public void SetMasterVolume(float v)
+        {
+            AudioListener.volume = Mathf.Clamp01(v);
+        }
+
+        public void SetMusicVolume(float v)
+        {
+            _musicBaseVolume        = Mathf.Clamp01(v);
+            if (_musicSource != null)
+                _musicSource.volume = _musicBaseVolume;
+        }
+
+        public void SetSfxVolume(float v)
+        {
+            _sfxBaseVolume = Mathf.Clamp01(v);
+            if (_sfxSource     != null) _sfxSource.volume     = _sfxBaseVolume;
+            if (_ambientSource != null) _ambientSource.volume = _sfxBaseVolume;
+        }
+
+        private void ApplySavedVolumePrefs()
+        {
+            SetMasterVolume(PlayerPrefs.GetFloat("vol_master", 1f));
+            SetMusicVolume (PlayerPrefs.GetFloat("vol_music",  0.8f));
+            SetSfxVolume   (PlayerPrefs.GetFloat("vol_sfx",    1f));
         }
 
         // ── Music Context ─────────────────────────────────────────
@@ -80,12 +112,11 @@ namespace MnM.Core.Systems
         {
             if (newClip == null) yield break;
 
-            float startVolume = _musicSource.volume;
             float t = 0f;
             while (t < 1f)
             {
                 t += Time.deltaTime / 1.5f;
-                _musicSource.volume = Mathf.Lerp(startVolume, 0f, t);
+                _musicSource.volume = Mathf.Lerp(_musicBaseVolume, 0f, t);
                 yield return null;
             }
 
@@ -97,10 +128,10 @@ namespace MnM.Core.Systems
             while (t < 1f)
             {
                 t += Time.deltaTime / 1.5f;
-                _musicSource.volume = Mathf.Lerp(0f, startVolume, t);
+                _musicSource.volume = Mathf.Lerp(0f, _musicBaseVolume, t);
                 yield return null;
             }
-            _musicSource.volume = startVolume;
+            _musicSource.volume = _musicBaseVolume;
         }
 
         // ── SFX ──────────────────────────────────────────────────
@@ -135,8 +166,6 @@ namespace MnM.Core.Systems
         {
             if (_sfxDeathSting == null) yield break;
 
-            float prevVolume = _musicSource.volume;
-
             _musicSource.volume = 0f;
             _sfxSource.PlayOneShot(_sfxDeathSting);
 
@@ -147,10 +176,10 @@ namespace MnM.Core.Systems
             while (t < 1f)
             {
                 t += Time.deltaTime;
-                _musicSource.volume = Mathf.Lerp(0f, prevVolume, t);
+                _musicSource.volume = Mathf.Lerp(0f, _musicBaseVolume, t);
                 yield return null;
             }
-            _musicSource.volume = prevVolume;
+            _musicSource.volume = _musicBaseVolume;
         }
 
         // ── Combat Event Hooks ────────────────────────────────────

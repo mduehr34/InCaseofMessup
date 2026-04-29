@@ -30,6 +30,9 @@ namespace MnM.Core.UI
         private Label[]         _apLabels            = new Label[4];
         private VisualElement[] _gritPipRows         = new VisualElement[4];
 
+        // Status effect displays — one per hunter slot
+        private StatusEffectDisplay[] _statusDisplays = new StatusEffectDisplay[4];
+
         // Monster panel
         private VisualElement _monsterPanel;
 
@@ -76,6 +79,7 @@ namespace MnM.Core.UI
             {
                 RefreshAll();
                 BuildGrid();
+                InitialiseStatusDisplays();
             }
         }
 
@@ -127,6 +131,24 @@ namespace MnM.Core.UI
             _combatManager.OnDamageDealt     -= OnDamageDealt;
             _combatManager.OnEntityCollapsed -= OnEntityCollapsed;
             _combatManager.OnCombatEnded     -= OnCombatEnded;
+        }
+
+        // ── Status Display Setup ──────────────────────────────────
+        private void InitialiseStatusDisplays()
+        {
+            var state = _combatManager.CurrentState;
+            for (int i = 0; i < 4 && i < state.hunters.Length; i++)
+            {
+                var iconStrip = _statusEffectRows[i];
+                if (iconStrip == null)
+                {
+                    Debug.LogWarning($"[CombatUI] status-effects-{i} not found — StatusEffectDisplay skipped");
+                    continue;
+                }
+                var display = gameObject.AddComponent<StatusEffectDisplay>();
+                display.Initialise(iconStrip, state.hunters[i].hunterId, _combatManager);
+                _statusDisplays[i] = display;
+            }
         }
 
         // ── Phase Events ─────────────────────────────────────────
