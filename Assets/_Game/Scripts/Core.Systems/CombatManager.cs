@@ -29,6 +29,10 @@ namespace MnM.Core.Systems
         public event System.Action<string>                  OnEntityCollapsed;
         public event System.Action<CombatResult>            OnCombatEnded;
 
+        // Status effect visual events — not on ICombatManager; consumed by StatusEffectDisplay
+        public event System.Action<string, string, int> OnEffectApplied;   // entityId, effectName, duration
+        public event System.Action<string, string>      OnEffectRemoved;    // entityId, effectName
+
         // ── Lifecycle ────────────────────────────────────────────
         public void StartCombat(CombatState initialState)
         {
@@ -457,6 +461,32 @@ namespace MnM.Core.Systems
 
         private HunterCombatState GetHunter(string hunterId) =>
             System.Array.Find(CurrentState.hunters, h => h.hunterId == hunterId);
+
+        // ── Status Effect API ─────────────────────────────────────
+        // Call these instead of StatusEffectResolver directly so the display stays in sync.
+        public void ApplyStatusEffect(string entityId, StatusEffect effect, int visualDuration = 2)
+        {
+            var hunter = GetHunter(entityId);
+            if (hunter == null)
+            {
+                Debug.LogWarning($"[Combat] ApplyStatusEffect: entity {entityId} not found");
+                return;
+            }
+            StatusEffectResolver.Apply(ref hunter.activeStatusEffects, effect);
+            OnEffectApplied?.Invoke(entityId, effect.ToString(), visualDuration);
+        }
+
+        public void RemoveStatusEffect(string entityId, StatusEffect effect)
+        {
+            var hunter = GetHunter(entityId);
+            if (hunter == null)
+            {
+                Debug.LogWarning($"[Combat] RemoveStatusEffect: entity {entityId} not found");
+                return;
+            }
+            StatusEffectResolver.Remove(ref hunter.activeStatusEffects, effect);
+            OnEffectRemoved?.Invoke(entityId, effect.ToString());
+        }
 
         public void SetMonsterAI(IMonsterAI ai) => _monsterAI = ai;
 

@@ -48,7 +48,7 @@ namespace MnM.Core.Data
         LegacyOrForgetting, TheSuture
     }
 
-    public enum StatusEffect { Shaken, Slowed, Pinned, Exposed, Bleeding }
+    public enum StatusEffect { Shaken, Slowed, Pinned, Exposed, Bleeding, Marked, Broken, Inspired }
     public enum CombatPhase { VitalityPhase, HunterPhase, BehaviorRefresh, MonsterPhase }
     public enum DamageType { Shell, Flesh }
     public enum FacingArc { Front, Flank, Rear }
