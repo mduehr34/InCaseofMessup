@@ -21,10 +21,10 @@
     --color-text-danger:      #CC3333;   /* Collapse, loss, danger */
     --color-text-disabled:    #4A4540;   /* Greyed-out unplayable */
 
-    --color-shell:            #4A5568;   /* Shell bar fill — grey-blue */
-    --color-shell-bg:         #1E2530;   /* Shell bar background */
-    --color-flesh:            #742A2A;   /* Flesh bar fill — dark red */
-    --color-flesh-bg:         #2A1010;   /* Flesh bar background */
+    --color-shell:            #B8860B;   /* Shell bar fill — Marrow gold */
+    --color-shell-bg:         #1A1408;   /* Shell bar background — dark ochre */
+    --color-flesh:            #4A2020;   /* Flesh bar fill — dried blood red */
+    --color-flesh-bg:         #1E0A0A;   /* Flesh bar background */
     --color-grit:             #8B7355;   /* Grit pip fill — warm bone */
     --color-grit-bg:          #2A2018;   /* Grit pip background */
 

@@ -101,5 +101,10 @@
             </ui:VisualElement>
         </ui:VisualElement>
 
+        <!-- Phase transition banner — animated by CombatScreenController, starts off-screen -->
+        <ui:VisualElement name="phase-banner" class="phase-banner">
+            <ui:Label name="phase-banner-label" class="phase-banner-label" text="VITALITY PHASE"/>
+        </ui:VisualElement>
+
     </ui:VisualElement>
 </ui:UXML>

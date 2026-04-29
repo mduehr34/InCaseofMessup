@@ -364,3 +364,84 @@
     border-width:      1px;
     padding:           1px var(--spacing-xs);
 }
+
+/* ── Shared HP Bar Tracks & Fills ────────────────────────────── */
+.shell-bar-track {
+    height:           var(--bar-height-shell);
+    background-color: var(--color-shell-bg);
+    flex:             1;
+    margin-right:     4px;
+    margin-bottom:    2px;
+}
+
+.shell-bar-fill {
+    height:           var(--bar-height-shell);
+    background-color: var(--color-shell);
+    width:            100%;
+    transition-duration: 0.15s;
+    transition-property: width;
+}
+
+.flesh-bar-track {
+    height:           var(--bar-height-flesh);
+    background-color: var(--color-flesh-bg);
+    flex:             1;
+    margin-right:     4px;
+}
+
+.flesh-bar-fill {
+    height:           var(--bar-height-flesh);
+    background-color: var(--color-flesh);
+    width:            100%;
+    transition-duration: 0.15s;
+    transition-property: width;
+}
+
+/* ── Zone Label (hunter body zone rows) ──────────────────────── */
+.zone-label {
+    font-size:   var(--font-size-small);
+    color:       var(--color-text-dim);
+    width:       36px;
+    flex-shrink: 0;
+}
+
+/* ── Grit Pips ────────────────────────────────────────────────── */
+.grit-pip {
+    width:            8px;
+    height:           8px;
+    background-color: var(--color-grit);
+    border-color:     var(--color-border);
+    border-width:     1px;
+    margin-right:     3px;
+}
+
+.grit-pip--empty {
+    background-color: var(--color-grit-bg);
+}
+
+/* ── Aggro Indicator ──────────────────────────────────────────── */
+.aggro-indicator {
+    font-size:  var(--font-size-small);
+    color:      var(--color-aggro);
+    margin-left: var(--spacing-xs);
+}
+
+/* ── Phase Transition Banner ──────────────────────────────────── */
+.phase-banner {
+    position:            absolute;
+    left:                0;
+    right:               0;
+    top:                 -80px;
+    height:              64px;
+    background-color:    #0A0A0CEA;
+    border-bottom-color: var(--color-text-accent);
+    border-bottom-width: 2px;
+    align-items:         center;
+    justify-content:     center;
+}
+
+.phase-banner-label {
+    font-size:         var(--font-size-xl);
+    color:             var(--color-text-primary);
+    -unity-font-style: bold;
+}

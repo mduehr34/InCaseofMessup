@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -35,6 +36,15 @@ namespace MnM.Core.UI
 
         // Monster panel
         private VisualElement _monsterPanel;
+        private VisualElement _monsterPartsContainer;
+
+        // Part HP bars — built once, updated on damage (avoids DOM rebuilds)
+        private readonly Dictionary<string, PartHealthBar> _partBars = new();
+
+        // Phase transition banner
+        private VisualElement _phaseBanner;
+        private Label         _phaseBannerLabel;
+        private Coroutine     _bannerCoroutine;
 
         // Card hand
         private VisualElement _handCards;
@@ -86,10 +96,13 @@ namespace MnM.Core.UI
         // ── Element Caching ──────────────────────────────────────
         private void CacheElements()
         {
-            _phaseLabel   = _root.Q<Label>("phase-label");
-            _roundLabel   = _root.Q<Label>("round-label");
-            _handCards    = _root.Q<VisualElement>("hand-cards");
-            _monsterPanel = _root.Q<VisualElement>("monster-panel");
+            _phaseLabel          = _root.Q<Label>("phase-label");
+            _roundLabel          = _root.Q<Label>("round-label");
+            _handCards           = _root.Q<VisualElement>("hand-cards");
+            _monsterPanel        = _root.Q<VisualElement>("monster-panel");
+            _monsterPartsContainer = _root.Q<VisualElement>("monster-parts-container");
+            _phaseBanner         = _root.Q<VisualElement>("phase-banner");
+            _phaseBannerLabel    = _root.Q<Label>("phase-banner-label");
 
             for (int i = 0; i < 4; i++)
             {
@@ -154,23 +167,60 @@ namespace MnM.Core.UI
         // ── Phase Events ─────────────────────────────────────────
         private void OnPhaseChanged(CombatPhase phase)
         {
-            if (_phaseLabel != null)
+            string phaseText = phase switch
             {
-                _phaseLabel.text = phase switch
-                {
-                    CombatPhase.VitalityPhase   => "VITALITY PHASE",
-                    CombatPhase.HunterPhase     => "HUNTER PHASE",
-                    CombatPhase.BehaviorRefresh => "BEHAVIOR REFRESH",
-                    CombatPhase.MonsterPhase    => "MONSTER PHASE",
-                    _                           => phase.ToString().ToUpper(),
-                };
-            }
+                CombatPhase.VitalityPhase   => "VITALITY PHASE",
+                CombatPhase.HunterPhase     => "HUNTER PHASE",
+                CombatPhase.BehaviorRefresh => "BEHAVIOR REFRESH",
+                CombatPhase.MonsterPhase    => "MONSTER PHASE",
+                _                           => phase.ToString().ToUpper(),
+            };
+
+            if (_phaseLabel != null)
+                _phaseLabel.text = phaseText;
 
             if (_roundLabel != null && _combatManager.CurrentState != null)
-                _roundLabel.text = $"Round {_combatManager.CurrentState.currentRound + 1}";
+                _roundLabel.text = $"ROUND {_combatManager.CurrentState.currentRound + 1}";
+
+            if (phase == CombatPhase.VitalityPhase || phase == CombatPhase.MonsterPhase)
+                TriggerPhaseBanner(phaseText);
 
             RefreshAll();
             Debug.Log($"[CombatUI] Phase → {phase}");
+        }
+
+        private void TriggerPhaseBanner(string text)
+        {
+            if (_phaseBanner == null) return;
+            if (_phaseBannerLabel != null) _phaseBannerLabel.text = text;
+            if (_bannerCoroutine != null) StopCoroutine(_bannerCoroutine);
+            _bannerCoroutine = StartCoroutine(AnimatePhaseBanner());
+        }
+
+        private IEnumerator AnimatePhaseBanner()
+        {
+            // Slide down from off-screen top
+            float t = 0f;
+            while (t < 0.3f)
+            {
+                t += Time.deltaTime;
+                _phaseBanner.style.top = Mathf.Lerp(-80f, 0f, t / 0.3f);
+                yield return null;
+            }
+            _phaseBanner.style.top = 0f;
+
+            yield return new WaitForSeconds(1.5f);
+
+            // Slide back up
+            t = 0f;
+            while (t < 0.25f)
+            {
+                t += Time.deltaTime;
+                _phaseBanner.style.top = Mathf.Lerp(0f, -80f, t / 0.25f);
+                yield return null;
+            }
+            _phaseBanner.style.top = -80f;
+            _bannerCoroutine = null;
         }
 
         // ── Damage / Collapse / End Events ───────────────────────
@@ -485,63 +535,40 @@ namespace MnM.Core.UI
                 stanceLabel.text = string.IsNullOrEmpty(monster.currentStanceTag)
                     ? "" : $"Stance: {monster.currentStanceTag}";
 
-            var partsContainer = _monsterPanel.Q<VisualElement>("monster-parts-container");
-            if (partsContainer == null) return;
-            partsContainer.Clear();
+            if (_monsterPartsContainer == null) return;
 
-            if (monster.parts == null) return;
-            foreach (var part in monster.parts)
-                partsContainer.Add(BuildMonsterPartElement(part));
+            if (_partBars.Count == 0)
+                BuildMonsterPartBars(monster.parts);
+            else
+                UpdateMonsterPartBars(monster.parts);
         }
 
-        private VisualElement BuildMonsterPartElement(MonsterPartState part)
+        private void BuildMonsterPartBars(MonsterPartState[] parts)
         {
-            var row = new VisualElement();
-            row.AddToClassList("monster-part-row");
-            if (part.isBroken) row.AddToClassList("monster-part-row--broken");
+            _monsterPartsContainer.Clear();
+            _partBars.Clear();
+            if (parts == null) return;
 
-            var nameLabel = new Label(part.isRevealed ? part.partName : "???");
-            nameLabel.AddToClassList("part-name");
-            row.Add(nameLabel);
-
-            var bars = new VisualElement();
-            bars.AddToClassList("part-bars");
-
-            var shellTrack = new VisualElement();
-            shellTrack.AddToClassList("shell-bar-track");
-            var shellFill = new VisualElement();
-            shellFill.AddToClassList("shell-bar-fill");
-            float shellPct = part.shellMax > 0 ? (float)part.shellCurrent / part.shellMax : 0f;
-            shellFill.style.width = Length.Percent(shellPct * 100f);
-            shellTrack.Add(shellFill);
-            bars.Add(shellTrack);
-
-            var fleshTrack = new VisualElement();
-            fleshTrack.AddToClassList("flesh-bar-track");
-            var fleshFill = new VisualElement();
-            fleshFill.AddToClassList("flesh-bar-fill");
-            float fleshPct = part.fleshMax > 0 ? (float)part.fleshCurrent / part.fleshMax : 0f;
-            fleshFill.style.width = Length.Percent(fleshPct * 100f);
-            fleshTrack.Add(fleshFill);
-            bars.Add(fleshTrack);
-
-            row.Add(bars);
-
-            if (part.isExposed)
+            foreach (var part in parts)
             {
-                var exposedTag = new Label("EXPOSED");
-                exposedTag.AddToClassList("exposed-tag");
-                row.Add(exposedTag);
-            }
+                var container = new VisualElement();
+                container.AddToClassList("monster-part-row");
+                _monsterPartsContainer.Add(container);
 
-            if (part.isBroken && part.isRevealed)
+                var bar = new PartHealthBar(container, part.partName, part.shellMax, part.fleshMax);
+                bar.SetValues(part.shellCurrent, part.fleshCurrent, part.isRevealed, part.isExposed, part.isBroken);
+                _partBars[part.partName] = bar;
+            }
+        }
+
+        private void UpdateMonsterPartBars(MonsterPartState[] parts)
+        {
+            if (parts == null) return;
+            foreach (var part in parts)
             {
-                var brokenTag = new Label("BROKEN");
-                brokenTag.AddToClassList("status-badge");
-                row.Add(brokenTag);
+                if (_partBars.TryGetValue(part.partName, out var bar))
+                    bar.SetValues(part.shellCurrent, part.fleshCurrent, part.isRevealed, part.isExposed, part.isBroken);
             }
-
-            return row;
         }
 
         // ── Card Hand ─────────────────────────────────────────────
