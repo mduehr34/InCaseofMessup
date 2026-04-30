@@ -185,6 +185,17 @@ namespace MnM.Core.Systems
             return true;
         }
 
+        /// <summary>Returns all remaining behavior cards across every group — used by the UI to render the panel.</summary>
+        public BehaviorCardSO[] GetActiveBehaviorCards()
+        {
+            var all = new List<BehaviorCardSO>();
+            all.AddRange(_openingCards);
+            all.AddRange(_escalationCards);
+            all.AddRange(_apexCards);
+            all.AddRange(_permanentCards);
+            return all.ToArray();
+        }
+
         public void ExecuteCard(BehaviorCardSO card, CombatState state)
         {
             // STUB — implemented Session 3-C (trigger evaluation)

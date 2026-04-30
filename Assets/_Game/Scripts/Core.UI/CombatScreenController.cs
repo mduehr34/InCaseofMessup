@@ -37,6 +37,7 @@ namespace MnM.Core.UI
         // Monster panel
         private VisualElement _monsterPanel;
         private VisualElement _monsterPartsContainer;
+        private VisualElement _behaviorCardsContainer;
 
         // Part HP bars — built once, updated on damage (avoids DOM rebuilds)
         private readonly Dictionary<string, PartHealthBar> _partBars = new();
@@ -70,6 +71,11 @@ namespace MnM.Core.UI
                 Debug.LogError("[CombatUI] UIDocument not assigned");
                 return;
             }
+
+            // Force fresh DOM builds — ensures hot-reloads pick up new layouts
+            // (Domain Reload keeps non-serialized fields alive across recompiles)
+            _partBars.Clear();
+            _behaviorCardsContainer = null;
 
             _root = _uiDocument.rootVisualElement;
             CacheElements();
@@ -501,6 +507,13 @@ namespace MnM.Core.UI
             if (row == null) return;
             row.Clear();
 
+            // Label so it's not confused with the AP display above it
+            var lbl = new Label("GRIT");
+            lbl.style.color      = new Color(0.54f, 0.54f, 0.54f);
+            lbl.style.fontSize   = 7;
+            lbl.style.marginRight = 4;
+            row.Add(lbl);
+
             int total = Mathf.Max(maxGrit, 1);
             for (int g = 0; g < total; g++)
             {
@@ -526,7 +539,8 @@ namespace MnM.Core.UI
             var deckLabel = _monsterPanel.Q<Label>("monster-deck-count");
             if (deckLabel != null)
             {
-                int removable = monster.activeDeckCardNames?.Length ?? 0;
+                int removable = _combatManager.GetActiveBehaviorCards()
+                    .Length;
                 deckLabel.text = $"Removable: {removable}";
             }
 
@@ -535,12 +549,62 @@ namespace MnM.Core.UI
                 stanceLabel.text = string.IsNullOrEmpty(monster.currentStanceTag)
                     ? "" : $"Stance: {monster.currentStanceTag}";
 
-            if (_monsterPartsContainer == null) return;
+            if (_monsterPartsContainer != null)
+            {
+                if (_partBars.Count == 0)
+                    BuildMonsterPartBars(monster.parts);
+                else
+                    UpdateMonsterPartBars(monster.parts);
+            }
 
-            if (_partBars.Count == 0)
-                BuildMonsterPartBars(monster.parts);
-            else
-                UpdateMonsterPartBars(monster.parts);
+            RefreshBehaviorCards();
+        }
+
+        private void RefreshBehaviorCards()
+        {
+            if (_behaviorCardsContainer == null)
+            {
+                var deckRoot = _root.Q<VisualElement>("behavior-deck-container");
+                if (deckRoot == null) return;
+
+                var header = new Label("BEHAVIOR DECK");
+                header.style.color       = new Color(0.72f, 0.52f, 0.04f);
+                header.style.fontSize    = 9;
+                header.style.unityFontStyleAndWeight = UnityEngine.FontStyle.Bold;
+                header.style.paddingLeft   = 6;
+                header.style.paddingTop    = 6;
+                header.style.paddingBottom = 4;
+                deckRoot.Add(header);
+
+                var scroll = new ScrollView(ScrollViewMode.Vertical);
+                scroll.style.flexGrow = 1;
+                deckRoot.Add(scroll);
+
+                _behaviorCardsContainer = scroll.contentContainer;
+                _behaviorCardsContainer.style.flexDirection = FlexDirection.Column;
+                _behaviorCardsContainer.style.paddingLeft   = 6;
+                _behaviorCardsContainer.style.paddingRight  = 6;
+                _behaviorCardsContainer.style.paddingBottom = 8;
+            }
+
+            _behaviorCardsContainer.Clear();
+
+            var cards = _combatManager.GetActiveBehaviorCards();
+            if (cards.Length == 0)
+            {
+                var empty = new Label("No cards remaining");
+                empty.style.color    = new Color(0.54f, 0.54f, 0.54f);
+                empty.style.fontSize = 8;
+                _behaviorCardsContainer.Add(empty);
+                return;
+            }
+
+            foreach (var card in cards)
+            {
+                var el = CardRenderer.BuildBehaviorCard(card);
+                el.style.marginBottom = 8;
+                _behaviorCardsContainer.Add(el);
+            }
         }
 
         private void BuildMonsterPartBars(MonsterPartState[] parts)
@@ -549,11 +613,23 @@ namespace MnM.Core.UI
             _partBars.Clear();
             if (parts == null) return;
 
+            // Wrap in a ScrollView so parts scroll within the max-height cap
+            var scroll = new ScrollView(ScrollViewMode.Vertical);
+            scroll.style.flexGrow = 1;
+            _monsterPartsContainer.Add(scroll);
+
+            var content = scroll.contentContainer;
+            content.style.flexDirection = FlexDirection.Column;
+            content.style.paddingLeft   = 6;
+            content.style.paddingRight  = 6;
+
             foreach (var part in parts)
             {
                 var container = new VisualElement();
-                container.AddToClassList("monster-part-row");
-                _monsterPartsContainer.Add(container);
+                container.style.flexDirection     = FlexDirection.Column;
+                container.style.borderBottomWidth = 1;
+                container.style.borderBottomColor = new StyleColor(new Color(0.20f, 0.17f, 0.13f));
+                content.Add(container);
 
                 var bar = new PartHealthBar(container, part.partName, part.shellMax, part.fleshMax);
                 bar.SetValues(part.shellCurrent, part.fleshCurrent, part.isRevealed, part.isExposed, part.isBroken);
@@ -572,8 +648,22 @@ namespace MnM.Core.UI
         }
 
         // ── Card Hand ─────────────────────────────────────────────
-        private ActionCardSO LoadCard(string cardName) =>
-            Resources.Load<ActionCardSO>($"Data/Cards/Action/{cardName}");
+        private static ActionCardRegistrySO _cardRegistry;
+
+        private static ActionCardSO LoadCard(string cardName)
+        {
+            if (_cardRegistry == null)
+            {
+                _cardRegistry = Resources.Load<ActionCardRegistrySO>("ActionCardRegistry");
+                if (_cardRegistry == null)
+                {
+                    Debug.LogError("[CombatUI] ActionCardRegistry not found — " +
+                                   "create it at Assets/_Game/Data/Resources/ActionCardRegistry.asset");
+                    return null;
+                }
+            }
+            return _cardRegistry.Get(cardName);
+        }
 
         private void RefreshCardHand(CombatState state)
         {
@@ -600,72 +690,29 @@ namespace MnM.Core.UI
                 gritDisplay.text = $"Grit: {activeHunter.currentGrit}";
 
             foreach (var cardName in activeHunter.handCardNames)
-                _handCards.Add(BuildCardElement(cardName, activeHunter));
-        }
-
-        private VisualElement BuildCardElement(string cardName, HunterCombatState hunter)
-        {
-            var card = LoadCard(cardName);
-
-            var el = new VisualElement();
-            el.AddToClassList("card");
-            el.AddToClassList("stone-panel");
-
-            // Header: name + Loud tag
-            var header = new VisualElement();
-            header.AddToClassList("card-header");
-
-            var nameLabel = new Label(card != null ? card.cardName : cardName);
-            nameLabel.AddToClassList("card-name");
-            header.Add(nameLabel);
-
-            if (card != null && card.isLoud)
             {
-                var loudTag = new Label("LOUD");
-                loudTag.AddToClassList("loud-tag");
-                header.Add(loudTag);
-            }
-            el.Add(header);
+                var card     = LoadCard(cardName);
+                bool canPlay = card == null || activeHunter.apRemaining >= (card.apCost - card.apRefund);
 
-            // Category
-            if (card != null)
-            {
-                var categoryLabel = new Label(card.category.ToString().ToUpper());
-                categoryLabel.AddToClassList("card-category");
-                el.Add(categoryLabel);
-            }
-
-            // Effect text
-            var effectLabel = new Label(card != null ? card.effectDescription : "");
-            effectLabel.AddToClassList("card-effect");
-            el.Add(effectLabel);
-
-            // Footer: AP cost
-            var footer = new VisualElement();
-            footer.AddToClassList("card-footer");
-
-            if (card != null)
-            {
-                var apLabel = new Label($"AP: {card.apCost}");
-                apLabel.AddToClassList("card-ap-cost");
-                footer.Add(apLabel);
-
-                if (card.apRefund > 0)
+                VisualElement el;
+                if (card != null)
                 {
-                    var refundLabel = new Label($"(refund {card.apRefund})");
-                    refundLabel.AddToClassList("card-refund");
-                    footer.Add(refundLabel);
+                    el = CardRenderer.BuildActionCard(card, isPlayable: canPlay);
                 }
+                else
+                {
+                    // Fallback for missing SO asset — plain label card
+                    el = new VisualElement();
+                    el.AddToClassList("card");
+                    el.AddToClassList("stone-panel");
+                    el.Add(new Label(cardName));
+                }
+
+                el.EnableInClassList("card--unplayable", !canPlay);
+                string capturedName = cardName;
+                el.RegisterCallback<ClickEvent>(_ => OnCardClicked(capturedName, el, canPlay));
+                _handCards.Add(el);
             }
-            el.Add(footer);
-
-            bool canPlay = card == null || hunter.apRemaining >= (card.apCost - card.apRefund);
-            el.EnableInClassList("card--unplayable", !canPlay);
-
-            string capturedName = cardName;
-            el.RegisterCallback<ClickEvent>(_ => OnCardClicked(capturedName, el, canPlay));
-
-            return el;
         }
 
         private void OnCardClicked(string cardName, VisualElement cardEl, bool canPlay)

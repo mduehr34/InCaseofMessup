@@ -87,6 +87,7 @@
                 <ui:Label name="monster-deck-count" text="Removable: --" class="monster-deck-label"/>
                 <ui:Label name="monster-stance"     text=""              class="monster-stance-label"/>
                 <ui:VisualElement name="monster-parts-container"         class="monster-parts-container"/>
+                <ui:VisualElement name="behavior-deck-container"         class="behavior-deck-container"/>
             </ui:VisualElement>
 
         </ui:VisualElement>
