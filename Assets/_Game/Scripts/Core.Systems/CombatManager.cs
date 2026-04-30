@@ -488,6 +488,14 @@ namespace MnM.Core.Systems
             OnEffectRemoved?.Invoke(entityId, effect.ToString());
         }
 
+        /// <summary>Returns all remaining BehaviorCardSOs — UI only, not on the interface.</summary>
+        public BehaviorCardSO[] GetActiveBehaviorCards()
+        {
+            if (_monsterAI is MonsterAI ai)
+                return ai.GetActiveBehaviorCards();
+            return new BehaviorCardSO[0];
+        }
+
         public void SetMonsterAI(IMonsterAI ai) => _monsterAI = ai;
 
         public void InitializeMonsterAI(MonsterSO monster, string difficulty)

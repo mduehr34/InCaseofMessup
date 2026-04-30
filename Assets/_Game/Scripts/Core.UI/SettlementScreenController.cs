@@ -310,27 +310,19 @@ namespace MnM.Core.UI
 
             foreach (var inn in _drawnInnovations)
             {
-                var row = new VisualElement();
-                row.AddToClassList("character-row");
-                row.AddToClassList("stone-panel");
+                var wrapper = new VisualElement();
+                wrapper.style.marginBottom = 8;
+                wrapper.style.alignItems   = Align.Center;
 
-                var nameLabel = new Label(inn.innovationName);
-                nameLabel.AddToClassList("character-name");
-                row.Add(nameLabel);
+                wrapper.Add(CardRenderer.BuildInnovationCard(inn, isAdopted: false));
 
-                var effectLabel = new Label(inn.effect);
-                effectLabel.AddToClassList("proficiency-label");
-                effectLabel.style.whiteSpace = WhiteSpace.Normal;
-                effectLabel.style.flexShrink = 1;
-                row.Add(effectLabel);
-
-                var innRef = inn;
+                var innRef   = inn;
                 var adoptBtn = new Button(() => OnAdoptInnovation(innRef)) { text = "ADOPT" };
                 adoptBtn.AddToClassList("small-btn");
                 adoptBtn.SetEnabled(!_innovationAdoptedThisPhase);
-                row.Add(adoptBtn);
+                wrapper.Add(adoptBtn);
 
-                _tabContent.Add(row);
+                _tabContent.Add(wrapper);
             }
         }
 
@@ -338,6 +330,8 @@ namespace MnM.Core.UI
         {
             _settlement.AdoptInnovation(innovation);
             _innovationAdoptedThisPhase = true;
+            // Remove the adopted card from the cached draw so it disappears immediately
+            _drawnInnovations = System.Array.FindAll(_drawnInnovations, i => i != innovation);
             BuildInnovationsTab();
             Debug.Log($"[Settlement] Adopted: {innovation.innovationName}");
         }
