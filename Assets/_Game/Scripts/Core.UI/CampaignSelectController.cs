@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using MnM.Core.Data;
 using MnM.Core.Systems;
@@ -55,7 +54,7 @@ namespace MnM.Core.UI
             root.Q<Toggle>("toggle-ironman").RegisterValueChangedCallback(evt => _ironman = evt.newValue);
 
             // Navigation
-            root.Q<Button>("btn-back")   .RegisterCallback<ClickEvent>(_ => SceneManager.LoadScene("MainMenu"));
+            root.Q<Button>("btn-back")   .RegisterCallback<ClickEvent>(_ => SceneTransitionManager.Instance.LoadScene("MainMenu"));
             root.Q<Button>("btn-confirm").RegisterCallback<ClickEvent>(_ => OnConfirm());
         }
 
@@ -113,7 +112,7 @@ namespace MnM.Core.UI
             Debug.Log($"[CampaignSelect] Confirmed: {_selectedCampaign.campaignName} / " +
                       $"{_selectedDifficulty} / Ironman={_ironman}");
             GameStateManager.Instance.PrepareNewCampaign(_selectedCampaign, _selectedDifficulty, _ironman);
-            SceneManager.LoadScene("CharacterCreation");
+            SceneTransitionManager.Instance.LoadScene("CharacterCreation");
         }
 
     }

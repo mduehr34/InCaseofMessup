@@ -258,7 +258,7 @@ namespace MnM.Core.UI
 
         private void OnClose()
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene("Settlement");
+            MnM.Core.Systems.SceneTransitionManager.Instance.LoadScene("Settlement");
         }
 
         // Resources.Load fallback — Stage 7 wires a proper registry

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using MnM.Core.Data;
 using MnM.Core.Systems;
@@ -112,7 +111,7 @@ namespace MnM.Core.UI
             }
 
             root.Q<Button>("btn-back")
-                .RegisterCallback<ClickEvent>(_ => SceneManager.LoadScene("CampaignSelect"));
+                .RegisterCallback<ClickEvent>(_ => SceneTransitionManager.Instance.LoadScene("CampaignSelect"));
             root.Q<Button>("btn-confirm")
                 .RegisterCallback<ClickEvent>(_ => OnConfirm());
         }
@@ -160,7 +159,7 @@ namespace MnM.Core.UI
             }
 
             GameStateManager.Instance.StartNewCampaign(_hunters);
-            SceneManager.LoadScene("Settlement");
+            SceneTransitionManager.Instance.LoadScene("Settlement");
         }
     }
 }

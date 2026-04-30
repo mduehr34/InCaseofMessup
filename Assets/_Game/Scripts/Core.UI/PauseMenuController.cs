@@ -96,7 +96,7 @@ namespace MnM.Core.UI
             PlayerPrefs.SetInt(ReturnPausedKey,    1);
             PlayerPrefs.Save();
             Time.timeScale = 1f;
-            SceneManager.LoadScene("Settings");
+            SceneTransitionManager.Instance.LoadScene("Settings");
         }
 
         private void SaveAndClose()
@@ -110,7 +110,7 @@ namespace MnM.Core.UI
             Time.timeScale = 1f;
 
             if (SceneManager.GetActiveScene().name == "CombatScene")
-                SceneManager.LoadScene("Settlement");
+                SceneTransitionManager.Instance.LoadScene("Settlement");
             else
                 SetPause(false);
         }
@@ -118,7 +118,7 @@ namespace MnM.Core.UI
         private void ReturnToMenu()
         {
             Time.timeScale = 1f;
-            SceneManager.LoadScene("MainMenu");
+            SceneTransitionManager.Instance.LoadScene("MainMenu");
         }
     }
 }

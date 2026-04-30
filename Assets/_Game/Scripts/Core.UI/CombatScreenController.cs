@@ -271,6 +271,8 @@ namespace MnM.Core.UI
             overlay.style.right    = 0;
             overlay.style.bottom   = 0;
             _root.Add(overlay);
+            if (SceneTransitionManager.Instance != null)
+                StartCoroutine(SceneTransitionManager.Instance.SlideIn(overlay));
 
             var state = _combatManager.CurrentState;
 

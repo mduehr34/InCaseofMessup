@@ -57,7 +57,7 @@ namespace MnM.Core.Systems
             CampaignState = CampaignInitializer.CreateNewCampaign(campaignData);
             Debug.Log($"[GSM] New campaign started: {campaignData.campaignName} " +
                       $"Year:{CampaignState.currentYear}");
-            SceneManager.LoadScene("Settlement");
+            SceneTransitionManager.Instance.LoadScene("Settlement");
         }
 
         // Called by CharacterCreationController after player confirms hunter names.
@@ -79,7 +79,7 @@ namespace MnM.Core.Systems
             CampaignData  = campaignData;
             CampaignState = state;
             Debug.Log($"[GSM] Campaign loaded. Year:{state.currentYear}");
-            SceneManager.LoadScene("Settlement");
+            SceneTransitionManager.Instance.LoadScene("Settlement");
         }
 
         // ── Hunt Flow ────────────────────────────────────────────
@@ -98,14 +98,14 @@ namespace MnM.Core.Systems
 
             Debug.Log($"[GSM] Hunt prepared: {monster.monsterName} ({difficulty}) " +
                       $"with {hunters.Length} hunters");
-            SceneManager.LoadScene("Travel");
+            SceneTransitionManager.Instance.LoadScene("Travel");
         }
 
         public void BeginCombat()
         {
             // Travel scene calls this after travel events are resolved
             Debug.Log("[GSM] Beginning combat — loading CombatScene");
-            SceneManager.LoadScene("CombatScene");
+            SceneTransitionManager.Instance.LoadScene("CombatScene");
         }
 
         public void ReturnFromHunt(HuntResult result)
@@ -114,14 +114,14 @@ namespace MnM.Core.Systems
             CampaignState.pendingHuntResult = result;
             SaveManager.Save(CampaignState);
             Debug.Log($"[GSM] Returning from hunt. Victory:{result.isVictory}");
-            SceneManager.LoadScene("Settlement");
+            SceneTransitionManager.Instance.LoadScene("Settlement");
         }
 
         // ── Navigation Helpers ───────────────────────────────────
         public void OpenGearGrid(string characterId)
         {
             PendingGearGridCharacterId = characterId;
-            SceneManager.LoadScene("GearGrid");
+            SceneTransitionManager.Instance.LoadScene("GearGrid");
         }
 
         public void GoToMainMenu()
@@ -129,7 +129,7 @@ namespace MnM.Core.Systems
             // Save before leaving (if campaign active)
             if (CampaignState != null)
                 SaveManager.Save(CampaignState);
-            SceneManager.LoadScene("MainMenu");
+            SceneTransitionManager.Instance.LoadScene("MainMenu");
         }
 
         public void OpenCodex()
