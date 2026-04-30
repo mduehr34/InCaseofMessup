@@ -446,6 +446,8 @@ namespace MnM.Core.UI
             overlay.style.bottom   = 0;
             _root.Add(overlay);
             _activeModal = overlay;
+            if (SceneTransitionManager.Instance != null)
+                StartCoroutine(SceneTransitionManager.Instance.SlideIn(overlay));
 
             overlay.Q<Label>("event-id").text        = evt.eventId;
             overlay.Q<Label>("event-name").text      = evt.eventName;
@@ -533,6 +535,8 @@ namespace MnM.Core.UI
             overlay.style.bottom   = 0;
             _root.Add(overlay);
             _activeModal = overlay;
+            if (SceneTransitionManager.Instance != null)
+                StartCoroutine(SceneTransitionManager.Instance.SlideIn(overlay));
 
             overlay.Q<Label>("gp-name").text    = gp.principalName;
             overlay.Q<Label>("gp-trigger").text = gp.triggerCondition;
@@ -551,11 +555,17 @@ namespace MnM.Core.UI
 
         private void CloseModal()
         {
-            if (_activeModal != null)
-            {
-                _root.Remove(_activeModal);
-                _activeModal = null;
-            }
+            if (_activeModal == null) return;
+            var modal = _activeModal;
+            _activeModal = null; // clear immediately so a new modal can open during slide-out
+            StartCoroutine(CloseModalCoroutine(modal));
+        }
+
+        private System.Collections.IEnumerator CloseModalCoroutine(VisualElement modal)
+        {
+            if (SceneTransitionManager.Instance != null)
+                yield return SceneTransitionManager.Instance.SlideOut(modal);
+            _root.Remove(modal);
             RefreshResourceSummary();
             if (_activeTab == "characters") BuildCharactersTab();
         }

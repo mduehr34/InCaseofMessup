@@ -241,7 +241,7 @@ namespace MnM.Core.UI
         {
             var root = new VisualElement();
             root.style.width             = 220;
-            root.style.minHeight         = 310;
+            root.style.minHeight         = 0;
             root.style.flexDirection     = FlexDirection.Column;
             root.style.backgroundColor   = new Color(0.08f, 0.06f, 0.04f);
             root.style.borderTopWidth    = 2;

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using MnM.Core.Data;
 using MnM.Core.Systems;
@@ -33,7 +32,7 @@ namespace MnM.Core.UI
             root.Q<Button>("btn-new-campaign").clicked += () =>
             {
                 Debug.Log("[MainMenu] New Campaign clicked");
-                SceneManager.LoadScene("CampaignSelect");
+                SceneTransitionManager.Instance.LoadScene("CampaignSelect");
             };
 
             // Continue → load save → Settlement (via GameStateManager)
@@ -56,7 +55,7 @@ namespace MnM.Core.UI
                 Debug.Log("[MainMenu] Codex — implement in Stage 6-G");
 
             root.Q<Button>("btn-settings").clicked += () =>
-                SceneManager.LoadScene("Settings");
+                SceneTransitionManager.Instance.LoadScene("Settings");
             root.Q<Button>("btn-credits").clicked += () =>
                 Debug.Log("[MainMenu] Credits — post-MVP");
 

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 using MnM.Core.Systems;
 
@@ -62,7 +61,7 @@ namespace MnM.Core.UI
             });
 
             root.Q<Button>("btn-back").RegisterCallback<ClickEvent>(_ =>
-                SceneManager.LoadScene(_backScene));
+                SceneTransitionManager.Instance.LoadScene(_backScene));
         }
 
         private void SetupSlider(VisualElement root, string sliderId, string labelId,
