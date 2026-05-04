@@ -29,9 +29,10 @@ namespace MnM.Core.Systems
         public event System.Action<string>                  OnEntityCollapsed;
         public event System.Action<CombatResult>            OnCombatEnded;
 
-        // Status effect visual events — not on ICombatManager; consumed by StatusEffectDisplay
-        public event System.Action<string, string, int> OnEffectApplied;   // entityId, effectName, duration
-        public event System.Action<string, string>      OnEffectRemoved;    // entityId, effectName
+        // Visual events — not on ICombatManager; consumed by UI components directly
+        public event System.Action<string, string, int> OnEffectApplied;        // entityId, effectName, duration
+        public event System.Action<string, string>      OnEffectRemoved;         // entityId, effectName
+        public event System.Action<string>              OnBehaviorCardActivated; // cardName
 
         // ── Lifecycle ────────────────────────────────────────────
         public void StartCombat(CombatState initialState)
@@ -145,6 +146,7 @@ namespace MnM.Core.Systems
             }
             var card = _monsterAI.DrawNextCard();
             Debug.Log($"[MonsterPhase] Executing: {card.cardName} — {card.effectDescription}");
+            OnBehaviorCardActivated?.Invoke(card.cardName);
             _monsterAI.ExecuteCard(card, CurrentState);
         }
 

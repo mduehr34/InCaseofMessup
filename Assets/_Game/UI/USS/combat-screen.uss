@@ -257,14 +257,15 @@
     flex-shrink:    0;
     align-items:    stretch;
     padding:        var(--spacing-sm);
-    overflow:       hidden;
+    padding-top:    20px;   /* headroom for hover lift */
+    overflow:       visible; /* allow cards to lift above zone boundary */
 }
 
 .hand-cards {
     flex:           1;
     flex-direction: row;
     align-items:    stretch;
-    overflow:       hidden;
+    overflow:       visible; /* allow slide-in animation and hover lift */
 }
 
 .hand-actions {
@@ -292,6 +293,30 @@
     width:     140px;
     height:    48px;
     font-size: var(--font-size-body);
+}
+
+/* ── Deck Pile Indicator ─────────────────────────────────────── */
+.deck-pile-wrapper {
+    flex-direction: column;
+    align-items:    center;
+    align-self:     flex-end;
+    flex-shrink:    0;
+    margin-right:   var(--spacing-sm);
+}
+
+.deck-pile {
+    width:            48px;
+    height:           64px;
+    background-image: url("../../Art/Generated/UI/ui_deck_stack.png");
+    background-size:  100% 100%;
+}
+
+.deck-count-label {
+    font-size:           var(--font-size-label);
+    color:               var(--color-text-accent);
+    -unity-font-style:   bold;
+    -unity-text-align:   upper-center;
+    margin-top:          3px;
 }
 
 /* ── Action Cards ────────────────────────────────────────────── */

@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 7a5b90df838345c438330403c97a8169
+guid: 703435c1770ef2a4e82409929f69cc6f
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2163904271019982348
-    second: ui_card_frame_0
+      213: -4599079031972317239
+    second: ui_deck_stack_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 0
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -51,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 16
+  spritePixelsToUnits: 1
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -72,7 +72,7 @@ TextureImporter:
   platformSettings:
   - serializedVersion: 4
     buildTarget: DefaultTexturePlatform
-    maxTextureSize: 64
+    maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: 4
     textureCompression: 0
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: ui_card_frame_0
+      name: ui_deck_stack_0
       rect:
         serializedVersion: 2
-        x: 5
-        y: 4
-        width: 151
-        height: 211
+        x: 1
+        y: 2
+        width: 47
+        height: 59
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c0eb81a387bb70e10800000000000000
-      internalID: 2163904271019982348
+      spriteID: 9c7b755ccf9cc20c0800000000000000
+      internalID: -4599079031972317239
       vertices: []
       indices: 
       edges: []
