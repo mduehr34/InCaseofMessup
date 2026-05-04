@@ -200,6 +200,7 @@ GameObject:
   - component: {fileID: 1010199894}
   - component: {fileID: 1010199893}
   - component: {fileID: 1010199892}
+  - component: {fileID: 1010199896}
   m_Layer: 0
   m_Name: CombatUI
   m_TagString: Untagged
@@ -236,6 +237,7 @@ MonoBehaviour:
   _uiDocument: {fileID: 1010199894}
   _combatManager: {fileID: 1066921340}
   _resultModalAsset: {fileID: 9197481963319205126, guid: 206abb6fb751bf442ae045797b1465cb, type: 3}
+  _cardAnim: {fileID: 1010199896}
   _gridManager: {fileID: 1980084148}
 --- !u!114 &1010199894
 MonoBehaviour:
@@ -275,6 +277,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1010199896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1010199891}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e9d9366eb48cdd4688e38d3584fbc39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: MnM.Core.UI::MnM.Core.UI.CardAnimationController
 --- !u!1 &1066921339
 GameObject:
   m_ObjectHideFlags: 0

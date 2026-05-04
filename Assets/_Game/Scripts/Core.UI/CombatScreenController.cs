@@ -12,9 +12,10 @@ namespace MnM.Core.UI
     public class CombatScreenController : MonoBehaviour
     {
         // ── Inspector References ─────────────────────────────────
-        [SerializeField] private UIDocument       _uiDocument;
-        [SerializeField] private CombatManager    _combatManager;
-        [SerializeField] private VisualTreeAsset  _resultModalAsset;
+        [SerializeField] private UIDocument              _uiDocument;
+        [SerializeField] private CombatManager           _combatManager;
+        [SerializeField] private VisualTreeAsset         _resultModalAsset;
+        [SerializeField] private CardAnimationController _cardAnim;
 
         // ── Cached Root Elements ─────────────────────────────────
         private VisualElement _root;
@@ -47,8 +48,24 @@ namespace MnM.Core.UI
         private Label         _phaseBannerLabel;
         private Coroutine     _bannerCoroutine;
 
+        // End Turn button — cached for enable/disable during auto-advance phases
+        private Button    _endTurnBtn;
+        // Auto-advance coroutine for non-interactive phases (BehaviorRefresh, MonsterPhase)
+        private Coroutine _autoAdvanceCoroutine;
+
         // Card hand
         private VisualElement _handCards;
+        private Label         _deckCountLabel;
+
+        // Animation overlay — absolute-positioned layer for cards mid-flight
+        private VisualElement _animationOverlay;
+
+        // Maps card name → its current VisualElement in the hand (for animation lookup)
+        private readonly Dictionary<string, VisualElement> _handCardElements     = new();
+        // Maps behavior card name → its current VisualElement in the monster panel
+        private readonly Dictionary<string, VisualElement> _behaviorCardElements = new();
+        // Tracks which behavior card names are currently rendered (skip rebuild when unchanged)
+        private readonly HashSet<string> _renderedBehaviorCardNames = new();
 
         // ── Card Selection State ─────────────────────────────────
         private string        _pendingCardName = null;   // Card selected, awaiting target
@@ -76,6 +93,9 @@ namespace MnM.Core.UI
             // (Domain Reload keeps non-serialized fields alive across recompiles)
             _partBars.Clear();
             _behaviorCardsContainer = null;
+            _handCardElements.Clear();
+            _behaviorCardElements.Clear();
+            _renderedBehaviorCardNames.Clear();
 
             _root = _uiDocument.rootVisualElement;
             CacheElements();
@@ -104,7 +124,19 @@ namespace MnM.Core.UI
         {
             _phaseLabel          = _root.Q<Label>("phase-label");
             _roundLabel          = _root.Q<Label>("round-label");
+
+            // Transparent overlay for cards mid-animation (play/discard fly-outs)
+            _animationOverlay = new VisualElement();
+            _animationOverlay.style.position = Position.Absolute;
+            _animationOverlay.style.left     = 0;
+            _animationOverlay.style.top      = 0;
+            _animationOverlay.style.right    = 0;
+            _animationOverlay.style.bottom   = 0;
+            _animationOverlay.pickingMode    = PickingMode.Ignore;
+            _root.Add(_animationOverlay);
+
             _handCards           = _root.Q<VisualElement>("hand-cards");
+            _deckCountLabel      = _root.Q<Label>("deck-count");
             _monsterPanel        = _root.Q<VisualElement>("monster-panel");
             _monsterPartsContainer = _root.Q<VisualElement>("monster-parts-container");
             _phaseBanner         = _root.Q<VisualElement>("phase-banner");
@@ -126,9 +158,9 @@ namespace MnM.Core.UI
             }
 
             // Wire End Turn button
-            var endTurnBtn = _root.Q<Button>("end-turn-btn");
-            if (endTurnBtn != null)
-                endTurnBtn.clicked += OnEndTurnClicked;
+            _endTurnBtn = _root.Q<Button>("end-turn-btn");
+            if (_endTurnBtn != null)
+                _endTurnBtn.clicked += OnEndTurnClicked;
             else
                 Debug.LogWarning("[CombatUI] end-turn-btn not found in UXML");
         }
@@ -137,19 +169,21 @@ namespace MnM.Core.UI
         private void WireEvents()
         {
             if (_combatManager == null) return;
-            _combatManager.OnPhaseChanged    += OnPhaseChanged;
-            _combatManager.OnDamageDealt     += OnDamageDealt;
-            _combatManager.OnEntityCollapsed += OnEntityCollapsed;
-            _combatManager.OnCombatEnded     += OnCombatEnded;
+            _combatManager.OnPhaseChanged          += OnPhaseChanged;
+            _combatManager.OnDamageDealt           += OnDamageDealt;
+            _combatManager.OnEntityCollapsed       += OnEntityCollapsed;
+            _combatManager.OnCombatEnded           += OnCombatEnded;
+            _combatManager.OnBehaviorCardActivated += OnBehaviorCardActivated;
         }
 
         private void UnwireEvents()
         {
             if (_combatManager == null) return;
-            _combatManager.OnPhaseChanged    -= OnPhaseChanged;
-            _combatManager.OnDamageDealt     -= OnDamageDealt;
-            _combatManager.OnEntityCollapsed -= OnEntityCollapsed;
-            _combatManager.OnCombatEnded     -= OnCombatEnded;
+            _combatManager.OnPhaseChanged          -= OnPhaseChanged;
+            _combatManager.OnDamageDealt           -= OnDamageDealt;
+            _combatManager.OnEntityCollapsed       -= OnEntityCollapsed;
+            _combatManager.OnCombatEnded           -= OnCombatEnded;
+            _combatManager.OnBehaviorCardActivated -= OnBehaviorCardActivated;
         }
 
         // ── Status Display Setup ──────────────────────────────────
@@ -191,8 +225,64 @@ namespace MnM.Core.UI
             if (phase == CombatPhase.VitalityPhase || phase == CombatPhase.MonsterPhase)
                 TriggerPhaseBanner(phaseText);
 
+            // Discard the hand when hunters are done acting and the round moves on.
+            // BehaviorRefresh is the first phase where the hand is truly finished.
+            if (phase == CombatPhase.BehaviorRefresh && _handCardElements.Count > 0)
+                AnimateDiscardHand();
+
+            // Enable End Turn only during the interactive phases
+            bool interactive = phase == CombatPhase.VitalityPhase || phase == CombatPhase.HunterPhase;
+            if (_endTurnBtn != null) _endTurnBtn.SetEnabled(interactive);
+
+            // Auto-advance non-interactive phases so monster acts without player input
+            if (_autoAdvanceCoroutine != null) StopCoroutine(_autoAdvanceCoroutine);
+            if (phase == CombatPhase.BehaviorRefresh)
+                _autoAdvanceCoroutine = StartCoroutine(AutoAdvancePhase(0.4f));
+            else if (phase == CombatPhase.MonsterPhase)
+                _autoAdvanceCoroutine = StartCoroutine(AutoAdvancePhase(1.5f));
+
             RefreshAll();
             Debug.Log($"[CombatUI] Phase → {phase}");
+        }
+
+        /// <summary>
+        /// Moves all current hand card elements to the animation overlay and
+        /// fades them out. Called at round boundary before the hand is rebuilt.
+        /// </summary>
+        private void AnimateDiscardHand()
+        {
+            foreach (var kvp in _handCardElements)
+            {
+                var el = kvp.Value;
+                if (el.parent == _handCards)
+                {
+                    _handCards.Remove(el);
+                    _animationOverlay?.Add(el);
+                }
+                _cardAnim?.AnimateDiscard(el);
+            }
+            _handCardElements.Clear();
+        }
+
+        private IEnumerator AutoAdvancePhase(float delay)
+        {
+            yield return new WaitForSeconds(delay);
+            _autoAdvanceCoroutine = null;
+            _combatManager.AdvancePhase();
+        }
+
+        private void OnBehaviorCardActivated(string cardName)
+        {
+            if (_cardAnim == null) return;
+            if (_behaviorCardElements.TryGetValue(cardName, out var el))
+            {
+                _cardAnim.AnimateBehaviorActivation(el);
+                Debug.Log($"[CombatUI] Behavior card pulse: {cardName}");
+            }
+            else
+            {
+                Debug.LogWarning($"[CombatUI] Behavior card element not found for pulse: {cardName}");
+            }
         }
 
         private void TriggerPhaseBanner(string text)
@@ -247,6 +337,11 @@ namespace MnM.Core.UI
 
         private void OnCombatEnded(CombatResult result)
         {
+            if (_autoAdvanceCoroutine != null)
+            {
+                StopCoroutine(_autoAdvanceCoroutine);
+                _autoAdvanceCoroutine = null;
+            }
             Debug.Log($"[CombatUI] Combat ended — Victory:{result.isVictory}");
             if (result.isVictory) AudioManager.Instance?.OnMonsterDefeated();
 
@@ -589,9 +684,17 @@ namespace MnM.Core.UI
                 _behaviorCardsContainer.style.paddingBottom = 8;
             }
 
-            _behaviorCardsContainer.Clear();
-
             var cards = _combatManager.GetActiveBehaviorCards();
+
+            // Skip rebuild if the deck hasn't changed — preserves elements mid-pulse
+            var currentNames = new HashSet<string>(cards.Select(c => c.cardName));
+            if (currentNames.SetEquals(_renderedBehaviorCardNames)) return;
+            _renderedBehaviorCardNames.Clear();
+            foreach (var n in currentNames) _renderedBehaviorCardNames.Add(n);
+
+            _behaviorCardsContainer.Clear();
+            _behaviorCardElements.Clear();
+
             if (cards.Length == 0)
             {
                 var empty = new Label("No cards remaining");
@@ -606,6 +709,7 @@ namespace MnM.Core.UI
                 var el = CardRenderer.BuildBehaviorCard(card);
                 el.style.marginBottom = 8;
                 _behaviorCardsContainer.Add(el);
+                _behaviorCardElements[card.cardName] = el;
             }
         }
 
@@ -670,7 +774,13 @@ namespace MnM.Core.UI
         private void RefreshCardHand(CombatState state)
         {
             if (_handCards == null) return;
+
+            // Record which card names were in the hand before this refresh so
+            // we can skip the draw animation for cards that haven't changed.
+            var previousNames = new HashSet<string>(_handCardElements.Keys);
+
             _handCards.Clear();
+            _handCardElements.Clear();
             _selectedCardEl  = null;
             _pendingCardName = null;
 
@@ -691,10 +801,14 @@ namespace MnM.Core.UI
             if (gritDisplay != null)
                 gritDisplay.text = $"Grit: {activeHunter.currentGrit}";
 
-            foreach (var cardName in activeHunter.handCardNames)
+            if (_deckCountLabel != null)
+                _deckCountLabel.text = activeHunter.deckCardNames.Length.ToString();
+
+            for (int i = 0; i < activeHunter.handCardNames.Length; i++)
             {
-                var card     = LoadCard(cardName);
-                bool canPlay = card == null || activeHunter.apRemaining >= (card.apCost - card.apRefund);
+                string cardName = activeHunter.handCardNames[i];
+                var card        = LoadCard(cardName);
+                bool canPlay    = card == null || activeHunter.apRemaining >= (card.apCost - card.apRefund);
 
                 VisualElement el;
                 if (card != null)
@@ -713,7 +827,14 @@ namespace MnM.Core.UI
                 el.EnableInClassList("card--unplayable", !canPlay);
                 string capturedName = cardName;
                 el.RegisterCallback<ClickEvent>(_ => OnCardClicked(capturedName, el, canPlay));
+
                 _handCards.Add(el);
+                _handCardElements[cardName] = el;
+
+                // Hover lift on all cards; draw animation only for newly drawn cards
+                CardAnimationController.RegisterHoverLift(el);
+                if (!previousNames.Contains(cardName))
+                    _cardAnim?.AnimateDraw(el, delay: i * 0.05f);
             }
         }
 
@@ -875,14 +996,37 @@ namespace MnM.Core.UI
                 return;
             }
 
+            // Capture card element before game state or DOM changes
+            string playedName = _pendingCardName;
+            VisualElement playedEl = null;
+            if (_handCardElements.TryGetValue(playedName, out var found))
+            {
+                playedEl = found;
+                _handCards.Remove(playedEl);
+                _animationOverlay?.Add(playedEl);
+            }
+
             var targetCell = new Vector2Int(x, y);
-            bool success = _combatManager.TryPlayCard(
-                activeHunter.hunterId, _pendingCardName, targetCell);
+            bool success = _combatManager.TryPlayCard(activeHunter.hunterId, playedName, targetCell);
 
             if (success)
-                Debug.Log($"[CombatUI] Card played: {_pendingCardName} → ({x},{y})");
+            {
+                Debug.Log($"[CombatUI] Card played: {playedName} → ({x},{y})");
+                if (playedEl != null && _cardAnim != null)
+                    _cardAnim.AnimatePlay(playedEl, _animationOverlay);
+                else if (playedEl != null)
+                    _animationOverlay?.Remove(playedEl);
+            }
             else
-                Debug.Log($"[CombatUI] TryPlayCard failed: {_pendingCardName} → ({x},{y}) — invalid target or insufficient AP");
+            {
+                // Put the card back — TryPlayCard rejected (invalid target, etc.)
+                if (playedEl != null)
+                {
+                    _animationOverlay?.Remove(playedEl);
+                    _handCards.Add(playedEl);
+                }
+                Debug.Log($"[CombatUI] TryPlayCard failed: {playedName} → ({x},{y}) — invalid target or insufficient AP");
+            }
 
             _pendingCardName = null;
             if (_selectedCardEl != null)

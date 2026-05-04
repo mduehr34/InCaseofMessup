@@ -94,6 +94,13 @@
 
         <!-- ── Zone 3: Card Hand ─────────────────────────────── -->
         <ui:VisualElement name="card-hand-zone" class="card-hand-zone stone-panel--raised">
+
+            <!-- Draw pile: sprite above, count label below -->
+            <ui:VisualElement class="deck-pile-wrapper">
+                <ui:VisualElement name="deck-pile" class="deck-pile"/>
+                <ui:Label name="deck-count" text="0" class="deck-count-label"/>
+            </ui:VisualElement>
+
             <ui:VisualElement name="hand-cards" class="hand-cards"/>
             <ui:VisualElement name="hand-actions" class="hand-actions">
                 <ui:Label  name="ap-display"   text="AP: 2"    class="hand-ap-display"/>
