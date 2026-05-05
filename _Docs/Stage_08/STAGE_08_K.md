@@ -5,14 +5,14 @@
 
 ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
 
-Stage 8-K | Combat Action Animations
+Stage 8-K | Hunter Movement UI — Grid Click to Move & Facing
 Status: Stage 8-J complete. Card animations working.
-Task: Add visual feedback to combat actions. Attack: flash
-the target part red briefly. Hit: show a tiny pixel burst
-particle on the token. Miss: show a "MISS" floating text.
-Monster move: smoothly lerp the token across grid cells.
-Part break: show a crack flash and part name highlights red.
-Hunter collapse: token shakes then fades to a "collapsed" tint.
+Task: Wire hunter movement to the combat grid. TryMoveHunter()
+is fully implemented in CombatManager and GridManager but
+nothing in CombatScreenController calls it. Clicking an empty
+cell during Hunter Phase does nothing. Fix this: clicking a
+reachable empty cell moves the active hunter. Show valid
+movement cells in green. Update hunter facing after each move.
 
 Read these files before doing anything:
 - .cursorrules
@@ -20,264 +20,300 @@ Read these files before doing anything:
 - _Docs/Stage_08/STAGE_08_K.md
 - Assets/_Game/Scripts/Core.UI/CombatScreenController.cs
 - Assets/_Game/Scripts/Core.Systems/CombatManager.cs
+- Assets/_Game/Scripts/Core.Data/CombatState.cs
 
 Then confirm:
-- Token movement uses Transform.position lerp in world space
-  (not UIToolkit — tokens are SpriteRenderer GameObjects on the grid)
-- Hit/Miss visuals are UIToolkit overlays (world-space to screen-space)
-- Part flash uses UIToolkit (the part list panel is already UIToolkit)
-- All animations are non-blocking — game state advances immediately
-- Part break is permanent — the bar turns grey and stays red-named
+- TryMoveHunter() in CombatManager.cs is complete (lines ~261-317)
+- HunterCombatState already has facingX and facingY int fields
+- OnGridCellClicked() has no movement code — only card targeting
+- _validMoveCells will be a new HashSet<Vector2Int> added to the controller
+- StatusEffectResolver.ApplyStatusPenalties already handles Slowed movement reduction
+- What you will NOT build: token lerp animations (Stage 10-M)
 
 ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 ============================================================ -->
 
-# Stage 8-K: Combat Action Animations
+# Stage 8-K: Hunter Movement UI — Grid Click to Move & Facing
 
 **Resuming from:** Stage 8-J complete — card animations working
-**Done when:** Attack hits show flash + impact; misses show floating "MISS" text; monster moves smoothly on grid; part breaks trigger crack effect; hunter collapse shakes and dims token
-**Commit:** `"8K: Combat action animations — hit flash, miss text, monster move lerp, part break, collapse"`
+**Done when:** Active hunter moves on grid click; reachable cells highlight green; hunter facing updates on every move; movement and card-targeting highlights never appear simultaneously
+**Commit:** `"8K: Hunter movement UI — grid click-to-move, range highlight, facing update"`
 **Next session:** STAGE_08_L.md
 
 ---
 
-## Part 1: Generate Impact Sprites
+## What's Missing
 
-Use CoPlay `generate_or_edit_images`. Save to `Assets/_Game/Art/Generated/UI/Combat/`
-
-| Filename | Size | Description |
-|---|---|---|
-| `fx_hit_shell.png` | 32×32 | Pixel burst — white/gold sparks radiating outward. Shell impact. Transparent bg. |
-| `fx_hit_flesh.png` | 32×32 | Dark red splatter dots. Flesh impact. Transparent bg. |
-| `fx_part_break.png` | 48×48 | Crack lines radiating from centre. Bone-white and grey. Transparent bg. |
-| `fx_miss.png` | 32×16 | The word "MISS" in grey pixel font, slightly diagonal. Transparent bg. |
-
-Import: Sprite (2D and UI), Point (No Filter), PPU 16
+`CombatManager.TryMoveHunter()` validates bounds, occupancy, denied cells, and movement range — it is fully implemented. `HunterCombatState` already has `facingX`/`facingY`. But `CombatScreenController.OnGridCellClicked()` only handles card targeting. Clicking any empty cell during Hunter Phase does nothing. This stage wires the two together and adds movement range highlighting.
 
 ---
 
-## Part 2: CombatAnimationController.cs
+## Part 1: Facing Update in TryMoveHunter
 
-**Path:** `Assets/_Game/Scripts/Core.UI/CombatAnimationController.cs`
+Open `Assets/_Game/Scripts/Core.Systems/CombatManager.cs`.
+
+Find the successful-move block in `TryMoveHunter()` — the section that calls `MoveOccupant` and updates `hunter.gridX`/`gridY`. Immediately after setting those fields, add the facing update:
 
 ```csharp
-using System.Collections;
-using UnityEngine;
-using UnityEngine.UIElements;
+// After: hunter.gridY = destination.y;
 
-namespace MnM.Core.UI
+// Update facing toward direction of movement
+int dx = destination.x - from.x;
+int dy = destination.y - from.y;
+if (dx != 0 || dy != 0)
 {
-    public class CombatAnimationController : MonoBehaviour
-    {
-        [SerializeField] private UIDocument _uiDocument;
+    hunter.facingX = dx == 0 ? 0 : (dx > 0 ? 1 : -1);
+    hunter.facingY = dy == 0 ? 0 : (dy > 0 ? 1 : -1);
+}
+Debug.Log($"[Combat] {hunter.hunterName} moved to ({destination.x},{destination.y}) " +
+          $"facing ({hunter.facingX},{hunter.facingY})");
+```
 
-        // ── Hit Flash ───────────────────────────────────────────────────
+---
 
-        /// <summary>Show impact sprite at a world-space position.</summary>
-        public void ShowHitImpact(Vector3 worldPos, bool isShell)
-        {
-            StartCoroutine(ImpactRoutine(worldPos, isShell));
-        }
+## Part 2: Movement Range Fields and Helpers
 
-        private IEnumerator ImpactRoutine(Vector3 worldPos, bool isShell)
-        {
-            string path = isShell ? "Art/Generated/UI/Combat/fx_hit_shell"
-                                  : "Art/Generated/UI/Combat/fx_hit_flesh";
-            var sprite  = Resources.Load<Sprite>(path);
-            if (sprite == null) yield break;
+Open `Assets/_Game/Scripts/Core.UI/CombatScreenController.cs`.
 
-            var el = new VisualElement();
-            el.style.width  = 48;
-            el.style.height = 48;
-            el.style.position = Position.Absolute;
-            el.style.backgroundImage     = new StyleBackground(sprite);
-            el.style.backgroundScaleMode = ScaleMode.ScaleToFit;
-            el.pickingMode = PickingMode.Ignore;
+Add one field alongside the existing card-selection state fields:
 
-            // Convert world → screen → UIToolkit coords
-            Vector2 screen = Camera.main.WorldToScreenPoint(worldPos);
-            float uiX = screen.x - 24f;
-            float uiY = Screen.height - screen.y - 24f;
-            el.style.left = uiX;
-            el.style.top  = uiY;
+```csharp
+// ── Movement State ────────────────────────────────────────────
+private HashSet<Vector2Int> _validMoveCells = new();
+```
 
-            _uiDocument.rootVisualElement.Add(el);
+Add a helper to avoid repeating the active-hunter lookup (used in several places below):
 
-            // Animate: scale up then fade
-            float t = 0f, duration = 0.3f;
-            while (t < duration)
-            {
-                t += Time.deltaTime;
-                float p = t / duration;
-                el.style.opacity = Mathf.Lerp(1f, 0f, p);
-                float scale = Mathf.Lerp(0.5f, 1.5f, p);
-                el.style.scale = new Scale(new Vector3(scale, scale, 1f));
-                yield return null;
-            }
-            _uiDocument.rootVisualElement.Remove(el);
-        }
-
-        // ── Miss Text ───────────────────────────────────────────────────
-
-        public void ShowMiss(Vector3 worldPos)
-        {
-            StartCoroutine(MissRoutine(worldPos));
-        }
-
-        private IEnumerator MissRoutine(Vector3 worldPos)
-        {
-            Vector2 screen = Camera.main.WorldToScreenPoint(worldPos);
-            float uiX = screen.x - 20f;
-            float uiY = Screen.height - screen.y;
-
-            var label = new Label("MISS");
-            label.style.position  = Position.Absolute;
-            label.style.left      = uiX;
-            label.style.top       = uiY;
-            label.style.color     = new Color(0.54f, 0.54f, 0.54f);
-            label.style.fontSize  = 14;
-            label.pickingMode     = PickingMode.Ignore;
-            label.style.unityFontStyleAndWeight = FontStyle.Bold;
-            _uiDocument.rootVisualElement.Add(label);
-
-            float t = 0f, duration = 0.6f;
-            while (t < duration)
-            {
-                t += Time.deltaTime;
-                float p = t / duration;
-                label.style.opacity = Mathf.Lerp(1f, 0f, p * p);
-                label.style.top     = uiY - 30f * p;
-                yield return null;
-            }
-            _uiDocument.rootVisualElement.Remove(label);
-        }
-
-        // ── Part Break Flash ────────────────────────────────────────────
-
-        /// <summary>Flash a crack effect on the part panel entry and lock bar to grey.</summary>
-        public void ShowPartBreak(VisualElement partContainer, string partName)
-        {
-            StartCoroutine(PartBreakRoutine(partContainer));
-            Debug.Log($"[Combat] PART BREAK: {partName}");
-        }
-
-        private IEnumerator PartBreakRoutine(VisualElement partContainer)
-        {
-            // Flash red
-            for (int i = 0; i < 3; i++)
-            {
-                partContainer.style.backgroundColor = new StyleColor(new Color(0.5f, 0.1f, 0.1f, 0.5f));
-                yield return new WaitForSeconds(0.08f);
-                partContainer.style.backgroundColor = StyleKeyword.Initial;
-                yield return new WaitForSeconds(0.06f);
-            }
-            // Lock shell bar to grey
-            // (PartHealthBar.SetValues() with shell=0 already turns part name red — see Stage 8-G)
-        }
-
-        // ── Monster Move ────────────────────────────────────────────────
-
-        /// <summary>Smoothly move a token from its current position to targetPos.</summary>
-        public void AnimateMove(GameObject token, Vector3 targetPos, float duration = 0.25f)
-        {
-            StartCoroutine(MoveRoutine(token, targetPos, duration));
-        }
-
-        private IEnumerator MoveRoutine(GameObject token, Vector3 target, float duration)
-        {
-            Vector3 start = token.transform.position;
-            float t = 0f;
-            while (t < duration)
-            {
-                t += Time.deltaTime;
-                token.transform.position = Vector3.Lerp(start, target, Mathf.SmoothStep(0f, 1f, t / duration));
-                yield return null;
-            }
-            token.transform.position = target;
-        }
-
-        // ── Hunter Collapse ─────────────────────────────────────────────
-
-        public void AnimateCollapse(GameObject hunterToken)
-        {
-            StartCoroutine(CollapseRoutine(hunterToken));
-        }
-
-        private IEnumerator CollapseRoutine(GameObject token)
-        {
-            var renderer = token.GetComponent<SpriteRenderer>();
-            if (renderer == null) yield break;
-
-            // Shake
-            Vector3 origin = token.transform.position;
-            for (int i = 0; i < 8; i++)
-            {
-                token.transform.position = origin + new Vector3(
-                    Random.Range(-0.06f, 0.06f), Random.Range(-0.04f, 0.04f), 0);
-                yield return new WaitForSeconds(0.04f);
-            }
-            token.transform.position = origin;
-
-            // Fade to dark collapsed tint
-            float t = 0f, duration = 0.4f;
-            Color startColor = renderer.color;
-            Color endColor   = new Color(0.3f, 0.15f, 0.15f, 0.5f);
-            while (t < duration)
-            {
-                t += Time.deltaTime;
-                renderer.color = Color.Lerp(startColor, endColor, t / duration);
-                yield return null;
-            }
-            renderer.color = endColor;
-            Debug.Log($"[Combat] {token.name} collapsed");
-        }
-    }
+```csharp
+private HunterCombatState GetActiveHunter()
+{
+    var state = _combatManager?.CurrentState;
+    if (state == null) return null;
+    return System.Array.Find(state.hunters, h => !h.hasActedThisPhase && !h.isCollapsed);
 }
 ```
 
 ---
 
-## Integration
+## Part 3: ShowMovementRange and ClearMovementRange
 
-Add `CombatAnimationController` component to the same GameObject as `CombatScreenController`.
-
-In `CombatScreenController` / `CombatManager` event handlers:
+Add these two methods immediately after `RefreshGrid()`:
 
 ```csharp
-// After resolving an attack:
-if (hit && isShell)
-    _combatAnim.ShowHitImpact(targetToken.transform.position, isShell: true);
-else if (hit)
-    _combatAnim.ShowHitImpact(targetToken.transform.position, isShell: false);
-else
-    _combatAnim.ShowMiss(targetToken.transform.position);
+private void ShowMovementRange(HunterCombatState hunter)
+{
+    _validMoveCells.Clear();
+    if (_gridManager == null || _gridCells == null) return;
 
-// After a part breaks:
-_combatAnim.ShowPartBreak(partContainer, partName);
+    int effectiveMove = hunter.movement;
+    int effectiveAcc  = hunter.accuracy;
+    StatusEffectResolver.ApplyStatusPenalties(hunter, ref effectiveAcc, ref effectiveMove);
 
-// After monster moves:
-_combatAnim.AnimateMove(monsterToken, targetWorldPos);
+    var origin = new Vector2Int(hunter.gridX, hunter.gridY);
 
-// After hunter collapses:
-_combatAnim.AnimateCollapse(hunterToken);
+    for (int x = 0; x < 22; x++)
+    for (int y = 0; y < 16; y++)
+    {
+        var cell = new Vector2Int(x, y);
+        if (!_gridManager.IsInBounds(cell)) continue;
+        if (_gridManager.IsOccupied(cell))  continue;
+        if (_gridManager.IsDenied(cell))    continue;
+
+        int dist = _gridManager.GetDistance(origin, cell);
+        if (dist > 0 && dist <= effectiveMove)
+            _validMoveCells.Add(cell);
+    }
+
+    // Apply CSS class to each reachable cell
+    foreach (var pos in _validMoveCells)
+    {
+        var el = _gridCells[pos.x, pos.y];
+        if (el != null) el.EnableInClassList("grid-cell--movable", true);
+    }
+
+    Debug.Log($"[CombatUI] Movement range: {_validMoveCells.Count} cells reachable from " +
+              $"({hunter.gridX},{hunter.gridY}) move={effectiveMove}");
+}
+
+private void ClearMovementRange()
+{
+    foreach (var pos in _validMoveCells)
+    {
+        var el = _gridCells?[pos.x, pos.y];
+        if (el != null) el.EnableInClassList("grid-cell--movable", false);
+    }
+    _validMoveCells.Clear();
+}
 ```
+
+---
+
+## Part 4: Wire ShowMovementRange into Phase Changes
+
+In `OnPhaseChanged()`, after the `RefreshAll()` call at the bottom, add:
+
+```csharp
+// Clear stale highlights first, then show movement range if entering Hunter Phase
+ClearMovementRange();
+if (phase == CombatPhase.HunterPhase && _pendingCardName == null)
+{
+    var active = GetActiveHunter();
+    if (active != null) ShowMovementRange(active);
+}
+```
+
+---
+
+## Part 5: Wire ShowMovementRange into Card Selection
+
+In `OnCardClicked()`, find the section that sets `_pendingCardName`. After the toggle-off path (card deselected, `_pendingCardName = null`) and after the select path (`_pendingCardName = cardName`), add range management at both branches:
+
+```csharp
+// ── Card deselected (toggle off) ─────────────────────────────
+if (_pendingCardName == cardName)
+{
+    _pendingCardName = null;
+    _selectedCardEl  = null;
+    Debug.Log($"[CombatUI] Card deselected: {cardName}");
+
+    // Restore movement range when no card is pending
+    ClearMovementRange();
+    var active = GetActiveHunter();
+    if (active != null && _combatManager.CurrentPhase == CombatPhase.HunterPhase)
+        ShowMovementRange(active);
+
+    RefreshGrid();
+    return;
+}
+
+// ── Card selected ─────────────────────────────────────────────
+_pendingCardName = cardName;
+_selectedCardEl  = cardEl;
+cardEl.EnableInClassList("card--selected", true);
+
+// Hide movement highlights — attack targets take priority visually
+ClearMovementRange();
+
+Debug.Log($"[CombatUI] Card selected: {cardName} — click a grid cell to target");
+RefreshGrid();
+```
+
+---
+
+## Part 6: Update OnGridCellClicked to Handle Movement
+
+Replace the full body of `OnGridCellClicked()` with:
+
+```csharp
+private void OnGridCellClicked(int x, int y)
+{
+    _gridCursor = new Vector2Int(x, y);
+    Debug.Log($"[CombatUI] Grid cell clicked: ({x},{y})");
+
+    // ── Card targeting mode ───────────────────────────────────
+    if (_pendingCardName != null)
+    {
+        ResolveCardAtCell(x, y);
+        return;
+    }
+
+    // ── Movement mode (Hunter Phase, no card selected) ────────
+    if (_combatManager?.CurrentPhase == CombatPhase.HunterPhase)
+    {
+        var activeHunter = GetActiveHunter();
+        if (activeHunter == null) { RefreshGrid(); return; }
+
+        var destination = new Vector2Int(x, y);
+
+        // Clicking own cell: no-op
+        if (destination.x == activeHunter.gridX && destination.y == activeHunter.gridY)
+        {
+            RefreshGrid();
+            return;
+        }
+
+        if (_validMoveCells.Contains(destination))
+        {
+            bool moved = _combatManager.TryMoveHunter(activeHunter.hunterId, destination);
+            if (moved)
+            {
+                ClearMovementRange();
+                ShowMovementRange(activeHunter); // Recalculate from new position
+                RefreshAll();
+            }
+            else
+            {
+                Debug.Log($"[CombatUI] TryMoveHunter rejected: ({x},{y})");
+            }
+        }
+        else
+        {
+            // Clicked a non-reachable occupied cell — log hunter name if present
+            var state = _combatManager.CurrentState;
+            var hunter = System.Array.Find(
+                state.hunters, h => !h.isCollapsed && h.gridX == x && h.gridY == y);
+            if (hunter != null)
+                Debug.Log($"[CombatUI] Hunter at ({x},{y}): {hunter.hunterName}");
+        }
+    }
+
+    RefreshGrid();
+}
+```
+
+---
+
+## Part 7: Keep Movable Class Alive Through RefreshGrid
+
+In `RefreshGrid()`, inside the per-cell loop alongside the other `EnableInClassList` calls, add:
+
+```csharp
+cell.EnableInClassList("grid-cell--movable",
+    _validMoveCells.Contains(new Vector2Int(x, y)));
+```
+
+This ensures movement highlights survive damage events, phase labels, and other UI refreshes that call `RefreshGrid`.
+
+---
+
+## Part 8: CSS — Movement Highlight
+
+Open the combat screen USS file (whichever `.uss` file defines `grid-cell`).
+
+Add:
+
+```css
+.grid-cell--movable {
+    background-color: rgba(40, 110, 60, 0.30);
+    border-color: rgba(70, 180, 90, 0.55);
+    border-width: 1px;
+}
+```
+
+Muted green — visually distinct from the gold `grid-cell--valid` used for card targeting.
 
 ---
 
 ## Verification Test
 
-- [ ] Hit a shell part → gold/white burst appears and fades at impact point
-- [ ] Hit a flesh wound → dark red splatter appears and fades
-- [ ] Miss → grey "MISS" text floats up and fades
-- [ ] Break Gaunt Throat shell → container flashes red 3 times, shell bar turns grey
-- [ ] Monster plays Creeping Advance → monster token slides to new cell smoothly (0.25s)
-- [ ] Aldric reaches 0 Flesh → token shakes then fades to dark tint
-- [ ] Multiple effects can run simultaneously (attack on one part while another moves)
-- [ ] No NullReferenceException when Camera.main is called
+- [ ] Enter Hunter Phase → green cells appear within active hunter's movement range
+- [ ] Card selected → green movement tint disappears; monster cells show gold (valid target)
+- [ ] Card deselected (click same card again) → movement range reappears
+- [ ] Click a green cell → hunter token repositions; range redraws from new position
+- [ ] Click hunter's own cell → nothing happens, no error
+- [ ] Click an occupied cell (another hunter or monster footprint) → no move
+- [ ] Click a denied cell → no move (`TryMoveHunter` rejects it)
+- [ ] Movement range respects grid edges — no cells outside 22×16
+- [ ] Slowed status applied → movement range shrinks (check movement halved)
+- [ ] After move: Console shows `[Combat] Aldric moved to (X,Y) facing (1,0)` (or appropriate)
+- [ ] After move: arc log appears `[Grid] Arc check: attacker... → Front/Flank/Rear`
+- [ ] Hunter can move multiple times per turn (movement does not end turn)
+- [ ] End Turn → movement highlights clear; if a second hunter exists, their range appears
+- [ ] Monster Phase → no green highlights visible anywhere
 
 ---
 
 ## Next Session
 
 **File:** `_Docs/Stage_08/STAGE_08_L.md`
-**Covers:** Settlement UI animations — item crafting forge flash, gear equip highlight in the gear grid, innovation adoption glow, and year advance banner
+**Covers:** Monster action execution engine — implement `MonsterAI.ExecuteCard()` and `EvaluateTrigger()` so the monster moves toward hunters, deals damage to body zones, and respects trigger conditions when resolving behavior cards each round

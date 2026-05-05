@@ -179,6 +179,12 @@
     border-width:     2px;
 }
 
+.grid-cell--movable {
+    background-color: rgba(40, 110, 60, 0.30);
+    border-color:     rgba(70, 180, 90, 0.55);
+    border-width:     1px;
+}
+
 /* ── Monster Panel ───────────────────────────────────────────── */
 .monster-panel {
     width:          380px;

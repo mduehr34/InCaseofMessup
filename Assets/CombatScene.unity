@@ -318,7 +318,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e57964ebd5f8a5b4283cf50ae6d8d051, type: 3}
   m_Name: 
   m_EditorClassIdentifier: MnM.Core.Systems::MnM.Core.Systems.CombatManager
-  _gridManager: {fileID: 0}
+  _gridManager: {fileID: 1980084148}
 --- !u!4 &1066921341
 Transform:
   m_ObjectHideFlags: 0
