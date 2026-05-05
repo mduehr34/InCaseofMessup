@@ -69,11 +69,14 @@ namespace MnM.Core.Logic
 
             if (!precision.isHit)
             {
+                result.wasMiss          = true;
                 Debug.Log($"[Card] MISS — {card.cardName}");
                 result.apRefundGranted  = card.apRefund;
                 attacker.apRemaining   -= (card.apCost - card.apRefund);
                 return result;
             }
+
+            result.isCritical = precision.isCritical;
 
             // ── Step 4: Shell or Flesh? ──────────────────────────
             bool shellDepleted = targetPart.shellCurrent == 0;
@@ -185,6 +188,8 @@ namespace MnM.Core.Logic
         public int          apRefundGranted;
         public bool         reactionApplied;
         public bool         wasLoud;
+        public bool         wasMiss;
+        public bool         isCritical;
         public bool         apexShouldTrigger;
         public List<string> removedCardNames;
     }

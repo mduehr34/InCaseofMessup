@@ -35,6 +35,7 @@ namespace MnM.Core.Data
         public int maxGrit;
         public int apRemaining;             // Resets to 2 each Hunter Phase
         public bool hasActedThisPhase;
+        public bool hasMovedThisPhase;
         public bool isCollapsed;
         // Body zones: Head, Torso, LeftArm, RightArm, LeftLeg, RightLeg
         public BodyZoneState[] bodyZones;

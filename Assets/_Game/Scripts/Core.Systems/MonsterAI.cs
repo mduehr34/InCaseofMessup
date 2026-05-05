@@ -21,6 +21,8 @@ namespace MnM.Core.Systems
         // ── Events ───────────────────────────────────────────────
         // Fires immediately mid-turn when the last Removable card is removed
         public event System.Action OnMonsterDefeated;
+        // Fires whenever a card is successfully removed — UI uses this to rebuild the deck panel
+        public event System.Action OnBehaviorCardRemoved;
 
         // ── State ────────────────────────────────────────────────
         private bool _apexTriggered = false;
@@ -145,6 +147,17 @@ namespace MnM.Core.Systems
             Debug.Log("[MonsterAI] *** APEX TRIGGERED — Apex cards entered rotation ***");
         }
 
+        // Returns a random removable card name, or null if none remain
+        public string GetRandomRemovableCardName()
+        {
+            var all = new List<BehaviorCardSO>();
+            all.AddRange(_openingCards);
+            all.AddRange(_escalationCards);
+            all.AddRange(_apexCards);
+            if (all.Count == 0) return null;
+            return all[Random.Range(0, all.Count)].cardName;
+        }
+
         // ── Card Removal ─────────────────────────────────────────
         public void RemoveCard(string cardName)
         {
@@ -155,14 +168,17 @@ namespace MnM.Core.Systems
             removed |= RemoveFromList(_apexCards,       cardName);
 
             // Also evict from the active draw pile if it's sitting there
-            var inActive = _activeDeck.FirstOrDefault(
-                c => c.cardName == cardName && c.cardType != BehaviorCardType.Permanent);
+            var inActive = _activeDeck.FirstOrDefault(c =>
+                (c.cardName == cardName ||
+                 string.Equals(c.name, cardName, System.StringComparison.OrdinalIgnoreCase))
+                && c.cardType != BehaviorCardType.Permanent);
             if (inActive != null) _activeDeck.Remove(inActive);
 
             if (removed)
             {
-                Debug.Log($"[MonsterAI] Card removed: \"{cardName}\". " +
-                          $"Remaining Removable: {RemainingRemovableCount}");
+                Debug.Log($"[Combat] Monster behavior card discarded: \"{cardName}\" " +
+                          $"(removable remaining: {RemainingRemovableCount})");
+                OnBehaviorCardRemoved?.Invoke();
 
                 // Win condition — fires IMMEDIATELY, mid-turn, mid-phase
                 if (!HasRemovableCards())
@@ -179,7 +195,11 @@ namespace MnM.Core.Systems
 
         private bool RemoveFromList(List<BehaviorCardSO> list, string cardName)
         {
-            var card = list.FirstOrDefault(c => c.cardName == cardName);
+            // Match by cardName field first, then fall back to Unity asset name (c.name)
+            // so MonsterSO breakRemovesCardNames can use either the display name or the asset ID
+            var card = list.FirstOrDefault(c =>
+                c.cardName == cardName ||
+                string.Equals(c.name, cardName, System.StringComparison.OrdinalIgnoreCase));
             if (card == null) return false;
             list.Remove(card);
             return true;

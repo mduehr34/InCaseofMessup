@@ -33,6 +33,7 @@ namespace MnM.Core.Systems
         public event System.Action<string, string, int> OnEffectApplied;        // entityId, effectName, duration
         public event System.Action<string, string>      OnEffectRemoved;         // entityId, effectName
         public event System.Action<string>              OnBehaviorCardActivated; // cardName
+        public event System.Action                      OnBehaviorCardRemoved;   // deck changed — UI should rebuild
 
         // ── Lifecycle ────────────────────────────────────────────
         public void StartCombat(CombatState initialState)
@@ -40,6 +41,41 @@ namespace MnM.Core.Systems
             CurrentState = initialState;
             CurrentPhase = CombatPhase.VitalityPhase;
             _aggroManager.Initialize(initialState);
+
+            // Register initial grid positions so IsOccupied() works from turn 1
+            var grid = _gridManager as IGridManager;
+            if (grid != null)
+            {
+                foreach (var hunter in initialState.hunters)
+                {
+                    if (hunter.isCollapsed) continue;
+                    grid.PlaceOccupant(new GridOccupant
+                    {
+                        occupantId = hunter.hunterId,
+                        isHunter   = true,
+                        footprintW = 1,
+                        footprintH = 1,
+                        gridX      = hunter.gridX,
+                        gridY      = hunter.gridY,
+                    }, new Vector2Int(hunter.gridX, hunter.gridY));
+                }
+
+                var m = initialState.monster;
+                grid.PlaceOccupant(new GridOccupant
+                {
+                    occupantId = m.monsterName,
+                    isHunter   = false,
+                    footprintW = m.footprintW,
+                    footprintH = m.footprintH,
+                    gridX      = m.gridX,
+                    gridY      = m.gridY,
+                }, new Vector2Int(m.gridX, m.gridY));
+            }
+            else
+            {
+                Debug.LogWarning("[Combat] StartCombat: _gridManager not assigned — occupancy will not block movement");
+            }
+
             Debug.Log($"[Combat] Started. Year:{initialState.campaignYear} " +
                       $"Monster:{initialState.monster.monsterName} " +
                       $"Hunters:{initialState.hunters.Length}");
@@ -92,8 +128,9 @@ namespace MnM.Core.Systems
             foreach (var hunter in CurrentState.hunters)
             {
                 if (hunter.isCollapsed) continue;
-                hunter.hasActedThisPhase = false;
-                hunter.apRemaining       = 2;
+                hunter.hasActedThisPhase  = false;
+                hunter.hasMovedThisPhase  = false;
+                hunter.apRemaining        = 2;
                 DrawCardsForHunter(hunter);
                 Debug.Log($"[Vitality] {hunter.hunterName} hand: [{string.Join(", ", hunter.handCardNames)}]");
             }
@@ -150,6 +187,21 @@ namespace MnM.Core.Systems
             _monsterAI.ExecuteCard(card, CurrentState);
         }
 
+        // ── Card Registry (mirrors UI pattern — cards not in a Resources sub-path) ────
+        private static ActionCardRegistrySO _cardRegistry;
+        private static ActionCardSO LoadCardSO(string name)
+        {
+            if (_cardRegistry == null)
+                _cardRegistry = Resources.Load<ActionCardRegistrySO>("ActionCardRegistry");
+            if (_cardRegistry == null)
+            {
+                Debug.LogError("[Combat] ActionCardRegistry not found — " +
+                               "create it at Assets/_Game/Data/Resources/ActionCardRegistry.asset");
+                return null;
+            }
+            return _cardRegistry.Get(name);
+        }
+
         // ── Hunter Actions ────────────────────────────────────────
         public bool TryPlayCard(string hunterId, string cardName, Vector2Int targetCell)
         {
@@ -166,11 +218,10 @@ namespace MnM.Core.Systems
                 return false;
             }
 
-            // Load card SO via Resources — Stage 5 will use a proper registry
-            var card = Resources.Load<ActionCardSO>($"Data/Cards/Action/{cardName}");
+            var card = LoadCardSO(cardName);
             if (card == null)
             {
-                Debug.LogWarning($"[Combat] TryPlayCard: ActionCardSO not found for \"{cardName}\"");
+                Debug.LogWarning($"[Combat] TryPlayCard: ActionCardSO not found for \"{cardName}\" — check ActionCardRegistry");
                 return false;
             }
 
@@ -209,6 +260,41 @@ namespace MnM.Core.Systems
                     foreach (var removedName in result.removedCardNames)
                         _monsterAI?.RemoveCard(removedName);
 
+                    // Flesh wound fallback — if no part-specific card removal was configured,
+                    // remove a random behavior card. Ensures every flesh hit shrinks the deck.
+                    if (result.damageType == DamageType.Flesh && result.damageDealt > 0
+                        && result.removedCardNames.Count == 0
+                        && _monsterAI is MonsterAI concreteAI
+                        && concreteAI.HasRemovableCards())
+                    {
+                        var fallback = concreteAI.GetRandomRemovableCardName();
+                        if (fallback != null)
+                        {
+                            result.removedCardNames.Add(fallback);
+                            _monsterAI.RemoveCard(fallback);
+                        }
+                    }
+
+                    // ── Combat Log ────────────────────────────────
+                    string outcome = result.wasMiss         ? "MISS"
+                                   : result.reactionApplied ? "REACTION"
+                                   : result.isCritical      ? $"CRITICAL HIT — {result.damageDealt} {result.damageType}"
+                                   : result.damageDealt > 0 ? $"HIT — {result.damageDealt} {result.damageType}"
+                                   :                          "HIT — Force check failed, no damage";
+                    string removed = result.removedCardNames.Count > 0
+                        ? string.Join(", ", result.removedCardNames)
+                        : "none";
+                    Debug.Log(
+                        $"[Combat Log] ──────────────────────────────────────────\n" +
+                        $"  {hunter.hunterName} played {card.cardName}\n" +
+                        $"  Target  : {targetPart.partName} ({CurrentState.monster.monsterName})\n" +
+                        $"  Outcome : {outcome}\n" +
+                        $"  Part HP : Shell {targetPart.shellCurrent}/{targetPart.shellMax} " +
+                                    $"| Flesh {targetPart.fleshCurrent}/{targetPart.fleshMax}\n" +
+                        $"  AP left : {hunter.apRemaining}\n" +
+                        $"  Removed : {removed} (remaining: {_monsterAI?.RemainingRemovableCount ?? -1})\n" +
+                        $"────────────────────────────────────────────────────────");
+
                     if (result.apexShouldTrigger && !_firstPartBreakOccurred)
                     {
                         _firstPartBreakOccurred = true;
@@ -234,13 +320,35 @@ namespace MnM.Core.Systems
 
         private int FindMonsterPartAtCell(Vector2Int cell)
         {
-            // Returns index 0 if cell is within the monster's footprint.
-            // Stage 5 UI will map cells to specific named parts.
             var m = CurrentState.monster;
             bool inFootprint =
                 cell.x >= m.gridX && cell.x < m.gridX + m.footprintW &&
                 cell.y >= m.gridY && cell.y < m.gridY + m.footprintH;
-            return inFootprint ? 0 : -1;
+            if (!inFootprint) return -1;
+
+            // Prefer unbroken revealed parts; fall back to broken parts (still have flesh)
+            var eligible = new List<int>();
+            for (int i = 0; i < m.parts.Length; i++)
+            {
+                var p = m.parts[i];
+                if (p.isRevealed) eligible.Add(i);
+            }
+
+            if (eligible.Count == 0)
+            {
+                Debug.LogWarning("[Combat] No revealed monster parts — no eligible target");
+                return -1;
+            }
+
+            // Prefer unbroken parts so shell damage is still possible; if all broken, any revealed part
+            var preferred = eligible.Where(i => !m.parts[i].isBroken).ToList();
+            var pool      = preferred.Count > 0 ? preferred : eligible;
+
+            int chosen = pool[Random.Range(0, pool.Count)];
+            Debug.Log($"[Combat] Part targeted: {m.parts[chosen].partName} " +
+                      $"broken={m.parts[chosen].isBroken} " +
+                      $"(rolled from {pool.Count} eligible parts)");
+            return chosen;
         }
 
         private void RemoveCardFromHand(HunterCombatState hunter, string cardName)
@@ -251,15 +359,22 @@ namespace MnM.Core.Systems
             discard.Add(cardName);
             hunter.handCardNames    = hand.ToArray();
             hunter.discardCardNames = discard.ToArray();
+            Debug.Log($"[Combat] {hunter.hunterName} discarded: {cardName} " +
+                      $"(discard pile: {hunter.discardCardNames.Length})");
         }
 
-        // Placeholder — Stage 5 will use a SO registry
-        private MonsterSO GetMonsterSO() =>
-            Resources.Load<MonsterSO>(
-                $"Data/Monsters/{CurrentState.monster.monsterName.Replace(" ", "")}");
+        private MonsterSO _cachedMonsterSO;
+        private MonsterSO GetMonsterSO() => _cachedMonsterSO;
 
         public bool TryMoveHunter(string hunterId, Vector2Int destination)
         {
+            var grid = _gridManager as IGridManager;
+            if (grid == null)
+            {
+                Debug.LogError("[Combat] TryMoveHunter: _gridManager not assigned on CombatManager");
+                return false;
+            }
+
             var hunter = GetHunter(hunterId);
             if (hunter == null)
             {
@@ -271,29 +386,29 @@ namespace MnM.Core.Systems
                 Debug.LogWarning($"[Combat] TryMoveHunter: {hunter.hunterName} is collapsed");
                 return false;
             }
-            if (!(_gridManager as IGridManager).IsInBounds(destination))
+            if (!grid.IsInBounds(destination))
             {
                 Debug.LogWarning($"[Combat] TryMoveHunter: destination out of bounds");
                 return false;
             }
-            if ((_gridManager as IGridManager).IsOccupied(destination))
+            if (grid.IsOccupied(destination))
             {
                 Debug.LogWarning($"[Combat] TryMoveHunter: destination occupied");
                 return false;
             }
-            if ((_gridManager as IGridManager).IsDenied(destination))
+            if (grid.IsDenied(destination))
             {
                 Debug.LogWarning($"[Combat] TryMoveHunter: destination denied by Spear zone");
                 return false;
             }
 
             // Movement cost check (Slowed = half movement)
-            int effectiveMovement = hunter.movement; // Base movement from CharacterSO (wired in Stage 4)
+            int effectiveMovement = hunter.movement;
             int accuracy = hunter.accuracy;
             StatusEffectResolver.ApplyStatusPenalties(hunter, ref accuracy, ref effectiveMovement);
 
             var from = new Vector2Int(hunter.gridX, hunter.gridY);
-            int dist = (_gridManager as IGridManager).GetDistance(from, destination);
+            int dist = grid.GetDistance(from, destination);
             if (dist > effectiveMovement)
             {
                 Debug.LogWarning($"[Combat] TryMoveHunter: distance {dist} exceeds movement {effectiveMovement}");
@@ -301,19 +416,37 @@ namespace MnM.Core.Systems
             }
 
             // Execute move
-            (_gridManager as IGridManager).MoveOccupant(hunterId, destination);
-            hunter.gridX = destination.x;
-            hunter.gridY = destination.y;
+            grid.MoveOccupant(hunterId, destination);
+            hunter.gridX             = destination.x;
+            hunter.gridY             = destination.y;
+            hunter.hasMovedThisPhase = true;
+
+            // Update facing toward direction of movement
+            int dx = destination.x - from.x;
+            int dy = destination.y - from.y;
+            if (dx != 0 || dy != 0)
+            {
+                hunter.facingX = dx == 0 ? 0 : (dx > 0 ? 1 : -1);
+                hunter.facingY = dy == 0 ? 0 : (dy > 0 ? 1 : -1);
+            }
 
             // Check which arc the hunter is in relative to the monster — may trigger Flank Sense
             // EvaluateTrigger handles this in MonsterAI (wired when full content added Stage 7)
             var monsterCell   = new Vector2Int(CurrentState.monster.gridX, CurrentState.monster.gridY);
             var monsterFacing = new Vector2Int(CurrentState.monster.facingX, CurrentState.monster.facingY);
-            var arc = (_gridManager as IGridManager).GetArcFromAttackerToTarget(
-                destination, monsterCell, monsterFacing);
+            var arc = grid.GetArcFromAttackerToTarget(destination, monsterCell, monsterFacing);
 
-            Debug.Log($"[Combat] {hunter.hunterName} moved to ({destination.x},{destination.y}) — Arc: {arc}");
+            Debug.Log($"[Combat] {hunter.hunterName} moved to ({destination.x},{destination.y}) " +
+                      $"facing ({hunter.facingX},{hunter.facingY}) — Arc: {arc}");
             return true;
+        }
+
+        public void SkipHunterMove(string hunterId)
+        {
+            var hunter = GetHunter(hunterId);
+            if (hunter == null) return;
+            hunter.hasMovedThisPhase = true;
+            Debug.Log($"[Combat] {hunter.hunterName} skipped move — staying at ({hunter.gridX},{hunter.gridY})");
         }
 
         public void EndHunterTurn(string hunterId)
@@ -323,7 +456,11 @@ namespace MnM.Core.Systems
             hunter.hasActedThisPhase = true;
             // Discard remaining hand
             var discard = new List<string>(hunter.discardCardNames);
-            discard.AddRange(hunter.handCardNames);
+            foreach (var cardName in hunter.handCardNames)
+            {
+                discard.Add(cardName);
+                Debug.Log($"[Combat] {hunter.hunterName} end-of-turn discard: {cardName}");
+            }
             hunter.discardCardNames = discard.ToArray();
             hunter.handCardNames    = new string[0];
             _comboTracker.OnHunterTurnEnd(hunterId);
@@ -498,15 +635,21 @@ namespace MnM.Core.Systems
             return new BehaviorCardSO[0];
         }
 
+        /// <summary>Direct read from MonsterAI — always matches the console log count.</summary>
+        public int MonsterRemainingRemovableCount => _monsterAI?.RemainingRemovableCount ?? 0;
+
         public void SetMonsterAI(IMonsterAI ai) => _monsterAI = ai;
 
         public void InitializeMonsterAI(MonsterSO monster, string difficulty)
         {
+            _cachedMonsterSO = monster;
+
             var ai = new MonsterAI();
             ai.InitializeDeck(monster, difficulty);
 
             // Subscribe before SetMonsterAI so the event is wired before any draws
-            ai.OnMonsterDefeated += HandleMonsterDefeated;
+            ai.OnMonsterDefeated      += HandleMonsterDefeated;
+            ai.OnBehaviorCardRemoved  += () => OnBehaviorCardRemoved?.Invoke();
 
             SetMonsterAI(ai);
             Debug.Log($"[Combat] MonsterAI initialized for {monster.monsterName} ({difficulty})");

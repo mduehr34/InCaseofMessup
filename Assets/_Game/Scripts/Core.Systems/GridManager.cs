@@ -110,7 +110,7 @@ namespace MnM.Core.Systems
 
         // ── Range & Sight ────────────────────────────────────────
         public int GetDistance(Vector2Int a, Vector2Int b) =>
-            Mathf.Max(Mathf.Abs(a.x - b.x), Mathf.Abs(a.y - b.y)); // Chebyshev
+            Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y); // Manhattan — each cell step costs 1
 
         public Vector2Int[] GetCellsInRange(Vector2Int origin, int range)
         {

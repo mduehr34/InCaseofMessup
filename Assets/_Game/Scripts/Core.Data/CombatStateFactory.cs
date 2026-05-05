@@ -16,6 +16,10 @@ namespace MnM.Core.Data
                 gridY               = 8,
                 facingX             = 1,    // Facing East
                 facingY             = 0,
+                accuracy            = 3,
+                strength            = 3,
+                luck                = 0,
+                movement            = 5,
                 currentGrit         = 3,
                 maxGrit             = 3,
                 apRemaining         = 2,

@@ -6,6 +6,7 @@ using UnityEngine.UIElements;
 using UnityEngine.InputSystem;
 using MnM.Core.Systems;
 using MnM.Core.Data;
+using MnM.Core.Logic;
 
 namespace MnM.Core.UI
 {
@@ -79,6 +80,9 @@ namespace MnM.Core.UI
 
         // ── Keyboard / Grid Cursor ───────────────────────────────
         private Vector2Int _gridCursor = new Vector2Int(-1, -1); // -1 = no selection
+
+        // ── Movement State ────────────────────────────────────────────
+        private HashSet<Vector2Int> _validMoveCells = new();
 
         // ── Lifecycle ────────────────────────────────────────────
         private void OnEnable()
@@ -174,6 +178,7 @@ namespace MnM.Core.UI
             _combatManager.OnEntityCollapsed       += OnEntityCollapsed;
             _combatManager.OnCombatEnded           += OnCombatEnded;
             _combatManager.OnBehaviorCardActivated += OnBehaviorCardActivated;
+            _combatManager.OnBehaviorCardRemoved   += OnBehaviorCardRemoved;
         }
 
         private void UnwireEvents()
@@ -184,6 +189,7 @@ namespace MnM.Core.UI
             _combatManager.OnEntityCollapsed       -= OnEntityCollapsed;
             _combatManager.OnCombatEnded           -= OnCombatEnded;
             _combatManager.OnBehaviorCardActivated -= OnBehaviorCardActivated;
+            _combatManager.OnBehaviorCardRemoved   -= OnBehaviorCardRemoved;
         }
 
         // ── Status Display Setup ──────────────────────────────────
@@ -242,6 +248,15 @@ namespace MnM.Core.UI
                 _autoAdvanceCoroutine = StartCoroutine(AutoAdvancePhase(1.5f));
 
             RefreshAll();
+
+            // Clear stale highlights first, then show movement range if entering Hunter Phase
+            ClearMovementRange();
+            if (phase == CombatPhase.HunterPhase && _pendingCardName == null)
+            {
+                var active = GetActiveHunter();
+                if (active != null) ShowMovementRange(active);
+            }
+
             Debug.Log($"[CombatUI] Phase → {phase}");
         }
 
@@ -283,6 +298,14 @@ namespace MnM.Core.UI
             {
                 Debug.LogWarning($"[CombatUI] Behavior card element not found for pulse: {cardName}");
             }
+        }
+
+        private void OnBehaviorCardRemoved()
+        {
+            // Invalidate the cache so RefreshBehaviorCards always rebuilds after a removal
+            _renderedBehaviorCardNames.Clear();
+            if (_combatManager?.CurrentState != null)
+                RefreshMonsterPanel(_combatManager.CurrentState.monster);
         }
 
         private void TriggerPhaseBanner(string text)
@@ -465,6 +488,13 @@ namespace MnM.Core.UI
             }
         }
 
+        private HunterCombatState GetActiveHunter()
+        {
+            var state = _combatManager?.CurrentState;
+            if (state == null) return null;
+            return System.Array.Find(state.hunters, h => !h.hasActedThisPhase && !h.isCollapsed);
+        }
+
         // ── Full Refresh ─────────────────────────────────────────
         public void RefreshAll()
         {
@@ -635,11 +665,7 @@ namespace MnM.Core.UI
 
             var deckLabel = _monsterPanel.Q<Label>("monster-deck-count");
             if (deckLabel != null)
-            {
-                int removable = _combatManager.GetActiveBehaviorCards()
-                    .Length;
-                deckLabel.text = $"Removable: {removable}";
-            }
+                deckLabel.text = $"Removable: {_combatManager.MonsterRemainingRemovableCount}";
 
             var stanceLabel = _monsterPanel.Q<Label>("monster-stance");
             if (stanceLabel != null)
@@ -855,6 +881,13 @@ namespace MnM.Core.UI
                 _pendingCardName = null;
                 _selectedCardEl  = null;
                 Debug.Log($"[CombatUI] Card deselected: {cardName}");
+
+                // Restore movement range when no card is pending
+                ClearMovementRange();
+                var active = GetActiveHunter();
+                if (active != null && _combatManager.CurrentPhase == CombatPhase.HunterPhase)
+                    ShowMovementRange(active);
+
                 RefreshGrid();
                 return;
             }
@@ -863,8 +896,75 @@ namespace MnM.Core.UI
             _selectedCardEl  = cardEl;
             cardEl.EnableInClassList("card--selected", true);
 
+            // Hide movement highlights — attack targets take priority visually
+            ClearMovementRange();
+
             Debug.Log($"[CombatUI] Card selected: {cardName} — click a grid cell to target");
             RefreshGrid();
+        }
+
+        private void ShowMovementRange(HunterCombatState hunter)
+        {
+            _validMoveCells.Clear();
+            if (hunter.hasMovedThisPhase) return;
+            if (_gridManager == null || _gridCells == null) return;
+
+            int effectiveMove = hunter.movement;
+            int effectiveAcc  = hunter.accuracy;
+            StatusEffectResolver.ApplyStatusPenalties(hunter, ref effectiveAcc, ref effectiveMove);
+
+            var grid   = _gridManager as IGridManager;
+            var origin = new Vector2Int(hunter.gridX, hunter.gridY);
+
+            // BFS — only expand through passable cells so the monster blocks paths behind it
+            var visited = new Dictionary<Vector2Int, int> { [origin] = 0 };
+            var queue   = new Queue<(Vector2Int cell, int cost)>();
+            queue.Enqueue((origin, 0));
+
+            var dirs = new[] {
+                new Vector2Int( 1,  0),
+                new Vector2Int(-1,  0),
+                new Vector2Int( 0,  1),
+                new Vector2Int( 0, -1),
+            };
+
+            while (queue.Count > 0)
+            {
+                var (cell, cost) = queue.Dequeue();
+                if (cost > 0) _validMoveCells.Add(cell);
+                if (cost >= effectiveMove) continue;
+
+                foreach (var dir in dirs)
+                {
+                    var next = cell + dir;
+                    if (visited.ContainsKey(next))    continue;
+                    if (!grid.IsInBounds(next))       continue;
+                    if (grid.IsOccupied(next))        continue;
+                    if (grid.IsDenied(next))          continue;
+
+                    visited[next] = cost + 1;
+                    queue.Enqueue((next, cost + 1));
+                }
+            }
+
+            foreach (var pos in _validMoveCells)
+            {
+                var el = _gridCells[pos.x, pos.y];
+                if (el != null) el.EnableInClassList("grid-cell--movable", true);
+            }
+
+            Debug.Log($"[CombatUI] Movement range: {_validMoveCells.Count} cells reachable from " +
+                      $"({hunter.gridX},{hunter.gridY}) move={effectiveMove}");
+        }
+
+        private void ClearMovementRange()
+        {
+            foreach (var pos in _validMoveCells)
+            {
+                var el = _gridCells?[pos.x, pos.y];
+                if (el != null) el.EnableInClassList("grid-cell--movable", false);
+            }
+            _validMoveCells.Clear();
         }
 
         // ── Grid Building ─────────────────────────────────────────
@@ -925,6 +1025,8 @@ namespace MnM.Core.UI
                 cell.EnableInClassList("grid-cell--monster",  false);
                 cell.EnableInClassList("grid-cell--selected", false);
                 cell.EnableInClassList("grid-cell--valid",    false);
+                cell.EnableInClassList("grid-cell--movable",
+                    _validMoveCells.Contains(new Vector2Int(x, y)));
 
                 if (grid != null)
                 {
@@ -964,15 +1066,47 @@ namespace MnM.Core.UI
             _gridCursor = new Vector2Int(x, y);
             Debug.Log($"[CombatUI] Grid cell clicked: ({x},{y})");
 
+            // ── Card targeting mode ───────────────────────────────────
             if (_pendingCardName != null)
             {
                 ResolveCardAtCell(x, y);
+                return;
             }
-            else
+
+            // ── Movement mode (Hunter Phase, no card selected) ────────
+            if (_combatManager?.CurrentPhase == CombatPhase.HunterPhase)
             {
-                var state = _combatManager?.CurrentState;
-                if (state != null)
+                var activeHunter = GetActiveHunter();
+                if (activeHunter == null) { RefreshGrid(); return; }
+
+                var destination = new Vector2Int(x, y);
+
+                // Clicking own cell: skip move — stay in place, clear highlights
+                if (destination.x == activeHunter.gridX && destination.y == activeHunter.gridY)
                 {
+                    _combatManager.SkipHunterMove(activeHunter.hunterId);
+                    ClearMovementRange();
+                    RefreshGrid();
+                    return;
+                }
+
+                if (_validMoveCells.Contains(destination))
+                {
+                    bool moved = _combatManager.TryMoveHunter(activeHunter.hunterId, destination);
+                    if (moved)
+                    {
+                        ClearMovementRange();
+                        ShowMovementRange(activeHunter); // Recalculate from new position
+                        RefreshAll();
+                    }
+                    else
+                    {
+                        Debug.Log($"[CombatUI] TryMoveHunter rejected: ({x},{y})");
+                    }
+                }
+                else
+                {
+                    var state = _combatManager.CurrentState;
                     var hunter = System.Array.Find(
                         state.hunters, h => !h.isCollapsed && h.gridX == x && h.gridY == y);
                     if (hunter != null)
