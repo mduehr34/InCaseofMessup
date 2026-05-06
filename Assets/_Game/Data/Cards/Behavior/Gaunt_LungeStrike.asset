@@ -10,20 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46fd15b58f04f9642be9b7748f4fea95, type: 3}
-  m_Name: Mock_CreepingAdvance
+  m_Name: Gaunt_LungeStrike
   m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.BehaviorCardSO
-  cardName: Creeping Advance
+  cardName: Lunge Strike
   cardType: 0
   group: 0
-  triggerCondition: End of round
-  effectDescription: Move 3 squares toward Aggro holder
-  removalCondition: Right Flank Shell break
+  triggerCondition: Always
+  effectDescription: The Gaunt lunges, driving its fang into the aggro holder.
+  removalCondition: 
   stanceTag: 
   groupTag: 
-  movementPattern: 1
-  movementDistance: 1
-  attackTargetType: 0
-  attackDamage: 0
+  movementPattern: 0
+  movementDistance: 0
+  attackTargetType: 1
+  attackDamage: 2
   attackRange: 1
   specialTag: 
   isShuffle: 0

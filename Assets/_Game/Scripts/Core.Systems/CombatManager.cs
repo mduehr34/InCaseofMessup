@@ -178,13 +178,44 @@ namespace MnM.Core.Systems
         {
             if (_monsterAI == null)
             {
-                Debug.LogWarning("[MonsterPhase] IMonsterAI not yet assigned — stub phase");
+                Debug.LogWarning("[MonsterPhase] IMonsterAI not assigned — skipping");
                 return;
             }
+
+            // Skip if monster is stunned
+            if (CurrentState.monster.currentStanceTag == "STUNNED")
+            {
+                CurrentState.monster.currentStanceTag = "";
+                Debug.Log("[MonsterPhase] Monster was STUNNED — skipping action, clearing stun");
+                return;
+            }
+
             var card = _monsterAI.DrawNextCard();
-            Debug.Log($"[MonsterPhase] Executing: {card.cardName} — {card.effectDescription}");
+            Debug.Log($"[MonsterPhase] Executing: {card.cardName}");
             OnBehaviorCardActivated?.Invoke(card.cardName);
-            _monsterAI.ExecuteCard(card, CurrentState);
+
+            var result = _monsterAI.ExecuteCard(card, CurrentState);
+
+            // Process movement — sync GridManager occupancy to new position
+            if (result.monsterMoved && _gridManager != null)
+            {
+                string monsterId = CurrentState.monster.monsterName;
+                (_gridManager as IGridManager).MoveOccupant(monsterId, result.newMonsterCell);
+                Debug.Log($"[MonsterPhase] GridManager updated — monster at " +
+                          $"({result.newMonsterCell.x},{result.newMonsterCell.y})");
+            }
+
+            // Process hits — fire events and check collapse
+            foreach (var hit in result.hits)
+            {
+                OnDamageDealt?.Invoke(hit.hunterId, hit.damage, DamageType.Flesh);
+                var hunter = GetHunter(hit.hunterId);
+                if (hunter != null) CheckHunterCollapse(hunter);
+            }
+
+            // Special tag side-effects visible to UI
+            if (result.specialFired)
+                Debug.Log($"[MonsterPhase] Special resolved: {result.specialTag}");
         }
 
         // ── Card Registry (mirrors UI pattern — cards not in a Resources sub-path) ────
@@ -256,23 +287,15 @@ namespace MnM.Core.Systems
 
                     CurrentState.monster.parts[targetPartIndex] = targetPart;
 
-                    // Act on removed cards — CardResolver is acyclic, so callers drive removal
+                    // Act on removed cards — CardResolver is acyclic, so callers drive removal.
+                    // Track only cards that MonsterAI confirms were still present and removed.
+                    // Card removal only fires when the MonsterSO part data explicitly configures it
+                    // via breakRemovesCardNames / woundRemovesCardNames. No fallback removal.
+                    var confirmedRemovals = new List<string>();
                     foreach (var removedName in result.removedCardNames)
-                        _monsterAI?.RemoveCard(removedName);
-
-                    // Flesh wound fallback — if no part-specific card removal was configured,
-                    // remove a random behavior card. Ensures every flesh hit shrinks the deck.
-                    if (result.damageType == DamageType.Flesh && result.damageDealt > 0
-                        && result.removedCardNames.Count == 0
-                        && _monsterAI is MonsterAI concreteAI
-                        && concreteAI.HasRemovableCards())
                     {
-                        var fallback = concreteAI.GetRandomRemovableCardName();
-                        if (fallback != null)
-                        {
-                            result.removedCardNames.Add(fallback);
-                            _monsterAI.RemoveCard(fallback);
-                        }
+                        if (_monsterAI != null && _monsterAI.RemoveCard(removedName))
+                            confirmedRemovals.Add(removedName);
                     }
 
                     // ── Combat Log ────────────────────────────────
@@ -281,8 +304,8 @@ namespace MnM.Core.Systems
                                    : result.isCritical      ? $"CRITICAL HIT — {result.damageDealt} {result.damageType}"
                                    : result.damageDealt > 0 ? $"HIT — {result.damageDealt} {result.damageType}"
                                    :                          "HIT — Force check failed, no damage";
-                    string removed = result.removedCardNames.Count > 0
-                        ? string.Join(", ", result.removedCardNames)
+                    string removed = confirmedRemovals.Count > 0
+                        ? string.Join(", ", confirmedRemovals)
                         : "none";
                     Debug.Log(
                         $"[Combat Log] ──────────────────────────────────────────\n" +
@@ -630,9 +653,7 @@ namespace MnM.Core.Systems
         /// <summary>Returns all remaining BehaviorCardSOs — UI only, not on the interface.</summary>
         public BehaviorCardSO[] GetActiveBehaviorCards()
         {
-            if (_monsterAI is MonsterAI ai)
-                return ai.GetActiveBehaviorCards();
-            return new BehaviorCardSO[0];
+            return _monsterAI?.GetActiveBehaviorCards() ?? new BehaviorCardSO[0];
         }
 
         /// <summary>Direct read from MonsterAI — always matches the console log count.</summary>
@@ -651,6 +672,7 @@ namespace MnM.Core.Systems
             ai.OnMonsterDefeated      += HandleMonsterDefeated;
             ai.OnBehaviorCardRemoved  += () => OnBehaviorCardRemoved?.Invoke();
 
+            ai.InjectGrid(_gridManager as IGridManager);
             SetMonsterAI(ai);
             Debug.Log($"[Combat] MonsterAI initialized for {monster.monsterName} ({difficulty})");
         }

@@ -88,7 +88,7 @@ MonoBehaviour:
     shellDurability: 2
     fleshDurability: 3
     breakRemovesCardNames:
-    - Gaunt_Lunge
+    - Gaunt_LungeStrike
     woundRemovesCardNames: []
     isTrapZone: 0
   - partName: Tail
@@ -96,7 +96,7 @@ MonoBehaviour:
     shellDurability: 2
     fleshDurability: 3
     breakRemovesCardNames:
-    - Gaunt_FlankSense
+    - Gaunt_DeadStillness
     woundRemovesCardNames: []
     isTrapZone: 0
   hardenedParts:
@@ -218,25 +218,13 @@ MonoBehaviour:
     woundRemovesCardNames: []
     isTrapZone: 0
   openingCards:
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a1, type: 2}
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a2, type: 2}
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a3, type: 2}
+  - {fileID: 11400000, guid: ab7a2fb7a31cda14683819dac05dda40, type: 2}
+  - {fileID: 11400000, guid: d1af09814a0bdcc47a01919e5cda3b3f, type: 2}
+  - {fileID: 11400000, guid: cee874ccab47f784f81ffdc0d9c139fd, type: 2}
   escalationCards:
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a4, type: 2}
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a5, type: 2}
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a6, type: 2}
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a7, type: 2}
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000ab, type: 2}
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000ae, type: 2}
-  apexCards:
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a8, type: 2}
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a9, type: 2}
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000ac, type: 2}
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000ad, type: 2}
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000af, type: 2}
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000b0, type: 2}
-  permanentCards:
-  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000aa, type: 2}
+  - {fileID: 11400000, guid: 22f1948df492cba48b3729c0207c79ee, type: 2}
+  apexCards: []
+  permanentCards: []
   weaknesses: 
   resistances: 
   frontFacing:
