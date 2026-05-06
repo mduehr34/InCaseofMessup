@@ -53,4 +53,22 @@ namespace MnM.Core.Data
     public enum DamageType { Shell, Flesh }
     public enum FacingArc { Front, Flank, Rear }
     public enum AudioContext { MainMenu, SettlementEarly, SettlementLate, HuntTravel, CombatStandard, CombatOverlord }
+
+    public enum MovementPattern
+    {
+        None,
+        Approach,   // Step-by-step toward aggro target
+        Charge,     // Full distance in a straight line, push through hunters
+        Pivot,      // Face toward lowest-Flesh hunter, no position change
+    }
+
+    public enum AttackTargetType
+    {
+        None,
+        AggroTarget,    // Single hit on the aggro holder
+        AllAdjacent,    // All hunters within 1 cell
+        AllBehind,      // All hunters in rear arc (behind monster facing)
+        AllInFront,     // All hunters in front arc
+        AllInRange,     // All hunters within attackRange cells
+    }
 }
