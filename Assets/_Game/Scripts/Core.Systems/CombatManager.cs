@@ -168,7 +168,7 @@ namespace MnM.Core.Systems
 
         private void RunBehaviorRefresh()
         {
-            _monsterAI?.AdvanceGroupIfExhausted();
+            // AdvanceGroupIfExhausted removed — no escalation logic in Stage 8-M model
             (_gridManager as IGridManager)?.TickDeniedCells();
             int remaining = _monsterAI?.RemainingRemovableCount ?? -1;
             Debug.Log($"[BehaviorRefresh] Removable cards remaining: {remaining}");
@@ -301,8 +301,8 @@ namespace MnM.Core.Systems
                     // ── Combat Log ────────────────────────────────
                     string outcome = result.wasMiss         ? "MISS"
                                    : result.reactionApplied ? "REACTION"
-                                   : result.isCritical      ? $"CRITICAL HIT — {result.damageDealt} {result.damageType}"
-                                   : result.damageDealt > 0 ? $"HIT — {result.damageDealt} {result.damageType}"
+                                   : result.isCritical      ? $"CRITICAL HIT — wound deck resolution in 8-N"
+                                   : result.damageDealt > 0 ? $"HIT — wound deck resolution in 8-N"
                                    :                          "HIT — Force check failed, no damage";
                     string removed = confirmedRemovals.Count > 0
                         ? string.Join(", ", confirmedRemovals)
@@ -318,15 +318,9 @@ namespace MnM.Core.Systems
                         $"  Removed : {removed} (remaining: {_monsterAI?.RemainingRemovableCount ?? -1})\n" +
                         $"────────────────────────────────────────────────────────");
 
-                    if (result.apexShouldTrigger && !_firstPartBreakOccurred)
-                    {
-                        _firstPartBreakOccurred = true;
-                        _monsterAI?.TriggerApex();
-                    }
+                    // apexShouldTrigger / TriggerApex removed — no escalation logic in Stage 8-M model
 
-                    if (result.damageDealt > 0)
-                        OnDamageDealt?.Invoke(CurrentState.monster.monsterName,
-                            result.damageDealt, result.damageType);
+                    // Monster-side damage event removed — wound resolution via WoundDeck in Stage 8-N
                 }
             }
 
@@ -557,36 +551,10 @@ namespace MnM.Core.Systems
         // Returns true if a trap was triggered (caller should skip normal attack resolution)
         private bool HandleTrapZone(string partName, string hunterId)
         {
-            var part = System.Array.Find(
-                CurrentState.monster.parts, p => p.partName == partName);
-
-            if (part.partName == null) return false;
-
-            if (!part.isRevealed)
-            {
-                var monsterSO = GetMonsterSO();
-                bool isTrap = monsterSO != null &&
-                    System.Array.IndexOf(monsterSO.trapZoneParts, partName) >= 0;
-
-                if (isTrap)
-                {
-                    int idx = System.Array.FindIndex(
-                        CurrentState.monster.parts, p => p.partName == partName);
-                    if (idx >= 0)
-                    {
-                        var mutablePart = CurrentState.monster.parts[idx];
-                        mutablePart.isRevealed = true;
-                        CurrentState.monster.parts[idx] = mutablePart;
-                    }
-
-                    Debug.Log($"[Combat] *** TRAP TRIGGERED — {partName} was a Trap Zone! ***");
-                    Debug.Log($"[Combat] Counter-attack fires. No damage applied this hit.");
-
-                    // Full trigger evaluation wired in Stage 7 with real behavior cards
-                    return true; // trap triggered — skip normal attack
-                }
-            }
-            return false; // not a trap — proceed normally
+            // Stage 8-M: trapZoneParts removed from MonsterSO.
+            // Trap zones are now WoundLocationSO entries with isTrap == true,
+            // drawn from the wound deck on a successful hit — see Stage 8-N.
+            return false;
         }
 
         // ── Win / Loss ────────────────────────────────────────────

@@ -53,31 +53,24 @@ namespace MnM.Core.Data
         public int strength;
         public int toughness;
         public int evasion;
-        public int behaviorDeckSizeRemovable;
+        // Deck size is derived at runtime from BehaviorCardSO[].Length — no field needed
     }
 
     [System.Serializable]
-    public struct MonsterBodyPart
+    public struct BehaviorDeckComposition
     {
-        public string partName;
-        public BodyPartTag partTag;
-        public int shellDurability;
-        public int fleshDurability;
-        // Names must exactly match BehaviorCardSO asset names
-        public string[] breakRemovesCardNames;
-        public string[] woundRemovesCardNames;
-        public bool isTrapZone;
+        public int baseCardCount;           // Cards drawn from the monster's base pool
+        public int advancedCardCount;       // Cards drawn from the advanced pool
+        public int overwhelmingCardCount;   // Cards drawn from the overwhelming pool
+        // Total drawn = health pool for this difficulty
+        // Pools are authored larger than counts — each fight draws a different random subset
     }
 
     [System.Serializable]
-    public struct FacingTable
+    public struct FacingAccuracyBonus
     {
-        public BodyPartTag primaryZone;
-        public BodyPartTag secondaryZone;
-        public BodyPartTag tertiaryZone;
-        public int primaryZoneWeight;       // Must sum to 100 with secondary + tertiary
-        public int secondaryZoneWeight;
-        public int tertiaryZoneWeight;
+        public FacingArc arc;
+        public int accuracyModifier;        // e.g. Rear = +2 (easier to hit from behind)
     }
 
     [System.Serializable]

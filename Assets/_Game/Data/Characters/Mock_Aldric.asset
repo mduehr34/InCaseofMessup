@@ -17,13 +17,12 @@ MonoBehaviour:
   sex: 0
   accuracy: 0
   evasion: 0
-  strength: 0
+  strength: 3
   toughness: 0
-  luck: 0
+  luck: 2
   movement: 3
   currentDeck:
   - {fileID: 11400000, guid: 31a69757e6d7d48459a1a2e6233c00fe, type: 2}
-  - {fileID: 11400000, guid: d2da7cf36c6ff684e8ed6333091c8120, type: 2}
   injuryCards: []
   fightingArts: []
   disorders: []
@@ -31,4 +30,4 @@ MonoBehaviour:
   huntCount: 0
   isRetired: 0
   equippedItems: []
-  equippedWeapon: {fileID: 11400000, guid: 9df833f8a1ea20747b65027cc96b1aa6, type: 2}
+  equippedWeapon: {fileID: 0}

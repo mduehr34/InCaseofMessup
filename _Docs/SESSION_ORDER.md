@@ -32,8 +32,8 @@
 | 8-J | STAGE_08_J.md | Card Play & Draw Animations | ✅ Done |
 | 8-K | STAGE_08_K.md | Hunter Movement UI — Grid Click, Range Highlight, Facing | ✅ Done |
 | 8-L | STAGE_08_L.md | Monster Action Execution Engine (first pass — superseded by 8-M) | ✅ Done |
-| **8-M** | **STAGE_08_M.md** | **Monster Health Rework — Behavior Deck as Life & Wound Locations** | ⬜ Next |
-| **8-N** | **STAGE_08_N.md** | **New Combat Runtime — BehaviorDeck, Wound Resolution, MonsterAI Rebuild** | ⬜ |
+| 8-M | STAGE_08_M.md | Monster Health Rework — Behavior Deck as Life & Wound Locations | ✅ Done |
+| **8-N** | **STAGE_08_N.md** | **New Combat Runtime — BehaviorDeck, Wound Resolution, MonsterAI Rebuild** | ⬜ Next |
 | **8-O** | **STAGE_08_O.md** | **Hunter Deployment Phase — Per-Monster Spawn Zones** | ⬜ |
 | **8-P** | **STAGE_08_P.md** | **Active Hunter Selection — Player Chooses Who Acts** | ⬜ |
 | **8-Q** | **STAGE_08_Q.md** | **Combat Terrain — Obstacle and Bonus Squares** | ⬜ |

@@ -1,0 +1,86 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fca2cbac5ab82747a30962a8672c4c0, type: 3}
+  m_Name: Mock_GauntStandard
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.MonsterSO
+  monsterName: The Gaunt
+  materialTier: 1
+  availableFromYear: 0
+  animalBasis: "Marrow-starved wolf, enormous, blind \u2014 hunts by sound and vibration"
+  combatEmotion: "Tension \u2014 the monster reacts to noise and movement, not sight"
+  coreSkillTaught: Positioning and facing
+  gridFootprintStandard: {x: 2, y: 2}
+  gridFootprintHardened: {x: 2, y: 2}
+  gridFootprintApex: {x: 3, y: 3}
+  statBlocks:
+  - movement: 6
+    accuracy: 1
+    strength: 2
+    toughness: 1
+    evasion: 2
+  - movement: 8
+    accuracy: 2
+    strength: 3
+    toughness: 2
+    evasion: 3
+  - movement: 10
+    accuracy: 3
+    strength: 4
+    toughness: 3
+    evasion: 4
+  baseCardPool:
+  - {fileID: 11400000, guid: 2ca959f84ab0aa148a0411397d57f419, type: 2}
+  - {fileID: 11400000, guid: 35b4051ef4c97084c971bb6c43581f49, type: 2}
+  - {fileID: 11400000, guid: 4126856198c90014b8c77f3ca0e85c7a, type: 2}
+  - {fileID: 11400000, guid: ae0818694fd3f404c85ed064e0f923a0, type: 2}
+  advancedCardPool:
+  - {fileID: 11400000, guid: 334c12a4b32082d41bd0c7aedaed5004, type: 2}
+  overwhelmingCardPool: []
+  deckCompositions:
+  - baseCardCount: 3
+    advancedCardCount: 0
+    overwhelmingCardCount: 0
+  - baseCardCount: 4
+    advancedCardCount: 1
+    overwhelmingCardCount: 0
+  - baseCardCount: 4
+    advancedCardCount: 1
+    overwhelmingCardCount: 0
+  standardWoundDeck:
+  - {fileID: 11400000, guid: 126a36a1be3f86c42ba6841201eb7231, type: 2}
+  - {fileID: 11400000, guid: c8f39ecdb7cd1dd4e9178942baa794d7, type: 2}
+  - {fileID: 11400000, guid: 516c09632888c0c47bbf380c3b59ad72, type: 2}
+  - {fileID: 11400000, guid: eee88838302f71f4ca1d4db9963471e6, type: 2}
+  - {fileID: 11400000, guid: 437f7a0a4d5dd24408f4cf0d00134f6e, type: 2}
+  hardenedWoundDeck:
+  - {fileID: 11400000, guid: 126a36a1be3f86c42ba6841201eb7231, type: 2}
+  - {fileID: 11400000, guid: c8f39ecdb7cd1dd4e9178942baa794d7, type: 2}
+  - {fileID: 11400000, guid: 516c09632888c0c47bbf380c3b59ad72, type: 2}
+  - {fileID: 11400000, guid: eee88838302f71f4ca1d4db9963471e6, type: 2}
+  - {fileID: 11400000, guid: 437f7a0a4d5dd24408f4cf0d00134f6e, type: 2}
+  apexWoundDeck:
+  - {fileID: 11400000, guid: 126a36a1be3f86c42ba6841201eb7231, type: 2}
+  - {fileID: 11400000, guid: c8f39ecdb7cd1dd4e9178942baa794d7, type: 2}
+  - {fileID: 11400000, guid: 516c09632888c0c47bbf380c3b59ad72, type: 2}
+  - {fileID: 11400000, guid: eee88838302f71f4ca1d4db9963471e6, type: 2}
+  - {fileID: 11400000, guid: 437f7a0a4d5dd24408f4cf0d00134f6e, type: 2}
+  weaknesses: 
+  resistances: 
+  facingBonuses:
+  - arc: 0
+    accuracyModifier: 0
+  - arc: 1
+    accuracyModifier: 1
+  - arc: 2
+    accuracyModifier: 2
+  lootTable: []
+  stances: []

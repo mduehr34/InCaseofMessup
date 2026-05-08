@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e432c8da68b519243bd481d078cfe85f, type: 3}
+  m_Name: Mock_WL_SpikedTail
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.WoundLocationSO
+  locationName: Spiked Tail
+  partTag: 6
+  woundTarget: 7
+  isTrap: 0
+  trapEffect: 
+  isImpervious: 0
+  failureEffect: "The tail whips away \u2014 too armored to penetrate"
+  woundEffect: A spine snaps from the tail
+  criticalEffect: "The tail is severed \u2014 hunter gains a spine trophy"
+  criticalWoundTag: 
+  woundResources: []
+  criticalResources: []

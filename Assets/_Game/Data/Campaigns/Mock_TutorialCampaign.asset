@@ -20,26 +20,11 @@ MonoBehaviour:
   startingGrit: 3
   ironmanMode: 0
   monsterRoster:
-  - {fileID: 11400000, guid: 9b47334a3da03b445b364fb050f2479d, type: 2}
-  eventPool:
-  - {fileID: 11400000, guid: 43c0a06fd9864e14c99ec8da88c51591, type: 2}
-  - {fileID: 11400000, guid: 3bc76cab91f05054db4481d29836eb2d, type: 2}
-  startingInnovations:
-  - {fileID: 11400000, guid: 9e082aa0030da364b9794b30dc597f80, type: 2}
-  - {fileID: 11400000, guid: 3720c18bf9d5def40814b4a0a8734736, type: 2}
-  - {fileID: 11400000, guid: 05bb53c7b4cd07d44af4e61944bd4a91, type: 2}
-  crafterPool:
-  - {fileID: 11400000, guid: ac5448effe75c2f46b0f8fb1e25990c8, type: 2}
-  - {fileID: 11400000, guid: ee6e84d0a0d456a409b6654c20262f66, type: 2}
-  - {fileID: 11400000, guid: 8e2a6dfd0efbfb54bac24f1bd1a42862, type: 2}
-  - {fileID: 11400000, guid: 5dae203c7f90db74bbdf5dbc59112d2a, type: 2}
-  - {fileID: 11400000, guid: 776896fa4683e4140ad353ecfede7b65, type: 2}
-  - {fileID: 11400000, guid: 424eb69048211e645ba1e365404a3fe1, type: 2}
-  - {fileID: 11400000, guid: 3759cc0e73dca3b4ba65923182233bb1, type: 2}
-  - {fileID: 11400000, guid: c54b938ec53fe8045962f063258d0236, type: 2}
-  guidingPrincipals:
-  - {fileID: 11400000, guid: 65a01f650d3b89646a32c02b46b5d027, type: 2}
+  - {fileID: 11400000, guid: 0a802bcfa85f9c54b97e0852dd9253c0, type: 2}
+  eventPool: []
+  startingInnovations: []
+  crafterPool: []
+  guidingPrincipals: []
   retirementHuntCount: 10
   birthConditionAge: 0
-  overlordMonster: {fileID: 0}
-  overlordApproachYears: 
+  overlordSchedule: []
