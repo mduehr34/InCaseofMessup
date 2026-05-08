@@ -316,5 +316,5 @@ Fill in this table as you go. Every change made this session must be documented 
 
 ## Next Session
 
-**File:** `_Docs/Stage_10/STAGE_10_L.md`
-**Covers:** Final integration and ship — the complete Stage 10 DoD smoke test, build verification (Windows standalone), performance check, final v1.0 tag
+**File:** `_Docs/Stage_10/STAGE_10_M.md`
+**Covers:** Combat Action Animations — hit flash, part break, collapse pulse; all USS transitions, no logic changes
