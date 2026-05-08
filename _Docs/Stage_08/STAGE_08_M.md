@@ -1,373 +1,690 @@
 <!-- ============================================================
      SESSION PROMPT — copy everything between the arrows and
-     paste it into Claude.ai to start this session
+     paste it into Claude Code to start this session
      ============================================================
 
 ▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼▼
 
-Stage 8-M | Hunt Travel Scene — Full Implementation
-Status: Stage 8-L complete. Settlement animations done.
-Task: Build the Hunt Travel scene completely. Show a dark
-wilderness background. Display 0–3 random travel events as
-card-style panels with a narrative text and a choice or
-"continue" button. After all events, show the CONTINUE
-TO HUNT button that loads CombatScene. Wire travel music.
+Stage 8-M | Monster Health Rework — Behavior Deck as Life & Wound Locations
+Status: Stage 8-L complete. Monster execution engine (first pass) done.
+Playtesting revealed the shell/flesh HP system created frustrating combat
+pacing. This session replaces the data model entirely.
+Task: Rework the monster health system. Shells and flesh wounds are
+removed. Behavior cards are the monster's only health. A separate wound
+location deck is introduced. No escalation logic — all behavior cards
+for a difficulty are shuffled into a single starting deck.
 
 Read these files before doing anything:
-- .cursorrules
-- claude.md
+- CLAUDE.md
 - _Docs/Stage_08/STAGE_08_M.md
-- Assets/_Game/Scripts/Core.Data/EventSO.cs
-- Assets/_Game/Scripts/Core.Systems/GameStateManager.cs
-- Assets/_Game/Scripts/Core.Systems/AudioManager.cs
+- Assets/_Game/Scripts/Core.Data/Enums.cs
+- Assets/_Game/Scripts/Core.Data/DataStructs.cs
+- Assets/_Game/Scripts/Core.Data/MonsterSO.cs
+- Assets/_Game/Scripts/Core.Data/BehaviorCardSO.cs
+- Assets/_Game/Editor/MockDataCreator.cs
 
 Then confirm:
-- Travel events are drawn from the eventPool filtered by
-  the tag "travel" (you may need to add this tag field to EventSO)
-- Events with no travel tag are never shown in travel
-- If 0 travel events fire, go straight to CONTINUE TO HUNT
-- Player choices in travel events are logged and stored in
-  CampaignState.resolvedEventIds
-- What you will NOT build (the full event system is in
-  SettlementScreenController — this scene just renders events
-  using the same EventSO data)
+- Which fields you are REMOVING from existing files
+- Which new files you are CREATING
+- What you will NOT touch this session
 
 ▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲▲
 ============================================================ -->
 
-# Stage 8-M: Hunt Travel Scene — Full Implementation
+# Stage 8-M: Monster Health Rework — Behavior Deck as Life & Wound Locations
 
-**Resuming from:** Stage 8-L complete — settlement animations done
-**Done when:** Travel scene opens after SEND HUNTING PARTY, shows 0–3 travel events with choices, then CONTINUE TO HUNT loads CombatScene
-**Commit:** `"8M: Hunt travel scene — travel events, choices, CONTINUE TO HUNT button"`
-**Next session:** STAGE_08_N.md
-
----
-
-## What You Are Building
-
-When the player sends hunters on a hunt, they pass through a travel scene before reaching the monster. This scene:
-1. Shows a dark atmospheric wilderness background
-2. Randomly draws 0–3 events tagged as "travel" from the event pool
-3. Displays each as a narrative card the player must respond to
-4. Then shows a CONTINUE TO HUNT button
-
-**New developer note:** Think of this like a "road encounter" — small moments between leaving the settlement and reaching the fight.
+**Resuming from:** Stage 8-L complete — monster execution engine (first pass); playtesting revealed shell/flesh HP pacing was frustrating; this session reworks the data model  
+**Done when:** All data model files compile clean; MockDataCreator updated to new format; Gaunt SO inspectable in Editor with new deck structure  
+**Commit:** `"8M: Monster health rework — behavior deck as life, wound location deck, mood cards"`  
+**Next session:** STAGE_08_N.md — Wire up the runtime implementation: BehaviorDeck/WoundDeck wrappers, MonsterAI rebuild, wound resolution, Gaunt SO assets
 
 ---
 
-## Step 1: Generate Background Art
+## Design Philosophy
 
-Use CoPlay `generate_or_edit_images`:
+The shell/flesh/body-part HP system is replaced with a Kingdom Death: Monster-inspired approach:
 
-**Travel background (640×360):**
+- **Behavior cards are the monster's only health.** When all removable behavior cards are gone the monster is defeated.
+- **Wound locations are a separate shuffled deck** drawn on a successful hit — they tell the hunter what Force roll is needed to wound and what happens on failure, wound, and critical.
+- **No escalation logic.** All behavior cards for a given difficulty are shuffled into a single starting deck. Harder difficulties have more cards (more health) and more powerful cards.
+- **Facing affects to-hit only.** Wound location draws are pure random from the full wound deck.
+
+---
+
+## What This Stage Touches
+
+| File | Action |
+|---|---|
+| `Enums.cs` | Remove `BehaviorGroup`, remove `DamageType`, update `BehaviorCardType`, add `WoundOutcome` |
+| `DataStructs.cs` | Remove `MonsterBodyPart`, update `MonsterStatBlock`, add `FacingAccuracyBonus` |
+| `WoundLocationSO.cs` | **New file** |
+| `BehaviorCardSO.cs` | Remove `group`, add sub-phase fields + critical wound alternate behavior |
+| `MonsterSO.cs` | Replace 4 behavior arrays + 3 body part arrays with 3 difficulty decks + 3 wound decks; replace facing tables |
+| `MockDataCreator.cs` | Update Gaunt mock data to new format |
+
+**Not touched this session:** Any Core.Systems, Core.Logic, Core.UI, or scene files. Runtime combat logic is Stage 8-N onward.
+
+---
+
+## Step 1: Enums.cs — Remove Obsolete, Update BehaviorCardType, Add WoundOutcome
+
+**Remove entirely:**
+- `BehaviorGroup { Opening, Escalation, Apex }` — escalation no longer exists
+- `DamageType { Shell, Flesh }` — shell/flesh HP no longer exists
+
+**Replace:**
+```csharp
+// OLD
+public enum BehaviorCardType { Removable, Permanent, SingleTrigger }
+
+// NEW
+public enum BehaviorCardType { Removable, Mood, SingleTrigger }
 ```
-Dark pixel art wilderness scene. A narrow hunter's path through
-dense dead forest. Silhouetted bare trees on both sides.
-Distant fog. No settlement visible. Moon partially obscured
-by clouds. Distant eyes in the dark (barely visible).
-Atmospheric, tense, lonely. Style: 16-bit pixel art,
-ash grey, bone white, shadow black palette.
+
+`Mood` replaces `Permanent`. Unlike the old Permanent type, Mood cards that are removed from play return to the behavior discard pile and can be reshuffled — they are not gone forever.
+
+**Add:**
+```csharp
+public enum WoundOutcome { Wound, Critical, Failure, Trap }
 ```
-Save to: `Assets/_Game/Art/Generated/UI/ui_travel_bg.png`
-Import settings: Sprite (2D and UI), Point (No Filter), PPU 16
+
+Used at runtime by the wound resolution system to branch outcomes.
 
 ---
 
-## Step 2: Add `isTravel` to EventSO
+## Step 2: DataStructs.cs — Remove MonsterBodyPart, Update MonsterStatBlock, Add FacingAccuracyBonus
 
-Open `Assets/_Game/Scripts/Core.Data/EventSO.cs` and add one field:
+**Remove `MonsterBodyPart` entirely.** Wound location SOs replace per-part HP.
+
+**Update `MonsterStatBlock`** — remove the now-redundant deck size field; deck size is derived at runtime from the card array length:
 
 ```csharp
-[Header("Travel")]
-public bool isTravel = false;  // If true, this event can fire during hunt travel
-```
-
-Then open the Inspector for any travel-appropriate events and set `isTravel = true`.
-
-**Suggested travel events** (set isTravel = true on these):
-- EVT-04 (Strange Sounds)
-- EVT-08 (Bone Wind)
-- EVT-15 (Hard Winter — choice B forces specific monster, still valid here)
-
-You can also create 2–3 new travel-only EventSO assets:
-
-| Asset | Name | Narrative | Choice A | Choice B |
-|---|---|---|---|---|
-| `Event_TRV01` | Tracks | "Fresh tracks in the mud. Large. Recent." | Follow them (+1 Accuracy first round) | Avoid them (no effect) |
-| `Event_TRV02` | Old Cairn | "Someone built this. A warning, maybe. Or a grave." | Search it (gain 1 Bone) | Leave it (nothing) |
-| `Event_TRV03` | Fog | "The fog came in fast. We split up briefly." | Call out to each other (regroup, no effect) | Stay quiet (all hunters start combat with Shaken) |
-
----
-
-## Step 3: Create Scene & UIDocument
-
-**File → New Scene → Empty** → save as `Assets/HuntTravel.unity`
-Add to Build Settings after Settlement.
-Add UIDocument GameObject named `TravelUI`.
-
----
-
-## Step 4: UXML Layout
-
-Create `Assets/_Game/UI/HuntTravel.uxml`:
-
-```xml
-<ui:UXML xmlns:ui="UnityEngine.UIElements">
-  <ui:VisualElement name="root" style="width:100%; height:100%; position:relative; background-color:#0A0A0C;">
-
-    <!-- Background art -->
-    <ui:VisualElement name="bg" style="position:absolute; left:0; top:0; right:0; bottom:0;
-        -unity-background-scale-mode:scale-to-fit;" />
-
-    <!-- Dark vignette overlay -->
-    <ui:VisualElement name="vignette" style="position:absolute; left:0; top:0; right:0; bottom:0;
-        background-color:rgba(0,0,0,0.45); pointer-events:none;" />
-
-    <!-- Header -->
-    <ui:VisualElement style="position:absolute; top:0; left:0; right:0; height:48px;
-        background-color:rgba(10,10,12,0.8); align-items:center; justify-content:center;">
-      <ui:Label name="hunt-target-label" text="HUNTING: THE GAUNT (STANDARD)"
-                style="color:#D4CCBA; font-size:14px;" />
-    </ui:VisualElement>
-
-    <!-- Event card area (centre) -->
-    <ui:VisualElement name="event-area" style="position:absolute; top:80px; bottom:120px;
-        left:0; right:0; align-items:center; justify-content:center;" />
-
-    <!-- Continue button (shown after all events resolved) -->
-    <ui:VisualElement style="position:absolute; bottom:24px; left:0; right:0;
-        align-items:center;">
-      <ui:Button name="btn-continue-hunt" text="CONTINUE TO HUNT →"
-                 style="width:280px; height:52px; background-color:#4A2020;
-                        border-color:#B8860B; border-width:2px;
-                        color:#D4CCBA; font-size:16px; display:none;" />
-    </ui:VisualElement>
-
-  </ui:VisualElement>
-</ui:UXML>
-```
-
----
-
-## Step 5: TravelController.cs
-
-**Path:** `Assets/_Game/Scripts/Core.UI/TravelController.cs`
-
-```csharp
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UIElements;
-using MnM.Core.Data;
-using MnM.Core.Systems;
-
-namespace MnM.Core.UI
+[System.Serializable]
+public struct MonsterStatBlock
 {
-    public class TravelController : MonoBehaviour
-    {
-        [SerializeField] private UIDocument  _uiDocument;
-        [SerializeField] private CampaignSO  _campaignData;
+    public int movement;
+    public int accuracy;
+    public int strength;
+    public int toughness;
+    public int evasion;
+    // REMOVED: behaviorDeckSizeRemovable — deck size is now BehaviorCardSO[].Length
+}
+```
 
-        private VisualElement _eventArea;
-        private Button        _continueBtn;
-        private List<EventSO> _travelQueue = new();
-        private int           _currentEvent = 0;
+**Add `BehaviorDeckComposition`** — defines how many cards to randomly draw from each pool when building a monster's deck at combat start:
 
-        private void OnEnable()
-        {
-            var root     = _uiDocument.rootVisualElement;
-            _eventArea   = root.Q("event-area");
-            _continueBtn = root.Q<Button>("btn-continue-hunt");
+```csharp
+[System.Serializable]
+public struct BehaviorDeckComposition
+{
+    public int baseCardCount;           // Cards drawn from the monster's base pool
+    public int advancedCardCount;       // Cards drawn from the advanced pool
+    public int overwhelmingCardCount;   // Cards drawn from the overwhelming pool
+    // Total drawn = health pool for this difficulty.
+    // Pools are larger than counts — each fight uses a different random subset.
+}
+```
 
-            // Background
-            var bg = Resources.Load<Sprite>("Art/Generated/UI/ui_travel_bg");
-            if (bg != null) root.Q("bg").style.backgroundImage = new StyleBackground(bg);
+**Add `FacingAccuracyBonus`** — facing now only affects the to-hit roll, not wound location draws:
 
-            // Hunt target label
-            var state = GameStateManager.Instance.CampaignState;
-            string monsterName = state.currentHuntMonsterName ?? "THE HUNT";
-            root.Q<Label>("hunt-target-label").text =
-                $"HUNTING: {monsterName.ToUpper()} ({state.currentHuntDifficulty.ToUpper()})";
-
-            // Build travel event queue
-            BuildEventQueue();
-
-            // Wire continue button
-            _continueBtn.RegisterCallback<ClickEvent>(_ =>
-                SceneTransitionManager.Instance.LoadScene("CombatScene"));
-
-            // Switch to travel music
-            AudioManager.Instance?.SetMusicContext(AudioContext.HuntTravel);
-
-            // Start event sequence
-            StartCoroutine(RunEventSequence());
-        }
-
-        private void BuildEventQueue()
-        {
-            _travelQueue.Clear();
-            if (_campaignData?.eventPool == null) return;
-
-            var rng       = new System.Random();
-            var candidates = new List<EventSO>();
-
-            foreach (var evt in _campaignData.eventPool)
-            {
-                if (evt == null || !evt.isTravel) continue;
-                if (GameStateManager.Instance.CampaignState.resolvedEventIds != null &&
-                    System.Array.IndexOf(
-                        GameStateManager.Instance.CampaignState.resolvedEventIds,
-                        evt.eventId) >= 0) continue;
-                candidates.Add(evt);
-            }
-
-            // Draw 0–3 events at random
-            int count = rng.Next(0, Mathf.Min(4, candidates.Count + 1));
-            while (_travelQueue.Count < count && candidates.Count > 0)
-            {
-                int idx = rng.Next(candidates.Count);
-                _travelQueue.Add(candidates[idx]);
-                candidates.RemoveAt(idx);
-            }
-
-            Debug.Log($"[Travel] {_travelQueue.Count} travel events queued");
-        }
-
-        private IEnumerator RunEventSequence()
-        {
-            // Brief pause before first event
-            yield return new WaitForSeconds(0.8f);
-
-            for (int i = 0; i < _travelQueue.Count; i++)
-            {
-                yield return ShowEvent(_travelQueue[i]);
-                yield return new WaitForSeconds(0.3f);
-            }
-
-            // All events done — show Continue button
-            _continueBtn.style.display = DisplayStyle.Flex;
-            Debug.Log("[Travel] All events resolved — CONTINUE TO HUNT available");
-        }
-
-        private IEnumerator ShowEvent(EventSO evt)
-        {
-            _eventArea.Clear();
-
-            // Build event card
-            var card = new VisualElement();
-            card.style.width            = 480;
-            card.style.backgroundColor  = new StyleColor(new Color(0.05f, 0.04f, 0.03f, 0.95f));
-            card.style.borderTopColor   = card.style.borderBottomColor =
-            card.style.borderLeftColor  = card.style.borderRightColor  =
-                new StyleColor(new Color(0.72f, 0.52f, 0.04f));
-            card.style.borderTopWidth   = card.style.borderBottomWidth =
-            card.style.borderLeftWidth  = card.style.borderRightWidth  = 2;
-            card.style.paddingTop       = card.style.paddingBottom =
-            card.style.paddingLeft      = card.style.paddingRight  = 24;
-            card.style.opacity          = 0;
-
-            var title = new Label(evt.eventName.ToUpper());
-            title.style.color    = new Color(0.72f, 0.52f, 0.04f);
-            title.style.fontSize = 14;
-            title.style.marginBottom = 12;
-            title.style.unityFontStyleAndWeight = FontStyle.Bold;
-            card.Add(title);
-
-            var narrative = new Label(evt.narrativeText);
-            narrative.style.color       = new Color(0.83f, 0.80f, 0.73f);
-            narrative.style.fontSize    = 11;
-            narrative.style.whiteSpace  = WhiteSpace.Normal;
-            narrative.style.marginBottom = 20;
-            card.Add(narrative);
-
-            bool resolved = false;
-
-            if (evt.choices != null && evt.choices.Length > 0)
-            {
-                foreach (var choice in evt.choices)
-                {
-                    var btn = new Button();
-                    btn.text = choice.choiceText;
-                    btn.style.marginBottom   = 8;
-                    btn.style.backgroundColor = new StyleColor(new Color(0.12f, 0.10f, 0.08f));
-                    btn.style.borderTopColor  = btn.style.borderBottomColor =
-                    btn.style.borderLeftColor = btn.style.borderRightColor  =
-                        new StyleColor(new Color(0.31f, 0.27f, 0.20f));
-                    btn.style.borderTopWidth  = btn.style.borderBottomWidth =
-                    btn.style.borderLeftWidth = btn.style.borderRightWidth  = 1;
-                    btn.style.color           = new StyleColor(new Color(0.83f, 0.80f, 0.73f));
-                    btn.style.fontSize        = 10;
-                    btn.style.whiteSpace      = WhiteSpace.Normal;
-                    var capturedChoice = choice;
-                    btn.RegisterCallback<ClickEvent>(_ =>
-                    {
-                        resolved = true;
-                        GameStateManager.Instance.ResolveEventChoice(evt, capturedChoice);
-                        Debug.Log($"[Travel] {evt.eventName} → {capturedChoice.choiceText}");
-                    });
-                    card.Add(btn);
-                }
-            }
-            else
-            {
-                var ackBtn = new Button { text = "CONTINUE" };
-                ackBtn.RegisterCallback<ClickEvent>(_ =>
-                {
-                    resolved = true;
-                    GameStateManager.Instance.ResolveEvent(evt);
-                });
-                card.Add(ackBtn);
-            }
-
-            _eventArea.Add(card);
-
-            // Fade card in
-            float t = 0f;
-            while (t < 0.3f)
-            {
-                t += Time.deltaTime;
-                card.style.opacity = Mathf.Lerp(0f, 1f, t / 0.3f);
-                yield return null;
-            }
-            card.style.opacity = 1;
-
-            // Wait for player to resolve
-            yield return new WaitUntil(() => resolved);
-
-            // Fade card out
-            t = 0f;
-            while (t < 0.2f)
-            {
-                t += Time.deltaTime;
-                card.style.opacity = Mathf.Lerp(1f, 0f, t / 0.2f);
-                yield return null;
-            }
-            _eventArea.Clear();
-        }
-    }
+```csharp
+[System.Serializable]
+public struct FacingAccuracyBonus
+{
+    public FacingArc arc;
+    public int accuracyModifier;    // e.g. Rear = +2 (easier to hit from behind)
 }
 ```
 
 ---
 
-## Verification Test
+## Step 3: WoundLocationSO.cs (New File)
 
-- [ ] SEND HUNTING PARTY in Settlement → HuntTravel scene loads (with fade)
-- [ ] Background wilderness art fills the screen
-- [ ] Hunt target label shows correct monster and difficulty
-- [ ] With 0 travel events: CONTINUE TO HUNT button appears immediately
-- [ ] With travel events: event card fades in, narrative text readable
-- [ ] Clicking a choice fades the card out and shows next event
-- [ ] After all events resolved: CONTINUE TO HUNT button appears
-- [ ] CONTINUE TO HUNT → CombatScene loads with fade
-- [ ] Hunt travel music plays during this scene
-- [ ] No Console errors if event pool is empty
+**Path:** `Assets/_Game/Scripts/Core.Data/WoundLocationSO.cs`
+
+```csharp
+using UnityEngine;
+
+namespace MnM.Core.Data
+{
+    [CreateAssetMenu(menuName = "MnM/Cards/WoundLocation", fileName = "New WoundLocation")]
+    public class WoundLocationSO : ScriptableObject
+    {
+        [Header("Identity")]
+        public string locationName;         // e.g. "Monster Mouth", "Gaunt Claw"
+        public BodyPartTag partTag;         // Narrative / future custom sprite — not used for draw filtering
+
+        [Header("Wound Threshold")]
+        public int woundTarget;             // d10 + Hunter.Strength > this = wound
+                                            // Critical: d10 result alone >= (10 - Hunter.Luck)
+
+        [Header("Trap")]
+        public bool isTrap;                 // True = monster responds, no wound, no behavior card removed
+        [TextArea] public string trapEffect;
+
+        [Header("Impervious")]
+        public bool isImpervious;           // True = force roll cannot remove a behavior card here
+                                            // Wound/critical effects still fire; resources still granted
+                                            // Strategic value: criticals set wound tags that alter behavior cards
+                                            // Does NOT interact with isTrap — a location is one or the other
+
+        [Header("Outcomes")]
+        [TextArea] public string failureEffect;   // Fires when force roll fails (and not a trap)
+        [TextArea] public string woundEffect;     // Additional effect beyond removing one behavior card
+        [TextArea] public string criticalEffect;  // Fires on critical in addition to woundEffect
+
+        [Header("Critical Wound Tracking")]
+        public string criticalWoundTag;     // Runtime flag set when a critical lands here
+                                            // e.g. "GauntMouth_Critical"
+                                            // Behavior cards read this tag to alter their resolution
+
+        [Header("Resources")]
+        public ResourceEntry[] woundResources;      // Resources gained on a wound
+        public ResourceEntry[] criticalResources;   // Additional resources on a critical (stacks with woundResources)
+    }
+}
+```
+
+### Trap card rules
+When a trap wound location is drawn:
+1. `trapEffect` fires (monster attacks or responds)
+2. Wound location card → WoundDiscard
+3. WoundDiscard reshuffles into WoundDeck immediately (trap cards cycle back)
+4. No behavior card is removed from the monster
+
+### Impervious location rules
+When a non-trap wound location with `isImpervious == true` is drawn:
+1. Force roll runs normally — the hunter must still beat the woundTarget
+2. On wound or critical: `woundEffect` fires, `woundResources` granted; NO behavior card removed
+3. On critical: additionally sets `criticalWoundTag`, fires `criticalEffect`, grants `criticalResources`; still NO behavior card removed
+4. On failure: `failureEffect` fires as normal
+5. Wound location → WoundDiscard as normal
+The primary gameplay value of impervious criticals is setting `criticalWoundTag` flags that alter how specific behavior cards resolve — a bone-plated shoulder can't be wounded through, but a critical fracture forces the monster's posture to change.
+
+### Wound deck reshuffle rule
+When WoundDeck is empty before a draw, shuffle the entire WoundDiscard back into WoundDeck. Trap cards cycle back in as normal.
+
+---
+
+## Step 4: BehaviorCardSO.cs — Rework
+
+**Path:** `Assets/_Game/Scripts/Core.Data/BehaviorCardSO.cs`
+
+Full replacement:
+
+```csharp
+using UnityEngine;
+
+namespace MnM.Core.Data
+{
+    [CreateAssetMenu(menuName = "MnM/Cards/BehaviorCard", fileName = "New BehaviorCard")]
+    public class BehaviorCardSO : ScriptableObject
+    {
+        [Header("Identity")]
+        public string cardName;
+        public BehaviorCardType cardType;   // Removable, Mood, or SingleTrigger
+        // REMOVED: BehaviorGroup group
+
+        [Header("Trigger & Effect")]
+        [TextArea] public string triggerCondition;
+        [TextArea] public string effectDescription;
+
+        [Header("Monster Turn Sub-Phases")]
+        public bool hasTargetIdentification;
+        public string targetRule;           // e.g. "nearest", "aggro", "mostInjured", "last_attacker"
+        public bool hasMovement;
+        public bool hasDamage;
+        public string forcedHunterBodyPart; // Leave empty for random roll; override e.g. "Head", "Torso"
+
+        [Header("Mood Card — Removal Condition")]
+        [TextArea] public string removalCondition;
+        // Examples:
+        //   "Hunter spends 1 Grit"
+        //   "Hunter inflicts a wound"
+        //   "3 turns"
+        // Evaluated by Core.Logic each turn. When met: card → BehaviorDiscard (re-enters health pool)
+
+        [Header("Critical Wound — Alternate Behavior")]
+        public string criticalWoundCondition;           // Tag from WoundLocationSO.criticalWoundTag
+                                                        // e.g. "GauntMouth_Critical"
+        [TextArea] public string alternateTriggerCondition;
+        [TextArea] public string alternateEffectDescription;
+        // If criticalWoundCondition is set and that tag is active at runtime,
+        // the alternate fields replace triggerCondition and effectDescription for this draw.
+
+        [Header("Tags")]
+        public string stanceTag;
+        public string groupTag;
+    }
+}
+```
+
+**Key changes from old version:**
+- `BehaviorGroup group` removed
+- `removalCondition` repurposed: now specifically describes how a Mood card leaves the "in play" zone
+- New sub-phase booleans (`hasTargetIdentification`, `hasMovement`, `hasDamage`) drive the structured monster turn flow
+- `targetRule` and `forcedHunterBodyPart` give the card authoring control over targeting
+- New `criticalWoundCondition` + `alternate*` fields allow wound state to alter how a card resolves
+
+---
+
+## Step 5: MonsterSO.cs — Rework Deck Structure and Facing
+
+Full replacement:
+
+```csharp
+using UnityEngine;
+
+namespace MnM.Core.Data
+{
+    [CreateAssetMenu(menuName = "MnM/Monster", fileName = "New Monster")]
+    public class MonsterSO : ScriptableObject
+    {
+        [Header("Identity")]
+        public string monsterName;
+        public int materialTier;
+        [TextArea] public string animalBasis;
+        [TextArea] public string combatEmotion;
+        [TextArea] public string coreSkillTaught;
+
+        [Header("Grid Footprint per Difficulty")]
+        public Vector2Int gridFootprintStandard;
+        public Vector2Int gridFootprintHardened;
+        public Vector2Int gridFootprintApex;
+
+        [Header("Stat Blocks — index 0=Standard, 1=Hardened, 2=Apex")]
+        public MonsterStatBlock[] statBlocks;
+
+        [Header("Behavior Card Pools")]
+        // Cards are randomly drawn from these pools at combat start to build the fight's deck.
+        // Pools are authored larger than any single deck — each fight draws a different subset,
+        // making repeat encounters feel varied even against the same monster.
+        public BehaviorCardSO[] baseCardPool;           // Core cards; available at all difficulties
+        public BehaviorCardSO[] advancedCardPool;       // More complex / dangerous cards
+        public BehaviorCardSO[] overwhelmingCardPool;   // Apex-tier — peak threat cards
+
+        [Header("Behavior Deck Composition — index 0=Standard, 1=Hardened, 2=Apex")]
+        // How many cards to draw from each pool per difficulty.
+        // Example: Standard = 12 base + 3 advanced + 0 overwhelming (15 health total)
+        //          Hardened  = 14 base + 4 advanced + 2 overwhelming (20 health total)
+        // Random draw uses Fisher-Yates on each pool, take first N — see MonsterAI.InitializeDeck
+        public BehaviorDeckComposition[] deckCompositions;
+
+        [Header("Wound Location Deck — per Difficulty")]
+        // Can be customized per difficulty. Harder difficulties may add
+        // higher woundTarget locations or additional traps.
+        public WoundLocationSO[] standardWoundDeck;
+        public WoundLocationSO[] hardenedWoundDeck;
+        public WoundLocationSO[] apexWoundDeck;
+
+        [Header("Elemental Profile")]
+        public ElementTag[] weaknesses;
+        public ElementTag[] resistances;
+
+        [Header("Facing — Accuracy Modifiers Only")]
+        // Wound location draws are NOT filtered by facing (pure random from full wound deck).
+        // Facing only modifies the hunter's to-hit roll.
+        public FacingAccuracyBonus[] facingBonuses;
+
+        [Header("Loot")]
+        public LootEntry[] lootTable;
+
+        [Header("Stances")]
+        public StanceDefinition[] stances;
+    }
+}
+```
+
+**Removed fields:**
+- `openingCards`, `escalationCards`, `apexCards`, `permanentCards`
+- `standardDeck`, `hardenedDeck`, `apexDeck` (replaced by pool arrays + deckCompositions)
+- `standardParts`, `hardenedParts`, `apexParts` (MonsterBodyPart arrays)
+- `frontFacing`, `flankFacing`, `rearFacing` (FacingTable — weighted zone draw system)
+- `trapZoneParts`
+
+---
+
+## Step 6: Runtime State Design (Reference for Stage 8-N)
+
+This section describes what `CombatState` must track. Do not implement here — implementation is Stage 8-N.
+
+### Deck construction at combat start
+`MonsterAI.InitializeDeck(MonsterSO, difficulty)` builds the starting `behaviorDeck` by:
+1. Read `deckCompositions[difficultyIndex]` to get counts per pool
+2. Shuffle each pool independently (Fisher-Yates)
+3. Take the first N cards from each shuffled pool
+4. Combine all drawn cards into one list, shuffle the combined list
+5. That combined list becomes the starting `behaviorDeck`
+
+This means two Standard-difficulty Gaunt fights can have different cards in the deck (different draws from the base pool), while the total health pool size stays predictable.
+
+### Per-monster runtime state
+```
+behaviorDeck         : List<BehaviorCardSO>     // shuffled draw pile
+behaviorDiscard      : List<BehaviorCardSO>     // standard discard; reshuffled when deck empty
+moodCardsInPlay      : List<BehaviorCardSO>     // active Mood cards (ongoing effects)
+permanentlyRemoved   : List<BehaviorCardSO>     // wounded away or SingleTrigger fired — never return
+woundDeck            : List<WoundLocationSO>    // shuffled draw pile
+woundDiscard         : List<WoundLocationSO>    // reshuffled when empty (trap cards cycle back)
+criticalWoundTags    : HashSet<string>          // tags flagged by landed criticals
+```
+
+### Health pool (computed, read-only)
+```
+monsterHealth = behaviorDeck.Count + behaviorDiscard.Count + moodCardsInPlay.Count
+```
+Mood cards in play are counted but cannot be removed by wounds while active. SingleTrigger cards that have fired and permanentlyRemoved cards do not contribute.
+
+### Defeat condition
+```
+IF behaviorDeck.Count + behaviorDiscard.Count == 0
+    → Monster defeated immediately
+```
+Mood cards currently in play do not block defeat. This prevents the player from being locked in a state where the only remaining "health" is a Mood card that cannot currently be removed. When a Mood card is removed from play (its `removalCondition` is met), it goes to `behaviorDiscard` — if the deck was empty, it would now count again and the defeat condition would not yet be met.
+
+### Per-hunter runtime state (dependency for Grit windows)
+```
+currentGrit : int   // initialized from CampaignSO.startingGrit; tracked per hunter
+```
+`CharacterSO` does not need a Grit field — Grit is a runtime combat resource, not a persistent character stat.
+
+> **Behavior deck contract — position-aware ordered list**
+>
+> The runtime `behaviorDeck` is a `List<BehaviorCardSO>` where **index 0 = top of deck** (next to draw). The shuffle algorithm (Fisher-Yates) produces a fully ordered list — every card's position is known and addressable at all times.
+>
+> **Default wound removal:** top card of `behaviorDeck` (index 0 → `permanentlyRemoved`). If deck is empty, shuffle `behaviorDiscard` first, then remove top.
+>
+> **Hunter abilities and Grit spends may use these deck operations — all supported natively by `List<T>`:**
+>
+> | Operation | Description | Example use |
+> |---|---|---|
+> | `Draw()` | Remove and return index 0 | Normal monster turn |
+> | `PeekTop()` | Read index 0 without removing | Hunter ability: "look at next behavior card" |
+> | `PeekTop(n)` | Read indices 0..n-1 without removing | Hunter ability: "look at top 3 cards" |
+> | `MoveTopToBottom()` | Remove index 0, append to end | Hunter ability: "push top card to bottom of deck" |
+> | `ReorderTop(n, newOrder)` | Replace indices 0..n-1 with caller-supplied permutation | Hunter ability: "rearrange top 3 as you see fit" |
+> | `RemoveSpecific(card)` | Remove a specific card by reference | Grit spend: "choose which behavior card is removed on this wound" |
+>
+> Stage 8-N should implement these as methods on a `BehaviorDeck` wrapper class (not raw list manipulation at the call site) so all deck interaction goes through a single auditable interface.
+
+---
+
+## Step 7: Wound Resolution Flow
+
+Triggered when a hunter's attack roll succeeds (hits the monster):
+
+```
+1. DRAW top card of WoundDeck
+   (if WoundDeck empty → shuffle WoundDiscard → draw)
+
+   ┌── isTrap == true ──────────────────────────────────────────┐
+   │  trapEffect fires                                           │
+   │  WoundLocation → WoundDiscard                              │
+   │  WoundDiscard reshuffles into WoundDeck immediately        │
+   │  No behavior card removed                                  │
+   │  → DONE                                                    │
+   └────────────────────────────────────────────────────────────┘
+
+2. FORCE ROLL (not a trap)
+   Hunter rolls d10
+
+   Wound check (resolved first):
+     d10 + Hunter.Strength > woundLocation.woundTarget → WOUND
+     d10 + Hunter.Strength <= woundLocation.woundTarget → FAILURE
+     (A high d10 that still fails the wound check is not a critical — it just fails)
+
+   Critical sub-check (only when wound check passes):
+     d10 natural result >= (10 - Hunter.Luck) → CRITICAL WOUND
+     Otherwise → standard WOUND
+
+3a. FAILURE
+    failureEffect fires
+    WoundLocation → WoundDiscard
+    No behavior card removed
+
+3b. WOUND (non-critical, non-impervious)
+    woundEffect fires (if any)
+    woundResources granted to hunter
+    Top card of BehaviorDeck → permanentlyRemoved
+      (if BehaviorDeck empty: shuffle BehaviorDiscard first, then remove top)
+    WoundLocation → WoundDiscard
+    → Run DEFEAT CHECK
+
+3c. CRITICAL WOUND (non-impervious)
+    criticalWoundTag added to criticalWoundTags runtime set
+    criticalEffect fires (in addition to woundEffect)
+    woundResources + criticalResources granted to hunter
+    Top card of BehaviorDeck → permanentlyRemoved
+    WoundLocation → WoundDiscard
+    → Run DEFEAT CHECK
+
+3d. WOUND — IMPERVIOUS LOCATION (isImpervious == true, wound check passed)
+    woundEffect fires (if any)
+    woundResources granted to hunter
+    NO behavior card removed
+    WoundLocation → WoundDiscard
+    → No defeat check needed
+
+3e. CRITICAL — IMPERVIOUS LOCATION (isImpervious == true, wound + critical both passed)
+    criticalWoundTag added to criticalWoundTags runtime set
+    criticalEffect fires (in addition to woundEffect)
+    woundResources + criticalResources granted to hunter
+    NO behavior card removed
+    WoundLocation → WoundDiscard
+    → No defeat check needed
+    Note: The wound tag set here is the strategic payoff — it alters future behavior card resolutions
+```
+
+---
+
+## Step 8: Monster Turn Flow — Behavior Card Sub-Phases with Grit Windows
+
+Each monster turn: draw one behavior card from `behaviorDeck`. If `behaviorDeck` is empty, shuffle `behaviorDiscard` into `behaviorDeck` before drawing. `permanentlyRemoved` cards never re-enter.
+
+**Before resolving:** Check `criticalWoundCondition`. If non-empty and that tag is in `criticalWoundTags`, substitute `alternateTriggerCondition` and `alternateEffectDescription` for this resolution.
+
+```
+1.  DRAW behavior card
+        ↓
+2.  [GRIT WINDOW] — Hunters may spend Grit or use reactions
+        ↓
+3.  [IF hasTargetIdentification]
+        Monster identifies target per targetRule
+        ("nearest", "aggro", "mostInjured", "last_attacker")
+        ↓
+4.  [GRIT WINDOW]
+        ↓
+5.  [IF hasMovement]
+        Monster moves toward/around target
+        ↓
+6.  [GRIT WINDOW]
+        ↓
+7.  [IF hasDamage]
+        Monster rolls for damage
+        Determine hunter wound location:
+          IF forcedHunterBodyPart is set → use that part
+          ELSE → random from: Head, Torso, Arms, Waist, Legs
+        ↓
+8.  [GRIT WINDOW]
+        ↓
+9.  [IF hasDamage]
+        Damage applied to hunter at determined body part
+        ↓
+10. [GRIT WINDOW]
+        ↓
+11. Resolve card type:
+    ├── Removable     → BehaviorDiscard
+    ├── Mood          → moodCardsInPlay  (ongoing effect begins)
+    └── SingleTrigger → permanentlyRemoved
+                        → Run DEFEAT CHECK immediately
+        ↓
+12. Check all active Mood cards for removal conditions
+    IF a Mood card's removalCondition is met:
+      → card leaves moodCardsInPlay → BehaviorDiscard
+      (re-enters health pool; can be reshuffled and potentially drawn again)
+        ↓
+13. Run DEFEAT CHECK
+        ↓
+14. Turn passes
+```
+
+### Mood card removal condition patterns
+
+The `removalCondition` string is resolved by `Core.Logic`. Three supported patterns at launch:
+
+| Pattern | Example string | Trigger |
+|---|---|---|
+| Grit spend | `"Hunter spends 1 Grit"` | Hunter uses a Grit window to pay the cost |
+| Wound trigger | `"Hunter inflicts a wound"` | Any successful wound this combat removes the card |
+| Turn countdown | `"3 turns"` | Decrement counter each monster turn; remove at 0 |
+
+---
+
+## Step 9: MockDataCreator.cs — Update for New Format
+
+Remove all references to `MonsterBodyPart`, `openingCards`, `escalationCards`, `apexCards`, `permanentCards`, `standardDeck`, `hardenedDeck`, `apexDeck`, `frontFacing`, `flankFacing`, `rearFacing`, and `trapZoneParts`.
+
+Populate the Gaunt with pool arrays and a composition for debug verification. Actual authored content is Stage 8-N.
+
+### Gaunt Behavior Card Pools (mock cards)
+
+**Base Card Pool (4 cards — drawn from for all difficulties):**
+
+| Card name | Type | hasTarget | hasMove | hasDamage | targetRule | forcedBodyPart | Notes |
+|---|---|---|---|---|---|---|---|
+| Creeping Advance | Removable | false | true | false | — | — | |
+| Gaunt Slash | Removable | true | false | true | nearest | — | criticalWoundCondition: "GauntJaw_Critical" |
+| Bone Rattle | Mood | false | false | false | — | — | removalCondition: "Hunter inflicts a wound" |
+| Brace | Removable | false | false | false | — | — | Reaction; no sub-phases |
+
+**Advanced Card Pool (1 card — drawn from for Hardened+):**
+
+| Card name | Type | hasTarget | hasMove | hasDamage | targetRule | forcedBodyPart | Notes |
+|---|---|---|---|---|---|---|---|
+| Spear Thrust | SingleTrigger | true | false | true | nearest | Torso | |
+
+**Overwhelming Card Pool:** Empty for mock (authored in Stage 8-N)
+
+### Gaunt Deck Compositions (mock values)
+
+| Difficulty | baseCardCount | advancedCardCount | overwhelmingCardCount | Total health |
+|---|---|---|---|---|
+| Standard | 3 | 0 | 0 | 3 |
+| Hardened | 4 | 1 | 0 | 5 |
+| Apex | 4 | 1 | 0 | 5 (update in 8-U) |
+
+The mock Standard deck draws 3 random cards from the 4-card base pool — each Standard fight uses a different trio. This exercises the pool construction logic without requiring full authored content.
+
+Gaunt Slash alternate behavior when GauntJaw_Critical is flagged:  
+`alternateTriggerCondition`: "Draws back, jaw hanging"  
+`alternateEffectDescription`: "The Gaunt recoils from its wounded jaw — cries out, no attack this turn"
+
+### Gaunt Standard Wound Location Deck (5 mock cards)
+
+| Location name | partTag | woundTarget | isTrap | trapEffect | criticalWoundTag | Notes |
+|---|---|---|---|---|---|---|
+| Gaunt Jaw | Head | 6 | false | — | GauntJaw_Critical | |
+| Gaunt Claw | Arms | 5 | false | — | — | |
+| Spiked Tail | Tail | 7 | false | — | — | |
+| Bony Shoulder | Torso | 5 | false | — | — | |
+| Spine Trap | Back | 0 | true | "Gaunt strikes back for 1 damage before the hunter can react" | — | isTrap=true; woundTarget irrelevant |
+
+### Gaunt facingBonuses (replaces facing tables)
+
+| arc | accuracyModifier |
+|---|---|
+| Front | 0 |
+| Flank | +1 |
+| Rear | +2 |
+
+---
+
+## Debug Verification: Aldric vs The Gaunt Standard, Round 1
+
+Use this as the first manual pass after all files compile.
+
+**Setup:**
+- Gaunt Standard deck: 3 cards drawn randomly from 4-card base pool (e.g. Creeping Advance, Gaunt Slash, Brace)
+- Gaunt Standard wound deck: 5 cards (4 wound locations, 1 trap)
+- Aldric: Strength 3, Luck 2 → Critical threshold: d10 ≥ 8
+
+**Hunter Phase — Aldric attacks:**
+```
+1. To-hit roll succeeds (assume pass for mock)
+2. Draw wound location: "Gaunt Jaw" (woundTarget: 6)
+3. Force roll: d10 + 3 > 6 → need d10 > 3
+   - Roll 5: 5 + 3 = 8 > 6 → WOUND CHECK PASSES
+   - Critical sub-check: d10 natural result (5) ≥ 8? No → standard wound
+4. Top card of BehaviorDeck → permanentlyRemoved (e.g. "Brace")
+5. Gaunt Jaw → WoundDiscard
+
+Debug.Log: "[Wound] Gaunt Jaw — WOUND. Brace permanently removed. Health: deck=1 discard=0 moodInPlay=0"
+```
+
+Note: Deck started at 3 cards drawn from pool. After 1 wound removal, deck=1 + discard=0 + moodInPlay=0 = 2 health remaining.
+
+**Monster Phase:**
+```
+1. Draw: "Creeping Advance" (Removable)
+Debug.Log: "[Monster] Drew Creeping Advance | hasTarget:false hasMove:true hasDamage:false"
+2. GRIT WINDOW
+3. No target identification
+4. GRIT WINDOW
+5. Monster moves
+6. GRIT WINDOW
+7. No damage
+8. GRIT WINDOW
+9. No damage applied
+10. GRIT WINDOW
+11. Removable → BehaviorDiscard
+12. No Mood cards to check
+13. Defeat check: deck=1 + discard=1 = 2 > 0 → not defeated
+Debug.Log: "[Monster] Creeping Advance discarded. Health: deck=1 discard=1 moodInPlay=0"
+```
+
+**Round 1 PASS if:**
+- [ ] Deck construction logged: N cards drawn from each pool (e.g. "3 base, 0 advanced drawn from Gaunt pools")
+- [ ] Wound location draw logged with woundTarget and outcome
+- [ ] Force roll wound check logged first (d10 + Strength > target), then critical sub-check
+- [ ] Behavior card removed from deck on wound (permanentlyRemoved count = 1)
+- [ ] Monster turn sub-phases logged in order with all Grit windows
+- [ ] Health pool count correct after both events
+- [ ] No compile errors
+
+---
+
+## Definition of Done — Stage 8-M
+
+- [ ] `Enums.cs` compiles: `BehaviorGroup` removed, `DamageType` removed, `BehaviorCardType` is `{Removable, Mood, SingleTrigger}`, `WoundOutcome` added
+- [ ] `DataStructs.cs` compiles: `MonsterBodyPart` removed, `MonsterStatBlock` has no `behaviorDeckSizeRemovable`, `BehaviorDeckComposition` added, `FacingAccuracyBonus` added
+- [ ] `WoundLocationSO.cs` created and compiles; `isImpervious`, `isTrap`, all outcome fields visible in Inspector
+- [ ] `BehaviorCardSO.cs` updated: `group` field gone, sub-phase booleans and critical wound fields visible in Inspector
+- [ ] `MonsterSO.cs` updated: body part arrays gone, escalation arrays gone, fixed deck arrays gone; `baseCardPool`, `advancedCardPool`, `overwhelmingCardPool`, `deckCompositions`, wound decks, and `facingBonuses` all present
+- [ ] `MockDataCreator.cs` updated: no references to removed fields; Gaunt pools (4 base, 1 advanced) and compositions (Standard: 3/0/0, Hardened: 4/1/0) populated; wound deck (5 locations) populated
+- [ ] Deck construction in `MonsterAI.InitializeDeck` randomly draws from pools per composition counts
+- [ ] Wound resolution: wound check runs before critical sub-check; critical only fires when wound check passes
+- [ ] Impervious locations: wound/critical effects and resources fire, but no behavior card is removed
+- [ ] No compile errors across all assemblies
+- [ ] Gaunt SO inspectable in Unity Editor — Inspector shows pool arrays, deckCompositions, wound deck arrays, and facing bonuses
+
+---
+
+## What This Stage Does Not Cover
+
+The following are intentional out-of-scope items for later stages:
+
+- **CombatState.cs** — runtime tracking of deck/discard/moodInPlay/permanentlyRemoved/criticalWoundTags/currentGrit (Stage 8-N)
+- **`BehaviorDeck` wrapper class** — position-aware deck operations (Draw, PeekTop, MoveTopToBottom, ReorderTop, RemoveSpecific) that all combat systems go through instead of raw list manipulation (Stage 8-N)
+- **Wound resolution logic** — the actual combat code that draws wound locations, runs force rolls, and removes behavior cards (Stage 8-N)
+- **Behavior card draw and resolve logic** — the monster turn state machine with Grit windows (Stage 8-N)
+- **Mood card removal condition evaluation** — Core.Logic parsing of removalCondition strings (Stage 8-N)
+- **Defeat condition check** — runtime combat manager defeat detection (Stage 8-N)
+- **Authored Gaunt content** — full Standard and Hardened wound location and behavior decks as real SO assets (Stage 8-N)
+- **Grit UI** — per-hunter Grit display in combat HUD (Stage 9+)
 
 ---
 
 ## Next Session
 
 **File:** `_Docs/Stage_08/STAGE_08_N.md`
-**Covers:** Tutorial tooltip and onboarding system — step-sequenced highlight overlays that guide new players through their first settlement and first combat
+**Covers:** New Combat Runtime — implement the runtime side of the new health model: `BehaviorDeck` and `WoundDeck` wrapper classes, rebuilt `MonsterAI.InitializeDeck` (pool-based), rebuilt `MonsterAI.ExecuteCard` (sub-phase flow with Grit windows), `CombatManager.ResolveWound`, defeat condition, and authoring the full Gaunt Standard SO assets
