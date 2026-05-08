@@ -10,15 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46fd15b58f04f9642be9b7748f4fea95, type: 3}
-  m_Name: Mock_CreepingAdvance
+  m_Name: Mock_BraceMonster
   m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.BehaviorCardSO
-  cardName: Creeping Advance
+  cardName: Brace
   cardType: 0
   triggerCondition: Always
-  effectDescription: Monster moves 3 squares toward nearest hunter
+  effectDescription: "The Gaunt hunkers down \u2014 reaction only, no attack this
+    turn"
   hasTargetIdentification: 0
   targetRule: 
-  hasMovement: 1
+  hasMovement: 0
   hasDamage: 0
   forcedHunterBodyPart: 
   removalCondition: 

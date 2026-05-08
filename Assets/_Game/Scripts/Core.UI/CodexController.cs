@@ -104,21 +104,24 @@ namespace MnM.Core.UI
             _detailTitle.text = monster.monsterName;
             _detailMeta.text  = $"Material Tier {monster.materialTier}";
 
-            var bodyPartNames = new System.Collections.Generic.List<string>();
-            if (monster.standardParts != null)
-                foreach (var part in monster.standardParts)
-                    bodyPartNames.Add(part.partName);
+            var woundLocationNames = new System.Collections.Generic.List<string>();
+            if (monster.standardWoundDeck != null)
+                foreach (var loc in monster.standardWoundDeck)
+                    if (loc != null) woundLocationNames.Add(loc.locationName);
 
-            var weaknesses   = monster.weaknesses?.Select(e => e.ToString()) ?? new[] { "None" };
-            var resistances  = monster.resistances?.Select(e => e.ToString()) ?? new[] { "None" };
+            var facingLines = new System.Collections.Generic.List<string>();
+            if (monster.facingBonuses != null)
+                foreach (var fb in monster.facingBonuses)
+                    facingLines.Add($"{fb.arc} +{fb.accuracyModifier} accuracy");
+
+            var weaknesses  = monster.weaknesses?.Select(e => e.ToString()) ?? new[] { "None" };
+            var resistances = monster.resistances?.Select(e => e.ToString()) ?? new[] { "None" };
 
             _detailBody.text =
                 $"{monster.animalBasis}\n\n" +
                 $"Combat: {monster.combatEmotion}\n\n" +
-                $"Body parts: {string.Join(", ", bodyPartNames)}\n\n" +
-                $"Facing: Front — {monster.frontFacing.primaryZone} first. " +
-                $"Flank — {monster.flankFacing.primaryZone} first. " +
-                $"Rear — {monster.rearFacing.primaryZone} first.\n\n" +
+                $"Wound locations: {string.Join(", ", woundLocationNames)}\n\n" +
+                $"Facing: {string.Join(" | ", facingLines)}\n\n" +
                 $"Weaknesses: {string.Join(", ", weaknesses)}\n" +
                 $"Resistances: {string.Join(", ", resistances)}";
         }

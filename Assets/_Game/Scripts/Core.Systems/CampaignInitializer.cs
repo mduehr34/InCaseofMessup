@@ -253,38 +253,18 @@ namespace MnM.Core.Systems
 
         private static MonsterPartState[] BuildMonsterParts(MonsterSO monster, string difficulty)
         {
-            var parts = difficulty switch
-            {
-                "Hardened" => monster.hardenedParts,
-                "Apex"     => monster.apexParts,
-                _          => monster.standardParts,
-            };
-            if (parts == null || parts.Length == 0) return new MonsterPartState[0];
-
-            return System.Array.ConvertAll(parts, p => new MonsterPartState
-            {
-                partName     = p.partName,
-                shellCurrent = p.shellDurability,
-                shellMax     = p.shellDurability,
-                fleshCurrent = p.fleshDurability,
-                fleshMax     = p.fleshDurability,
-                isBroken     = false,
-                isRevealed   = !p.isTrapZone, // Trap zones start hidden
-                isExposed    = false,
-                woundCount   = 0,
-            });
+            // Stage 8-M: MonsterBodyPart arrays removed from MonsterSO.
+            // Monster health is now tracked via the behavior deck (see MonsterAI).
+            // MonsterCombatState.parts retained for save-state compatibility; initialized empty.
+            return new MonsterPartState[0];
         }
 
         private static string[] GetDeckCardNames(MonsterSO monster)
         {
-            var names = new List<string>();
-            if (monster.openingCards    != null)
-                foreach (var c in monster.openingCards)    if (c != null) names.Add(c.cardName);
-            if (monster.escalationCards != null)
-                foreach (var c in monster.escalationCards) if (c != null) names.Add(c.cardName);
-            if (monster.apexCards       != null)
-                foreach (var c in monster.apexCards)       if (c != null) names.Add(c.cardName);
-            return names.ToArray();
+            // Stage 8-M: openingCards/escalationCards/apexCards removed.
+            // Deck is built at combat start by MonsterAI.InitializeDeck from pool arrays.
+            // Returning empty — activeDeckCardNames populated by MonsterAI in Stage 8-N.
+            return new string[0];
         }
     }
 }

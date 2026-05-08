@@ -1,21 +1,14 @@
-using UnityEditor;
+// Stage 8-M: Obsolete — openingCards/escalationCards/apexCards/permanentCards removed from MonsterSO.
+// Use the Unity Inspector to verify Gaunt pool arrays and wound deck.
 using UnityEngine;
-using MnM.Core.Data;
+using UnityEditor;
 
 public class Stage7P_CheckGauntSO
 {
     public static void Execute()
     {
-        var gaunt = AssetDatabase.LoadAssetAtPath<MonsterSO>("Assets/_Game/Data/Monsters/Monster_Gaunt.asset");
-        if (gaunt == null) { Debug.LogError("[Check] Monster_Gaunt.asset not found"); return; }
-
-        Debug.Log($"[Check] Monster_Gaunt: opening={gaunt.openingCards?.Length ?? 0} " +
-                  $"escalation={gaunt.escalationCards?.Length ?? 0} " +
-                  $"apex={gaunt.apexCards?.Length ?? 0} " +
-                  $"permanent={gaunt.permanentCards?.Length ?? 0}");
-
-        if (gaunt.openingCards != null)
-            foreach (var c in gaunt.openingCards)
-                Debug.Log($"  Opening: {(c != null ? c.cardName : "NULL")}");
+        Debug.LogWarning("[7P CheckGauntSO] Obsolete since Stage 8-M — " +
+                         "Gaunt SO now uses baseCardPool/advancedCardPool/standardWoundDeck. " +
+                         "Inspect Mock_GauntStandard.asset in the Unity Editor.");
     }
 }

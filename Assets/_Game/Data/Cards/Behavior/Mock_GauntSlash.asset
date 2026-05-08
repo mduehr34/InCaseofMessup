@@ -10,20 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46fd15b58f04f9642be9b7748f4fea95, type: 3}
-  m_Name: Mock_CreepingAdvance
+  m_Name: Mock_GauntSlash
   m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.BehaviorCardSO
-  cardName: Creeping Advance
+  cardName: Gaunt Slash
   cardType: 0
   triggerCondition: Always
-  effectDescription: Monster moves 3 squares toward nearest hunter
-  hasTargetIdentification: 0
-  targetRule: 
-  hasMovement: 1
-  hasDamage: 0
+  effectDescription: The Gaunt rakes a claw across the nearest hunter
+  hasTargetIdentification: 1
+  targetRule: nearest
+  hasMovement: 0
+  hasDamage: 1
   forcedHunterBodyPart: 
   removalCondition: 
-  criticalWoundCondition: 
-  alternateTriggerCondition: 
-  alternateEffectDescription: 
+  criticalWoundCondition: GauntJaw_Critical
+  alternateTriggerCondition: Draws back, jaw hanging
+  alternateEffectDescription: "The Gaunt recoils from its wounded jaw \u2014 cries
+    out, no attack this turn"
   stanceTag: 
   groupTag: 

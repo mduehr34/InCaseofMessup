@@ -5,35 +5,39 @@ namespace MnM.Core.Data
     [CreateAssetMenu(menuName = "MnM/Cards/BehaviorCard", fileName = "New BehaviorCard")]
     public class BehaviorCardSO : ScriptableObject
     {
+        [Header("Identity")]
         public string cardName;
-        public BehaviorCardType cardType;
-        public BehaviorGroup group;
+        public BehaviorCardType cardType;   // Removable, Mood, or SingleTrigger
+
+        [Header("Trigger & Effect")]
         [TextArea] public string triggerCondition;
         [TextArea] public string effectDescription;
-        public string removalCondition;     // e.g. "Throat Shell break"
+
+        [Header("Monster Turn Sub-Phases")]
+        public bool hasTargetIdentification;
+        public string targetRule;           // "nearest", "aggro", "mostInjured", "last_attacker"
+        public bool hasMovement;
+        public bool hasDamage;
+        public string forcedHunterBodyPart; // Leave empty for random roll; override e.g. "Head", "Torso"
+
+        [Header("Mood Card — Removal Condition")]
+        [TextArea] public string removalCondition;
+        // Examples:
+        //   "Hunter spends 1 Grit"
+        //   "Hunter inflicts a wound"
+        //   "3 turns"
+        // Evaluated by Core.Logic each turn. When met: card → BehaviorDiscard (re-enters health pool)
+
+        [Header("Critical Wound — Alternate Behavior")]
+        public string criticalWoundCondition;           // Tag from WoundLocationSO.criticalWoundTag
+                                                        // e.g. "GauntJaw_Critical"
+        [TextArea] public string alternateTriggerCondition;
+        [TextArea] public string alternateEffectDescription;
+        // If criticalWoundCondition is set and that tag is active at runtime,
+        // the alternate fields replace triggerCondition and effectDescription for this draw.
+
+        [Header("Tags")]
         public string stanceTag;
         public string groupTag;
-        // Logic resolved by MnM.Core.Systems — no logic in this class
-
-        [Header("Execution — Movement")]
-        public MovementPattern movementPattern = MovementPattern.None;
-        public int             movementDistance = 0;   // Cells to move (0 = no movement)
-
-        [Header("Execution — Attack")]
-        public AttackTargetType attackTargetType = AttackTargetType.None;
-        public int              attackDamage     = 0;  // Base flesh damage per target (0 = no attack)
-        public int              attackRange      = 1;  // Max cells to reach target (1 = adjacent/melee)
-
-        [Header("Execution — Special")]
-        public string specialTag = "";
-        // Simple effect tags — resolved in MonsterAI.ApplySpecial():
-        //   "PINNED"          — apply Pinned status to all adjacent hunters
-        //   "REGEN:N"         — restore N flesh to the most-damaged part
-        //   "STANCE:tagname"  — set MonsterCombatState.currentStanceTag
-        //   "STUN_SELF"       — skip next card draw (no action next monster phase)
-        //   "AGGRO:LOWEST"    — move aggro token to hunter with lowest flesh total
-
-        [Header("Execution — Deck")]
-        public bool isShuffle = false;  // Reshuffle active deck after this card resolves
     }
 }

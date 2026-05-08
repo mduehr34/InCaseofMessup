@@ -20,8 +20,8 @@ namespace MnM.Core.Data
         UniqueCommon, UniqueUncommon, UniqueRare
     }
 
-    public enum BehaviorCardType { Removable, Permanent, SingleTrigger }
-    public enum BehaviorGroup { Opening, Escalation, Apex }
+    public enum BehaviorCardType { Removable, Mood, SingleTrigger }
+    public enum WoundOutcome { Wound, Critical, Failure, Trap }
 
     public enum CardCategory
     {
@@ -50,7 +50,7 @@ namespace MnM.Core.Data
 
     public enum StatusEffect { Shaken, Slowed, Pinned, Exposed, Bleeding, Marked, Broken, Inspired }
     public enum CombatPhase { VitalityPhase, HunterPhase, BehaviorRefresh, MonsterPhase }
-    public enum DamageType { Shell, Flesh }
+    public enum DamageType { Shell, Flesh }    // Used for hunter body zone damage only
     public enum FacingArc { Front, Flank, Rear }
     public enum AudioContext { MainMenu, SettlementEarly, SettlementLate, HuntTravel, CombatStandard, CombatOverlord }
 

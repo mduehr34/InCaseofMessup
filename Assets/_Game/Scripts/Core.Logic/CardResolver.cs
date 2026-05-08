@@ -78,79 +78,22 @@ namespace MnM.Core.Logic
 
             result.isCritical = precision.isCritical;
 
-            // ── Step 4: Shell or Flesh? ──────────────────────────
-            bool shellDepleted = targetPart.shellCurrent == 0;
-            bool goesToFlesh   = shellDepleted || precision.isCritical;
-
-            if (goesToFlesh)
-            {
-                var force = DiceResolver.ResolveForce(
-                    attacker.strength,
-                    GetMonsterToughness(monster, monsterData),
-                    targetPart.isExposed,
-                    shellDepleted);
-
-                if (force.isWound)
-                {
-                    int fleshDamage = CalculateFleshDamage(attacker, precision.isCritical);
-                    var partResult  = PartResolver.ApplyDamage(
-                        ref targetPart, fleshDamage, DamageType.Flesh, monsterData);
-
-                    result.damageDealt = fleshDamage;
-                    result.damageType  = DamageType.Flesh;
-                    result.removedCardNames.AddRange(partResult.removedCardNames);
-
-                    Debug.Log($"[Card] FLESH WOUND — {fleshDamage} Flesh to {targetPart.partName}");
-                }
-                else
-                {
-                    Debug.Log("[Card] Force Check failed — no flesh damage");
-                }
-            }
-            else
-            {
-                int shellDamage = CalculateShellDamage();
-                var partResult  = PartResolver.ApplyDamage(
-                    ref targetPart, shellDamage, DamageType.Shell, monsterData);
-
-                result.damageDealt = shellDamage;
-                result.damageType  = DamageType.Shell;
-                result.removedCardNames.AddRange(partResult.removedCardNames);
-
-                if (partResult.partBreakOccurred && !firstPartBreakOccurredThisCombat)
-                {
-                    result.apexShouldTrigger = true;
-                    Debug.Log("[Card] First part break — Apex trigger flagged");
-                }
-
-                Debug.Log($"[Card] SHELL HIT — {shellDamage} Shell to {targetPart.partName}");
-            }
+            // ── Step 4: Wound Resolution (Stage 8-M stub) ────────
+            // Monster shell/flesh body parts removed. Wound resolution now uses
+            // WoundLocationSO deck draws — full pipeline implemented in Stage 8-N.
+            // Hit registered; damage dealt via wound deck in CombatManager.ResolveWound.
+            result.damageDealt = precision.isCritical ? 2 : 1; // placeholder count for logging
+            Debug.Log($"[Card] HIT on monster — wound deck resolution in Stage 8-N " +
+                      $"(isCritical:{precision.isCritical})");
 
             // ── Step 5: AP Management ────────────────────────────
             result.apRefundGranted  = card.apRefund;
             attacker.apRemaining   -= (card.apCost - card.apRefund);
 
-            Debug.Log($"[Card] Resolution complete. Damage:{result.damageDealt} {result.damageType} " +
-                      $"AP remaining:{attacker.apRemaining} " +
-                      $"Cards removed:[{string.Join(", ", result.removedCardNames)}]");
+            Debug.Log($"[Card] Resolution complete. Hit:{result.damageDealt > 0} Critical:{result.isCritical} " +
+                      $"AP remaining:{attacker.apRemaining}");
 
             return result;
-        }
-
-        // ── Damage Calculation ───────────────────────────────────
-        // Shell is always 1 base — weapon-type modifiers wired in Stage 7
-        private static int CalculateShellDamage() => 1;
-
-        // Flesh is 1 base; crits add +1
-        private static int CalculateFleshDamage(HunterCombatState attacker, bool isCrit)
-        {
-            int base_ = 1;
-            if (isCrit)
-            {
-                base_ += 1;
-                Debug.Log("[Card] Critical hit — +1 Flesh damage");
-            }
-            return base_;
         }
 
         // ── Helpers ──────────────────────────────────────────────
@@ -183,8 +126,7 @@ namespace MnM.Core.Logic
     public struct CardResolutionResult
     {
         public string       cardName;
-        public int          damageDealt;
-        public DamageType   damageType;
+        public int          damageDealt;    // Placeholder count; real wound resolved via WoundDeck in 8-N
         public int          apRefundGranted;
         public bool         reactionApplied;
         public bool         wasLoud;
