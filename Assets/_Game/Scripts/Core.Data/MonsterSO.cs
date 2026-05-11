@@ -57,5 +57,8 @@ namespace MnM.Core.Data
 
         [Header("Stances")]
         public StanceDefinition[] stances;
+
+        [Header("Combat Setup")]
+        public SpawnZoneSO[] hunterSpawnZones;   // All valid deployment zones — hunters may place in any of them
     }
 }

@@ -40,16 +40,16 @@ namespace MnM.Core.Systems
         public void StartCombat(CombatState initialState)
         {
             CurrentState = initialState;
-            CurrentPhase = CombatPhase.VitalityPhase;
             _aggroManager.Initialize(initialState);
 
-            // Register initial grid positions so IsOccupied() works from turn 1
+            // Register initial grid positions so IsOccupied() works from turn 1.
+            // Unplaced hunters are not yet on the grid — skip them.
             var grid = _gridManager as IGridManager;
             if (grid != null)
             {
                 foreach (var hunter in initialState.hunters)
                 {
-                    if (hunter.isCollapsed) continue;
+                    if (hunter.isCollapsed || hunter.isUnplaced) continue;
                     grid.PlaceOccupant(new GridOccupant
                     {
                         occupantId = hunter.hunterId,
@@ -77,9 +77,14 @@ namespace MnM.Core.Systems
                 Debug.LogWarning("[Combat] StartCombat: _gridManager not assigned — occupancy will not block movement");
             }
 
+            bool anyUnplaced = System.Array.Exists(initialState.hunters, h => h.isUnplaced);
+            CurrentPhase = anyUnplaced ? CombatPhase.DeploymentPhase : CombatPhase.VitalityPhase;
+            CurrentState.currentPhase = CurrentPhase.ToString();
+
             Debug.Log($"[Combat] Started. Year:{initialState.campaignYear} " +
                       $"Monster:{initialState.monster.monsterName} " +
-                      $"Hunters:{initialState.hunters.Length}");
+                      $"Hunters:{initialState.hunters.Length} " +
+                      $"Phase:{CurrentPhase}");
             OnPhaseChanged?.Invoke(CurrentPhase);
         }
 
@@ -88,6 +93,10 @@ namespace MnM.Core.Systems
         {
             switch (CurrentPhase)
             {
+                case CombatPhase.DeploymentPhase:
+                    Debug.LogWarning("[Combat] AdvancePhase called during DeploymentPhase — use TryPlaceHunter");
+                    break;
+
                 case CombatPhase.VitalityPhase:
                     RunVitalityPhase();
                     CurrentPhase = CombatPhase.HunterPhase;
@@ -235,6 +244,73 @@ namespace MnM.Core.Systems
                 return null;
             }
             return _cardRegistry.Get(name);
+        }
+
+        // ── Deployment ────────────────────────────────────────────
+        public bool TryPlaceHunter(string hunterId, Vector2Int cell, SpawnZoneSO[] zones)
+        {
+            var grid = _gridManager as IGridManager;
+            if (CurrentPhase != CombatPhase.DeploymentPhase)
+            {
+                Debug.LogWarning("[Combat] TryPlaceHunter called outside DeploymentPhase");
+                return false;
+            }
+
+            var hunter = GetHunter(hunterId);
+            if (hunter == null || !hunter.isUnplaced)
+            {
+                Debug.LogWarning($"[Combat] TryPlaceHunter: {hunterId} not found or already placed");
+                return false;
+            }
+
+            if (zones != null && zones.Length > 0 && !CellInAnyZone(cell, zones))
+            {
+                Debug.LogWarning($"[Combat] TryPlaceHunter: ({cell.x},{cell.y}) is outside all spawn zones");
+                return false;
+            }
+
+            if (grid != null && grid.IsOccupied(cell))
+            {
+                Debug.LogWarning($"[Combat] TryPlaceHunter: ({cell.x},{cell.y}) is occupied");
+                return false;
+            }
+
+            hunter.gridX      = cell.x;
+            hunter.gridY      = cell.y;
+            hunter.isUnplaced = false;
+
+            grid?.PlaceOccupant(new GridOccupant
+            {
+                occupantId = hunter.hunterId,
+                isHunter   = true,
+                footprintW = 1,
+                footprintH = 1,
+                gridX      = cell.x,
+                gridY      = cell.y,
+            }, cell);
+
+            Debug.Log($"[Combat] {hunter.hunterName} placed at ({cell.x},{cell.y})");
+
+            if (!System.Array.Exists(CurrentState.hunters, h => h.isUnplaced))
+            {
+                Debug.Log("[Combat] All hunters placed — advancing to VitalityPhase");
+                CurrentPhase = CombatPhase.VitalityPhase;
+                CurrentState.currentPhase = CurrentPhase.ToString();
+                OnPhaseChanged?.Invoke(CurrentPhase);
+            }
+            else
+            {
+                OnPhaseChanged?.Invoke(CurrentPhase); // Refresh UI to show next unplaced hunter
+            }
+
+            return true;
+        }
+
+        private static bool CellInAnyZone(Vector2Int cell, SpawnZoneSO[] zones)
+        {
+            foreach (var z in zones)
+                if (z != null && z.ContainsCell(cell)) return true;
+            return false;
         }
 
         // ── Hunter Actions ────────────────────────────────────────

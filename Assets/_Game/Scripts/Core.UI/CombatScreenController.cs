@@ -81,6 +81,10 @@ namespace MnM.Core.UI
         // ── Keyboard / Grid Cursor ───────────────────────────────
         private Vector2Int _gridCursor = new Vector2Int(-1, -1); // -1 = no selection
 
+        // ── Deployment State ──────────────────────────────────────────
+        [SerializeField] private SpawnZoneSO[] _spawnZones;
+        private string _deployingHunterId = null;
+
         // ── Movement State ────────────────────────────────────────────
         private HashSet<Vector2Int> _validMoveCells = new();
 
@@ -213,6 +217,32 @@ namespace MnM.Core.UI
         // ── Phase Events ─────────────────────────────────────────
         private void OnPhaseChanged(CombatPhase phase)
         {
+            // ── Deployment Phase ──────────────────────────────────────
+            if (phase == CombatPhase.DeploymentPhase)
+            {
+                if (_endTurnBtn != null) _endTurnBtn.SetEnabled(false);
+
+                var next = GetNextUnplacedHunter();
+                _deployingHunterId = next?.hunterId;
+                ShowSpawnZone();
+
+                if (_phaseLabel != null)
+                    _phaseLabel.text = next != null
+                        ? $"DEPLOY: Place {next.hunterName}"
+                        : "DEPLOY: All placed";
+
+                if (_roundLabel != null && _combatManager.CurrentState != null)
+                    _roundLabel.text = $"ROUND {_combatManager.CurrentState.currentRound + 1}";
+
+                RefreshAll();
+                Debug.Log($"[CombatUI] Phase → {phase} — placing: {next?.hunterName ?? "none"}");
+                return;
+            }
+
+            // ── Normal Phase Handling ─────────────────────────────────
+            ClearSpawnZone();
+            _deployingHunterId = null;
+
             string phaseText = phase switch
             {
                 CombatPhase.VitalityPhase   => "VITALITY PHASE",
@@ -903,6 +933,44 @@ namespace MnM.Core.UI
             RefreshGrid();
         }
 
+        // ── Deployment Helpers ────────────────────────────────────────
+        private HunterCombatState GetNextUnplacedHunter()
+        {
+            var state = _combatManager?.CurrentState;
+            if (state == null) return null;
+            return System.Array.Find(state.hunters, h => h.isUnplaced && !h.isCollapsed);
+        }
+
+        private void ShowSpawnZone()
+        {
+            if (_spawnZones == null || _gridCells == null) return;
+            foreach (var zone in _spawnZones)
+            {
+                if (zone == null) continue;
+                foreach (var cell in zone.GetAllCells())
+                {
+                    if (cell.x < 0 || cell.x >= 22 || cell.y < 0 || cell.y >= 16) continue;
+                    _gridCells[cell.x, cell.y]?.EnableInClassList("grid-cell--spawn", true);
+                }
+            }
+        }
+
+        private void ClearSpawnZone()
+        {
+            if (_gridCells == null) return;
+            for (int x = 0; x < 22; x++)
+            for (int y = 0; y < 16; y++)
+                _gridCells[x, y]?.EnableInClassList("grid-cell--spawn", false);
+        }
+
+        private bool CellInAnySpawnZone(Vector2Int cell)
+        {
+            if (_spawnZones == null) return false;
+            foreach (var z in _spawnZones)
+                if (z != null && z.ContainsCell(cell)) return true;
+            return false;
+        }
+
         private void ShowMovementRange(HunterCombatState hunter)
         {
             _validMoveCells.Clear();
@@ -1028,6 +1096,10 @@ namespace MnM.Core.UI
                 cell.EnableInClassList("grid-cell--movable",
                     _validMoveCells.Contains(new Vector2Int(x, y)));
 
+                bool inSpawnZone = _combatManager?.CurrentPhase == CombatPhase.DeploymentPhase
+                    && CellInAnySpawnZone(new Vector2Int(x, y));
+                cell.EnableInClassList("grid-cell--spawn", inSpawnZone);
+
                 if (grid != null)
                 {
                     if (grid.IsDenied(pos))     cell.AddToClassList("grid-cell--denied");
@@ -1050,7 +1122,7 @@ namespace MnM.Core.UI
         private bool IsHunterAtCell(HunterCombatState[] hunters, int x, int y)
         {
             foreach (var h in hunters)
-                if (!h.isCollapsed && h.gridX == x && h.gridY == y) return true;
+                if (!h.isCollapsed && !h.isUnplaced && h.gridX == x && h.gridY == y) return true;
             return false;
         }
 
@@ -1065,6 +1137,35 @@ namespace MnM.Core.UI
         {
             _gridCursor = new Vector2Int(x, y);
             Debug.Log($"[CombatUI] Grid cell clicked: ({x},{y})");
+
+            // ── Deployment mode ───────────────────────────────────────
+            if (_combatManager?.CurrentPhase == CombatPhase.DeploymentPhase)
+            {
+                if (_deployingHunterId == null)
+                {
+                    Debug.Log("[CombatUI] No hunter awaiting placement");
+                    return;
+                }
+
+                bool placed = _combatManager.TryPlaceHunter(
+                    _deployingHunterId, new Vector2Int(x, y), _spawnZones);
+
+                if (placed)
+                {
+                    ClearSpawnZone();
+                    var next = GetNextUnplacedHunter();
+                    _deployingHunterId = next?.hunterId;
+                    if (next != null) ShowSpawnZone();
+                    RefreshAll();
+                }
+                else
+                {
+                    Debug.Log($"[CombatUI] Cannot place here: ({x},{y}) — outside zone or occupied");
+                }
+
+                RefreshGrid();
+                return;
+            }
 
             // ── Card targeting mode ───────────────────────────────────
             if (_pendingCardName != null)

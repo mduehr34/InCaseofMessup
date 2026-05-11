@@ -12,8 +12,9 @@ namespace MnM.Core.Data
             {
                 hunterId            = "hunter_aldric",
                 hunterName          = "Aldric",
-                gridX               = 5,
-                gridY               = 8,
+                gridX               = -1,
+                gridY               = -1,
+                isUnplaced          = true,
                 facingX             = 1,    // Facing East
                 facingY             = 0,
                 accuracy            = 3,
@@ -54,7 +55,7 @@ namespace MnM.Core.Data
                 campaignId    = "mock_campaign",
                 campaignYear  = 1,
                 currentRound  = 0,
-                currentPhase  = "VitalityPhase",
+                currentPhase  = "DeploymentPhase",
                 aggroHolderId = "hunter_aldric",
                 hunters       = new[] { aldric },
                 monster       = gaunt,

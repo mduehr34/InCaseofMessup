@@ -34,8 +34,8 @@
 | 8-L | STAGE_08_L.md | Monster Action Execution Engine (first pass — superseded by 8-M) | ✅ Done |
 | 8-M | STAGE_08_M.md | Monster Health Rework — Behavior Deck as Life & Wound Locations | ✅ Done |
 | 8-N | STAGE_08_N.md | New Combat Runtime — BehaviorDeck, Wound Resolution, MonsterAI Rebuild | ✅ Done |
-| **8-O** | **STAGE_08_O.md** | **Hunter Deployment Phase — Per-Monster Spawn Zones** | ⬜ Next |
-| **8-P** | **STAGE_08_P.md** | **Active Hunter Selection — Player Chooses Who Acts** | ⬜ |
+| 8-O | STAGE_08_O.md | Hunter Deployment Phase — Per-Monster Spawn Zones | ✅ Done |
+| **8-P** | **STAGE_08_P.md** | **Active Hunter Selection — Player Chooses Who Acts** | ⬜ Next |
 | **8-Q** | **STAGE_08_Q.md** | **Combat Terrain — Obstacle and Bonus Squares** | ⬜ |
 | **8-R** | **STAGE_08_R.md** | **Combat Loop Integration Gate — full Aldric vs Gaunt pass (new system)** | ⬜ |
 | 8-S | STAGE_08_S.md | Hunt Travel Scene — Travel Events, CONTINUE TO HUNT | ⬜ |
