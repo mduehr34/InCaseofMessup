@@ -38,6 +38,7 @@ namespace MnM.Core.Data
         public bool hasActedThisPhase;
         public bool hasMovedThisPhase;
         public bool isCollapsed;
+        public bool isUnplaced;             // true during DeploymentPhase — hunter not yet on the grid
         // Body zones: Head, Torso, LeftArm, RightArm, LeftLeg, RightLeg
         public BodyZoneState[] bodyZones;
         // Deck state

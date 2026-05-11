@@ -49,7 +49,7 @@ namespace MnM.Core.Data
     }
 
     public enum StatusEffect { Shaken, Slowed, Pinned, Exposed, Bleeding, Marked, Broken, Inspired }
-    public enum CombatPhase { VitalityPhase, HunterPhase, BehaviorRefresh, MonsterPhase }
+    public enum CombatPhase { DeploymentPhase, VitalityPhase, HunterPhase, BehaviorRefresh, MonsterPhase }
     public enum DamageType { Shell, Flesh }    // Used for hunter body zone damage only
     public enum FacingArc { Front, Flank, Rear }
     public enum AudioContext { MainMenu, SettlementEarly, SettlementLate, HuntTravel, CombatStandard, CombatOverlord }
