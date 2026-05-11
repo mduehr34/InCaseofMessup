@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46fd15b58f04f9642be9b7748f4fea95, type: 3}
+  m_Name: Gaunt_ScentLock
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.BehaviorCardSO
+  cardName: Scent Lock
+  cardType: 0
+  triggerCondition: The Gaunt inhales deeply, locking on to a hunter's scent.
+  effectDescription: "The Gaunt fixes on a target \u2014 Aggro token transfers to
+    the nearest hunter."
+  hasTargetIdentification: 1
+  targetRule: 
+  hasMovement: 0
+  hasDamage: 0
+  forcedHunterBodyPart: 
+  removalCondition: 
+  criticalWoundCondition: 
+  alternateTriggerCondition: 
+  alternateEffectDescription: 
+  stanceTag: 
+  groupTag: 

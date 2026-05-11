@@ -10,6 +10,7 @@ namespace MnM.Core.Data
         public int currentRound;
         public string currentPhase;         // "VitalityPhase", "HunterPhase", etc.
         public string aggroHolderId;        // hunterId of current Aggro Token holder
+        public string lastAttackerId;       // hunterId of the last hunter who attacked the monster
         public HunterCombatState[] hunters;
         public MonsterCombatState monster;
         public GridState grid;
@@ -77,6 +78,23 @@ namespace MnM.Core.Data
         public string[] removedCardNames;
         public string currentStanceTag;
         public string[] activeStatusEffects;
+
+        // ── Behavior Deck Runtime State ───────────────────────────────────
+        // Counts only — actual card references live in MonsterAI.BehaviorDeck.
+        // CombatState tracks counts so UI and save/load can read health without touching MonsterAI.
+        public int behaviorDeckCount;
+        public int behaviorDiscardCount;
+        public int moodCardsInPlayCount;
+        public int permanentlyRemovedCount;
+
+        // ── Wound Deck Runtime State ──────────────────────────────────────
+        public int woundDeckCount;
+        public int woundDiscardCount;
+
+        // ── Critical Wound Tags ───────────────────────────────────────────
+        // Set when a critical wound lands on a location with a criticalWoundTag.
+        // Read by MonsterAI when resolving ExecuteCard with criticalWoundCondition.
+        public string[] criticalWoundTags;
     }
 
     [Serializable]

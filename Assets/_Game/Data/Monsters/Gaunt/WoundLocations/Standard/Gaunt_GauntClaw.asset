@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e432c8da68b519243bd481d078cfe85f, type: 3}
+  m_Name: Gaunt_GauntClaw
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.WoundLocationSO
+  locationName: Gaunt Claw
+  partTag: 7
+  woundTarget: 5
+  isTrap: 0
+  trapEffect: 
+  isImpervious: 0
+  failureEffect: "The strike glances off the cartilaginous claw \u2014 no purchase."
+  woundEffect: "The claw is scored deeply \u2014 the Gaunt favors that limb."
+  criticalEffect: 
+  criticalWoundTag: 
+  woundResources: []
+  criticalResources: []
