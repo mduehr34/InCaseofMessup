@@ -1,0 +1,92 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5fca2cbac5ab82747a30962a8672c4c0, type: 3}
+  m_Name: Monster_GauntStandard
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.MonsterSO
+  monsterName: The Gaunt
+  materialTier: 1
+  availableFromYear: 0
+  animalBasis: "Carrion predator \u2014 hollow-boned, skull-faced, ambush hunter"
+  combatEmotion: Methodical patience giving way to frenzied hunger
+  coreSkillTaught: "Reading the monster's deck \u2014 anticipating its next move"
+  gridFootprintStandard: {x: 2, y: 2}
+  gridFootprintHardened: {x: 2, y: 2}
+  gridFootprintApex: {x: 3, y: 2}
+  statBlocks:
+  - movement: 4
+    accuracy: 5
+    strength: 2
+    toughness: 5
+    evasion: 3
+  - movement: 5
+    accuracy: 6
+    strength: 3
+    toughness: 6
+    evasion: 4
+  - movement: 6
+    accuracy: 7
+    strength: 4
+    toughness: 7
+    evasion: 5
+  baseCardPool:
+  - {fileID: 11400000, guid: ab899721fcf23584ab2f204c03d92d93, type: 2}
+  - {fileID: 11400000, guid: 4ec4f33110fac1249b22718ceb4f3481, type: 2}
+  - {fileID: 11400000, guid: b12f65c6f8691b44eb98023186fca3b5, type: 2}
+  - {fileID: 11400000, guid: 76cb348dc10b15a46afd7e6bd3876773, type: 2}
+  - {fileID: 11400000, guid: 4d2929ea7245b6f4c9ed774129441091, type: 2}
+  - {fileID: 11400000, guid: d6a6505166ab00645bea375429a71124, type: 2}
+  advancedCardPool:
+  - {fileID: 11400000, guid: a4a566463b4a9b84caddb13c436dc7b5, type: 2}
+  - {fileID: 11400000, guid: 8382d8d1ae7bbed4bbfa2193cff90e34, type: 2}
+  overwhelmingCardPool: []
+  deckCompositions:
+  - baseCardCount: 4
+    advancedCardCount: 1
+    overwhelmingCardCount: 0
+  - baseCardCount: 5
+    advancedCardCount: 2
+    overwhelmingCardCount: 0
+  - baseCardCount: 6
+    advancedCardCount: 2
+    overwhelmingCardCount: 0
+  standardWoundDeck:
+  - {fileID: 11400000, guid: d1a304c4ea7c57148bf669936a5a7d41, type: 2}
+  - {fileID: 11400000, guid: 9daaca49ee537b14b914e2f6538693b1, type: 2}
+  - {fileID: 11400000, guid: 85534c1aabf3a004d88801824c45322a, type: 2}
+  - {fileID: 11400000, guid: 66099c829b32d0e4194c183e898be4cc, type: 2}
+  - {fileID: 11400000, guid: 8127077c3965e3b43b265978c077350b, type: 2}
+  - {fileID: 11400000, guid: 892f25f65510ca1408a4c476db2d7986, type: 2}
+  hardenedWoundDeck:
+  - {fileID: 11400000, guid: d1a304c4ea7c57148bf669936a5a7d41, type: 2}
+  - {fileID: 11400000, guid: 9daaca49ee537b14b914e2f6538693b1, type: 2}
+  - {fileID: 11400000, guid: 85534c1aabf3a004d88801824c45322a, type: 2}
+  - {fileID: 11400000, guid: 66099c829b32d0e4194c183e898be4cc, type: 2}
+  - {fileID: 11400000, guid: 8127077c3965e3b43b265978c077350b, type: 2}
+  - {fileID: 11400000, guid: 892f25f65510ca1408a4c476db2d7986, type: 2}
+  apexWoundDeck:
+  - {fileID: 11400000, guid: d1a304c4ea7c57148bf669936a5a7d41, type: 2}
+  - {fileID: 11400000, guid: 9daaca49ee537b14b914e2f6538693b1, type: 2}
+  - {fileID: 11400000, guid: 85534c1aabf3a004d88801824c45322a, type: 2}
+  - {fileID: 11400000, guid: 66099c829b32d0e4194c183e898be4cc, type: 2}
+  - {fileID: 11400000, guid: 8127077c3965e3b43b265978c077350b, type: 2}
+  - {fileID: 11400000, guid: 892f25f65510ca1408a4c476db2d7986, type: 2}
+  weaknesses: 
+  resistances: 
+  facingBonuses:
+  - arc: 0
+    accuracyModifier: 0
+  - arc: 1
+    accuracyModifier: 1
+  - arc: 2
+    accuracyModifier: 2
+  lootTable: []
+  stances: []

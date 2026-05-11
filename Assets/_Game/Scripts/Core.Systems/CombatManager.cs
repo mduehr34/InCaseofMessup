@@ -30,10 +30,11 @@ namespace MnM.Core.Systems
         public event System.Action<CombatResult>            OnCombatEnded;
 
         // Visual events — not on ICombatManager; consumed by UI components directly
-        public event System.Action<string, string, int> OnEffectApplied;        // entityId, effectName, duration
-        public event System.Action<string, string>      OnEffectRemoved;         // entityId, effectName
-        public event System.Action<string>              OnBehaviorCardActivated; // cardName
-        public event System.Action                      OnBehaviorCardRemoved;   // deck changed — UI should rebuild
+        public event System.Action<string, string, int>         OnEffectApplied;        // entityId, effectName, duration
+        public event System.Action<string, string>              OnEffectRemoved;         // entityId, effectName
+        public event System.Action<string>                      OnBehaviorCardActivated; // cardName
+        public event System.Action                              OnBehaviorCardRemoved;   // deck changed — UI should rebuild
+        public event System.Action<string, WoundOutcome, string> OnWoundResolved;        // hunterId, outcome, locationName
 
         // ── Lifecycle ────────────────────────────────────────────
         public void StartCombat(CombatState initialState)
@@ -176,36 +177,33 @@ namespace MnM.Core.Systems
 
         private void RunMonsterPhase()
         {
-            if (_monsterAI == null)
-            {
-                Debug.LogWarning("[MonsterPhase] IMonsterAI not assigned — skipping");
-                return;
-            }
+            if (_monsterAI == null) { Debug.LogWarning("[MonsterPhase] IMonsterAI not assigned"); return; }
 
-            // Skip if monster is stunned
             if (CurrentState.monster.currentStanceTag == "STUNNED")
             {
                 CurrentState.monster.currentStanceTag = "";
-                Debug.Log("[MonsterPhase] Monster was STUNNED — skipping action, clearing stun");
+                Debug.Log("[MonsterPhase] Monster STUNNED — skipping, clearing stun");
                 return;
             }
 
             var card = _monsterAI.DrawNextCard();
+            if (card == null) return;
+
             Debug.Log($"[MonsterPhase] Executing: {card.cardName}");
             OnBehaviorCardActivated?.Invoke(card.cardName);
 
             var result = _monsterAI.ExecuteCard(card, CurrentState);
 
-            // Process movement — sync GridManager occupancy to new position
+            // Process movement
             if (result.monsterMoved && _gridManager != null)
             {
-                string monsterId = CurrentState.monster.monsterName;
-                (_gridManager as IGridManager).MoveOccupant(monsterId, result.newMonsterCell);
+                (_gridManager as IGridManager)?.MoveOccupant(
+                    CurrentState.monster.monsterName, result.newMonsterCell);
                 Debug.Log($"[MonsterPhase] GridManager updated — monster at " +
                           $"({result.newMonsterCell.x},{result.newMonsterCell.y})");
             }
 
-            // Process hits — fire events and check collapse
+            // Process hits
             foreach (var hit in result.hits)
             {
                 OnDamageDealt?.Invoke(hit.hunterId, hit.damage, DamageType.Flesh);
@@ -213,9 +211,15 @@ namespace MnM.Core.Systems
                 if (hunter != null) CheckHunterCollapse(hunter);
             }
 
-            // Special tag side-effects visible to UI
-            if (result.specialFired)
-                Debug.Log($"[MonsterPhase] Special resolved: {result.specialTag}");
+            // Sync health counts to CombatState for UI
+            if (_monsterAI is MonsterAI ai)
+            {
+                CurrentState.monster.behaviorDeckCount    = ai._behaviorDeckPublic.DeckCount;
+                CurrentState.monster.behaviorDiscardCount = ai._behaviorDeckPublic.DiscardCount;
+                CurrentState.monster.moodCardsInPlayCount = ai._behaviorDeckPublic.MoodInPlayCount;
+                CurrentState.monster.woundDeckCount       = ai._woundDeckPublic.DeckCount;
+                CurrentState.monster.woundDiscardCount    = ai._woundDeckPublic.DiscardCount;
+            }
         }
 
         // ── Card Registry (mirrors UI pattern — cards not in a Resources sub-path) ────
@@ -298,12 +302,19 @@ namespace MnM.Core.Systems
                             confirmedRemovals.Add(removedName);
                     }
 
+                    // ── Wound Resolution (Stage 8-N) ──────────────
+                    if (!result.wasMiss && !result.reactionApplied)
+                    {
+                        CurrentState.lastAttackerId = hunterId;
+                        ResolveWound(hunterId);
+                    }
+
                     // ── Combat Log ────────────────────────────────
                     string outcome = result.wasMiss         ? "MISS"
                                    : result.reactionApplied ? "REACTION"
-                                   : result.isCritical      ? $"CRITICAL HIT — wound deck resolution in 8-N"
-                                   : result.damageDealt > 0 ? $"HIT — wound deck resolution in 8-N"
-                                   :                          "HIT — Force check failed, no damage";
+                                   : result.isCritical      ? "CRITICAL HIT"
+                                   : result.damageDealt > 0 ? "HIT"
+                                   :                          "HIT — Force check failed";
                     string removed = confirmedRemovals.Count > 0
                         ? string.Join(", ", confirmedRemovals)
                         : "none";
@@ -637,12 +648,160 @@ namespace MnM.Core.Systems
             ai.InitializeDeck(monster, difficulty);
 
             // Subscribe before SetMonsterAI so the event is wired before any draws
-            ai.OnMonsterDefeated      += HandleMonsterDefeated;
-            ai.OnBehaviorCardRemoved  += () => OnBehaviorCardRemoved?.Invoke();
+            ai.OnMonsterDefeated     += HandleMonsterDefeated;
+            ai.OnBehaviorCardRemoved += () => OnBehaviorCardRemoved?.Invoke();
+            // OnGritWindow: UI phase (Stage 9+) subscribes here to pause for player input
+            ai.OnGritWindow          += (phase, card) =>
+                Debug.Log($"[GritWindow] Phase: {phase} | Card: {card?.cardName}");
 
             ai.InjectGrid(_gridManager as IGridManager);
             SetMonsterAI(ai);
             Debug.Log($"[Combat] MonsterAI initialized for {monster.monsterName} ({difficulty})");
+        }
+
+        // ── Wound Resolution ──────────────────────────────────────────
+        /// <summary>
+        /// Called when a hunter successfully hits the monster (to-hit roll passed).
+        /// Draws a wound location, runs the force roll, and removes a behavior card on wound/critical.
+        /// </summary>
+        public WoundOutcome ResolveWound(string hunterId)
+        {
+            var hunter = GetHunter(hunterId);
+            if (hunter == null || _monsterAI == null)
+            {
+                Debug.LogWarning("[Combat] ResolveWound: hunter or AI null");
+                return WoundOutcome.Failure;
+            }
+
+            var ai = _monsterAI as MonsterAI;
+            if (ai == null)
+            {
+                Debug.LogWarning("[Combat] ResolveWound: MonsterAI cast failed");
+                return WoundOutcome.Failure;
+            }
+
+            // ── Draw wound location ───────────────────────────────────
+            var location = ai._woundDeckPublic.Draw();
+            if (location == null)
+            {
+                Debug.LogWarning("[Combat] ResolveWound: wound deck empty");
+                return WoundOutcome.Failure;
+            }
+
+            Debug.Log($"[Wound] Drew: {location.locationName} (target: {location.woundTarget}, " +
+                      $"trap: {location.isTrap}, impervious: {location.isImpervious})");
+
+            // ── Trap ──────────────────────────────────────────────────
+            if (location.isTrap)
+            {
+                Debug.Log($"[Wound] TRAP: {location.trapEffect}");
+                OnWoundResolved?.Invoke(hunterId, WoundOutcome.Trap, location.locationName);
+                ai._woundDeckPublic.SendToDiscard(location);
+                ai._woundDeckPublic.ReshuffleDiscardIntoDeck();
+                return WoundOutcome.Trap;
+            }
+
+            // ── Force Roll ────────────────────────────────────────────
+            int roll     = Random.Range(1, 11);  // d10
+            int strength = GetHunterStat(hunterId, "strength");
+            bool woundPassed = (roll + strength) > location.woundTarget;
+
+            Debug.Log($"[Wound] Force roll: d10={roll} + STR={strength} = {roll + strength} vs target {location.woundTarget} " +
+                      $"→ {(woundPassed ? "WOUND CHECK PASSES" : "FAILURE")}");
+
+            if (!woundPassed)
+            {
+                if (!string.IsNullOrEmpty(location.failureEffect))
+                    Debug.Log($"[Wound] Failure effect: {location.failureEffect}");
+                OnWoundResolved?.Invoke(hunterId, WoundOutcome.Failure, location.locationName);
+                ai._woundDeckPublic.SendToDiscard(location);
+                return WoundOutcome.Failure;
+            }
+
+            // ── Critical Sub-Check (only when wound check passed) ─────
+            int luck          = GetHunterStat(hunterId, "luck");
+            int critThreshold = 10 - luck;  // Luck 2 → crit on d10 ≥ 8
+            bool isCritical   = roll >= critThreshold;
+
+            Debug.Log($"[Wound] Critical check: d10 natural={roll} vs threshold {critThreshold} " +
+                      $"→ {(isCritical ? "CRITICAL" : "standard wound")}");
+
+            WoundOutcome outcome = isCritical ? WoundOutcome.Critical : WoundOutcome.Wound;
+
+            if (!string.IsNullOrEmpty(location.woundEffect))
+                Debug.Log($"[Wound] Wound effect: {location.woundEffect}");
+            if (isCritical && !string.IsNullOrEmpty(location.criticalEffect))
+                Debug.Log($"[Wound] Critical effect: {location.criticalEffect}");
+
+            // Set critical wound tag
+            if (isCritical && !string.IsNullOrEmpty(location.criticalWoundTag))
+            {
+                ai.AddCriticalWoundTag(location.criticalWoundTag);
+                var monState = CurrentState.monster;
+                var tags     = new List<string>(monState.criticalWoundTags ?? new string[0]);
+                if (!tags.Contains(location.criticalWoundTag)) tags.Add(location.criticalWoundTag);
+                monState.criticalWoundTags = tags.ToArray();
+                Debug.Log($"[Wound] Critical tag set: {location.criticalWoundTag}");
+            }
+
+            // Grant resources (placeholder — wire to ResourceManager in Stage 9-E)
+            if (location.woundResources != null && location.woundResources.Length > 0)
+                Debug.Log($"[Wound] Resources: {location.woundResources.Length} entries (wire to ResourceManager in 9-E)");
+
+            // ── Impervious: effects fire but no behavior card removed ──
+            if (location.isImpervious)
+            {
+                Debug.Log("[Wound] Location is IMPERVIOUS — no behavior card removed");
+                OnWoundResolved?.Invoke(hunterId, outcome, location.locationName);
+                ai._woundDeckPublic.SendToDiscard(location);
+                return outcome;
+            }
+
+            // ── Remove behavior card (default: top of deck) ───────────
+            var removedCard = ai._behaviorDeckPublic.RemoveTopCard();
+            if (removedCard != null)
+                Debug.Log($"[Wound] '{removedCard.cardName}' removed from monster health pool");
+
+            OnBehaviorCardRemoved?.Invoke();
+            OnWoundResolved?.Invoke(hunterId, outcome, location.locationName);
+            ai._woundDeckPublic.SendToDiscard(location);
+
+            // Sync deck counts
+            CurrentState.monster.behaviorDeckCount    = ai._behaviorDeckPublic.DeckCount;
+            CurrentState.monster.behaviorDiscardCount = ai._behaviorDeckPublic.DiscardCount;
+            CurrentState.monster.woundDeckCount       = ai._woundDeckPublic.DeckCount;
+            CurrentState.monster.woundDiscardCount    = ai._woundDeckPublic.DiscardCount;
+
+            // ── Defeat check ──────────────────────────────────────────
+            if (ai._behaviorDeckPublic.IsDefeated)
+            {
+                Debug.Log("[Combat] *** MONSTER DEFEATED — last behavior card removed by wound ***");
+                HandleMonsterDefeated();
+            }
+
+            return outcome;
+        }
+
+        private int GetHunterStat(string hunterId, string stat)
+        {
+            var hunter = GetHunter(hunterId);
+            if (hunter != null)
+            {
+                return stat switch
+                {
+                    "strength" => hunter.strength,
+                    "luck"     => hunter.luck,
+                    "accuracy" => hunter.accuracy,
+                    _          => 0,
+                };
+            }
+            // Fallback defaults for testing
+            return stat switch
+            {
+                "strength" => 3,
+                "luck"     => 1,
+                _          => 0,
+            };
         }
 
         private void HandleMonsterDefeated()

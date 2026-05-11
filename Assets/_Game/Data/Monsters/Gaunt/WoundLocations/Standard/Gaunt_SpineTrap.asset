@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e432c8da68b519243bd481d078cfe85f, type: 3}
+  m_Name: Gaunt_SpineTrap
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.WoundLocationSO
+  locationName: Spine Trap
+  partTag: 10
+  woundTarget: 0
+  isTrap: 1
+  trapEffect: "The Gaunt's spine barb catches the hunter \u2014 take 1 flesh damage
+    before the attack resolves"
+  isImpervious: 0
+  failureEffect: 
+  woundEffect: 
+  criticalEffect: 
+  criticalWoundTag: 
+  woundResources: []
+  criticalResources: []

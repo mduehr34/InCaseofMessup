@@ -16,6 +16,11 @@ namespace MnM.Core.Data
         public bool   specialFired = false;
         public string specialTag   = "";
 
+        // Defeat / pending damage (Stage 8-N)
+        public bool   monsterDefeated       = false;
+        public string pendingDamageHunterId = null;  // Set before Grit window, applied after
+        public string pendingDamageZone     = null;
+
         public struct HitRecord
         {
             public string hunterId;
