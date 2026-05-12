@@ -126,6 +126,11 @@ namespace MnM.Core.UI
         {
             if (_combatManager?.CurrentState != null)
             {
+                // Override inspector spawn zones with MonsterSO zones when entering via real game flow
+                var gsm = GameStateManager.Instance;
+                if (gsm?.SelectedMonster?.hunterSpawnZones is { Length: > 0 } monsterZones)
+                    _spawnZones = monsterZones;
+
                 RefreshAll();
                 BuildGrid();
                 InitialiseStatusDisplays();

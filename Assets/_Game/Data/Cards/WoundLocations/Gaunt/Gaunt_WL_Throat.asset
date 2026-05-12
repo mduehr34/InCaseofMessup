@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e432c8da68b519243bd481d078cfe85f, type: 3}
+  m_Name: Gaunt_WL_Throat
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.WoundLocationSO
+  locationName: Throat
+  partTag: 2
+  woundTarget: 6
+  isTrap: 0
+  trapEffect: 
+  isImpervious: 0
+  failureEffect: "Claws deflect the strike \u2014 the Gaunt snarls but is unharmed."
+  woundEffect: "Throat tear \u2014 Gaunt loses 1 AP on its next turn."
+  criticalEffect: "Windpipe crush \u2014 Gaunt is Stunned for 1 round."
+  criticalWoundTag: GauntThroat_Critical
+  woundResources:
+  - resourceName: Hide
+    amount: 1
+  criticalResources:
+  - resourceName: Hide
+    amount: 1
+  - resourceName: Bone
+    amount: 1
