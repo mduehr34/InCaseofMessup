@@ -301,9 +301,6 @@ public class Stage8NVerification
         var ai = new MonsterAI();
         ai.InitializeDeck(gaunt, "Standard");
 
-        bool defeatFired = false;
-        ai.OnMonsterDefeated += () => defeatFired = true;
-
         var state = MakeCombatState();
 
         // Remove all cards via wound path
