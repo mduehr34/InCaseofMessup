@@ -105,6 +105,7 @@
             <ui:VisualElement name="hand-actions" class="hand-actions">
                 <ui:Label  name="ap-display"   text="AP: 2"    class="hand-ap-display"/>
                 <ui:Label  name="grit-display" text="Grit: 3"  class="hand-grit-display"/>
+                <ui:Button name="undo-deploy-btn" text="UNDO PLACE" class="action-btn action-btn--secondary undo-deploy-btn"/>
                 <ui:Button name="end-turn-btn" text="END TURN" class="action-btn action-btn--primary end-turn-btn"/>
             </ui:VisualElement>
         </ui:VisualElement>

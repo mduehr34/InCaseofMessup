@@ -240,10 +240,7 @@ MonoBehaviour:
   _cardAnim: {fileID: 1010199896}
   _gridManager: {fileID: 1980084148}
   _spawnZones:
-  - {fileID: 11400000, guid: 70c3a3d2bf83079468fef75b85bd653b, type: 2}
-  - {fileID: 11400000, guid: 59599e98ba17a5740a656f583edb08b9, type: 2}
-  - {fileID: 11400000, guid: 5bdfc1177bbb00f48827cb183b504514, type: 2}
-  - {fileID: 11400000, guid: 6fe0dad1d196bc145a427264f38a07e2, type: 2}
+  - {fileID: 11400000, guid: 956badea498d1084682b084e8a6762ba, type: 2}
 --- !u!114 &1010199894
 MonoBehaviour:
   m_ObjectHideFlags: 0
