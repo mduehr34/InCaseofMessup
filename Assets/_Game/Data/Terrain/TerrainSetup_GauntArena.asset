@@ -1,0 +1,45 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 562ff6499a42a374a804797729e4f9ed, type: 3}
+  m_Name: TerrainSetup_GauntArena
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.TerrainSetupSO
+  entries:
+  - terrain: {fileID: 11400000, guid: 268d39792ea1ad9458ac3b704c1db55b, type: 2}
+    gridX: 11
+    gridY: 7
+    footprintW: 1
+    footprintH: 1
+  - terrain: {fileID: 11400000, guid: 268d39792ea1ad9458ac3b704c1db55b, type: 2}
+    gridX: 14
+    gridY: 7
+    footprintW: 1
+    footprintH: 1
+  - terrain: {fileID: 11400000, guid: 5fef5a735f96b41418524487ea759d88, type: 2}
+    gridX: 12
+    gridY: 9
+    footprintW: 1
+    footprintH: 1
+  - terrain: {fileID: 11400000, guid: f2477d937ba916b47ab082eaf886d4ef, type: 2}
+    gridX: 10
+    gridY: 7
+    footprintW: 1
+    footprintH: 1
+  - terrain: {fileID: 11400000, guid: f2477d937ba916b47ab082eaf886d4ef, type: 2}
+    gridX: 15
+    gridY: 8
+    footprintW: 1
+    footprintH: 1
+  - terrain: {fileID: 11400000, guid: 051acd5700b80da48b6c7e425f19dafa, type: 2}
+    gridX: 11
+    gridY: 6
+    footprintW: 2
+    footprintH: 1

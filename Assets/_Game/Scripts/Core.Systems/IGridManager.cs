@@ -36,5 +36,10 @@ namespace MnM.Core.Systems
         // Denial (Spear zone control cards)
         void SetDenied(Vector2Int cell, bool denied, int durationRounds);
         void TickDeniedCells();     // Called once per round end
+
+        // Terrain (static per-combat layout)
+        void PlaceTerrain(TerrainCellState cell);
+        bool IsTerrain(Vector2Int cell);
+        TerrainCellState? GetTerrain(Vector2Int cell);
     }
 }
