@@ -246,6 +246,40 @@ namespace MnM.Core.Systems
             return _cardRegistry.Get(name);
         }
 
+        // ── Weapon Registry ───────────────────────────────────────────────────────
+        private static WeaponRegistrySO _weaponRegistry;
+        private static WeaponSO LoadWeaponSO(WeaponType type)
+        {
+            if (_weaponRegistry == null)
+                _weaponRegistry = Resources.Load<WeaponRegistrySO>("WeaponRegistry");
+            if (_weaponRegistry == null)
+            {
+                Debug.LogWarning("[Combat] WeaponRegistry not found — " +
+                                 "create it at Assets/_Game/Data/Resources/WeaponRegistry.asset");
+                return null;
+            }
+            return _weaponRegistry.Get(type);
+        }
+
+        // Returns the max attack distance for the given hunter + card, or int.MaxValue if unknown.
+        public int GetHunterAttackRange(string hunterId, string cardName)
+        {
+            var card = LoadCardSO(cardName);
+            if (card == null) return int.MaxValue;
+            var weapon = LoadWeaponSO(card.weaponType);
+            if (weapon == null) return int.MaxValue;
+            // range=0 on WeaponSO means "adjacent" which is distance 1 on the grid
+            return weapon.range == 0 ? 1 : weapon.range;
+        }
+
+        // Manhattan distance from a point to the nearest cell of the monster's rectangular footprint.
+        private static int MinDistToMonsterFootprint(Vector2Int pos, MonsterCombatState m)
+        {
+            int dx = Mathf.Max(0, Mathf.Max(m.gridX - pos.x, pos.x - (m.gridX + m.footprintW - 1)));
+            int dy = Mathf.Max(0, Mathf.Max(m.gridY - pos.y, pos.y - (m.gridY + m.footprintH - 1)));
+            return dx + dy;
+        }
+
         // ── Deployment ────────────────────────────────────────────
         public bool TryPlaceHunter(string hunterId, Vector2Int cell, SpawnZoneSO[] zones)
         {
@@ -342,6 +376,20 @@ namespace MnM.Core.Systems
                 Debug.LogWarning($"[Combat] TryPlayCard: insufficient AP. " +
                                  $"Have:{hunter.apRemaining} Need:{netCost}");
                 return false;
+            }
+
+            // ── Range check ───────────────────────────────────────
+            if (card.category != CardCategory.Reaction)
+            {
+                var hunterPos = new Vector2Int(hunter.gridX, hunter.gridY);
+                int minDist   = MinDistToMonsterFootprint(hunterPos, CurrentState.monster);
+                int maxRange  = GetHunterAttackRange(hunter.hunterId, cardName);
+                if (minDist > maxRange)
+                {
+                    Debug.LogWarning($"[Combat] TryPlayCard: {hunter.hunterName} is out of range " +
+                                     $"(dist={minDist}, maxRange={maxRange})");
+                    return false;
+                }
             }
 
             int targetPartIndex = FindMonsterPartAtCell(targetCell);

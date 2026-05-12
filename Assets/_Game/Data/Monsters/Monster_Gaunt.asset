@@ -57,7 +57,19 @@ MonoBehaviour:
   advancedCardPool: []
   overwhelmingCardPool: []
   deckCompositions: []
-  standardWoundDeck: []
+  standardWoundDeck:
+  - {fileID: 11400000, guid: 143f99d2d412e9f4992bc0415c4a4c56, type: 2}
+  - {fileID: 11400000, guid: 143f99d2d412e9f4992bc0415c4a4c56, type: 2}
+  - {fileID: 11400000, guid: 143f99d2d412e9f4992bc0415c4a4c56, type: 2}
+  - {fileID: 11400000, guid: 912fda961bf9a6e4f8556ff6062f55c8, type: 2}
+  - {fileID: 11400000, guid: 912fda961bf9a6e4f8556ff6062f55c8, type: 2}
+  - {fileID: 11400000, guid: b801bac6bdf85e9438a621afa06ae9f1, type: 2}
+  - {fileID: 11400000, guid: b801bac6bdf85e9438a621afa06ae9f1, type: 2}
+  - {fileID: 11400000, guid: ab681e73c9ce75847ab13a9d819e2bbd, type: 2}
+  - {fileID: 11400000, guid: ab681e73c9ce75847ab13a9d819e2bbd, type: 2}
+  - {fileID: 11400000, guid: cb2ba616e24988747b1c188b7008ee34, type: 2}
+  - {fileID: 11400000, guid: 9296033b985ced7429229e017ec108db, type: 2}
+  - {fileID: 11400000, guid: 7d3a83396eded4841ab827e375b17aa8, type: 2}
   hardenedWoundDeck: []
   apexWoundDeck: []
   weaknesses: 

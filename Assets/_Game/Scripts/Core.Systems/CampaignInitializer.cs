@@ -169,8 +169,9 @@ namespace MnM.Core.Systems
                 {
                     hunterId            = ch.characterId,
                     hunterName          = ch.characterName,
-                    gridX               = 3 + i * 2, // Default starting positions
-                    gridY               = 8,
+                    gridX               = -1,
+                    gridY               = -1,
+                    isUnplaced          = true,
                     facingX             = 1,
                     facingY             = 0,
                     currentGrit         = 3, // Seeded from CampaignSO in Stage 6
@@ -226,7 +227,7 @@ namespace MnM.Core.Systems
                 campaignId    = campaign.campaignId,
                 campaignYear  = campaign.currentYear,
                 currentRound  = 0,
-                currentPhase  = "VitalityPhase",
+                currentPhase  = "DeploymentPhase",
                 aggroHolderId = hunters.Length > 0 ? hunters[0].hunterId : "",
                 hunters       = hunters,
                 monster       = monsterState,
@@ -253,10 +254,47 @@ namespace MnM.Core.Systems
 
         private static MonsterPartState[] BuildMonsterParts(MonsterSO monster, string difficulty)
         {
-            // Stage 8-M: MonsterBodyPart arrays removed from MonsterSO.
-            // Monster health is now tracked via the behavior deck (see MonsterAI).
-            // MonsterCombatState.parts retained for save-state compatibility; initialized empty.
-            return new MonsterPartState[0];
+            // Build unique body locations from the wound deck so targeting validation works.
+            // Shell/flesh health values are 0 — monster health is the behavior deck (Stage 8-M).
+            var woundDeck = difficulty switch
+            {
+                "Hardened" => monster.hardenedWoundDeck,
+                "Apex"     => monster.apexWoundDeck,
+                _          => monster.standardWoundDeck,
+            };
+
+            if (woundDeck != null && woundDeck.Length > 0)
+            {
+                var seen  = new System.Collections.Generic.HashSet<string>();
+                var parts = new System.Collections.Generic.List<MonsterPartState>();
+                foreach (var loc in woundDeck)
+                {
+                    if (loc == null || !seen.Add(loc.locationName)) continue;
+                    parts.Add(new MonsterPartState
+                    {
+                        partName     = loc.locationName,
+                        shellCurrent = 0, shellMax = 0,
+                        fleshCurrent = 0, fleshMax = 0,
+                        isBroken     = false,
+                        isRevealed   = !loc.isTrap,
+                        isExposed    = false,
+                        woundCount   = 0,
+                    });
+                }
+                return parts.ToArray();
+            }
+
+            // Fallback: single generic part so TryPlayCard targeting never fails outright
+            return new[] { new MonsterPartState
+            {
+                partName     = "Body",
+                shellCurrent = 0, shellMax = 0,
+                fleshCurrent = 0, fleshMax = 0,
+                isBroken     = false,
+                isRevealed   = true,
+                isExposed    = false,
+                woundCount   = 0,
+            }};
         }
 
         private static string[] GetDeckCardNames(MonsterSO monster)

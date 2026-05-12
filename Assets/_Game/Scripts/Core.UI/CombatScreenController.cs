@@ -126,6 +126,11 @@ namespace MnM.Core.UI
         {
             if (_combatManager?.CurrentState != null)
             {
+                // Override inspector spawn zones with MonsterSO zones when entering via real game flow
+                var gsm = GameStateManager.Instance;
+                if (gsm?.SelectedMonster?.hunterSpawnZones is { Length: > 0 } monsterZones)
+                    _spawnZones = monsterZones;
+
                 RefreshAll();
                 BuildGrid();
                 InitialiseStatusDisplays();
@@ -529,20 +534,31 @@ namespace MnM.Core.UI
             var activeHunter = GetActiveHunter();
             if (activeHunter != null)
             {
-                _selectedHunterId = null;   // Clear before ending so GetActiveHunter() won't re-select stale id
                 _combatManager.EndHunterTurn(activeHunter.hunterId);
                 ClearMovementRange();
+                _pendingCardName = null;
+                if (_selectedCardEl != null)
+                {
+                    _selectedCardEl.EnableInClassList("card--selected", false);
+                    _selectedCardEl = null;
+                }
                 Debug.Log($"[CombatUI] End Turn: {activeHunter.hunterName} done");
 
-                // Auto-select the last remaining non-acted hunter when exactly one is left
-                var state     = _combatManager.CurrentState;
-                var remaining = System.Array.FindAll(
-                    state.hunters, h => !h.hasActedThisPhase && !h.isCollapsed);
-                if (remaining.Length == 1)
+                // Always fully select the next available hunter so they can act immediately.
+                // We set _selectedHunterId directly rather than calling SelectHunter() to avoid
+                // the "already active" guard that fires when GetActiveHunter()'s fallback already
+                // returns this hunter before the explicit selection is set.
+                var state = _combatManager.CurrentState;
+                var next  = System.Array.Find(state.hunters, h => !h.hasActedThisPhase && !h.isCollapsed);
+                if (next != null)
                 {
-                    _selectedHunterId = remaining[0].hunterId;
-                    ShowMovementRange(remaining[0]);
-                    Debug.Log($"[CombatUI] Auto-selected last remaining hunter: {remaining[0].hunterName}");
+                    _selectedHunterId = next.hunterId;
+                    ShowMovementRange(next);
+                    Debug.Log($"[CombatUI] Auto-selected next hunter: {next.hunterName}");
+                }
+                else
+                {
+                    _selectedHunterId = null;
                 }
 
                 RefreshAll();
@@ -1259,7 +1275,12 @@ namespace MnM.Core.UI
                     cell.AddToClassList("grid-cell--selected");
 
                 if (_pendingCardName != null && isMonsterCell)
-                    cell.AddToClassList("grid-cell--valid");
+                {
+                    var ah = GetActiveHunter();
+                    bool inRange = ah == null || IsHunterInCardRange(ah, _pendingCardName);
+                    if (inRange)
+                        cell.AddToClassList("grid-cell--valid");
+                }
             }
         }
 
@@ -1274,6 +1295,19 @@ namespace MnM.Core.UI
         {
             return x >= monster.gridX && x < monster.gridX + monster.footprintW &&
                    y >= monster.gridY && y < monster.gridY + monster.footprintH;
+        }
+
+        private bool IsHunterInCardRange(HunterCombatState hunter, string cardName)
+        {
+            if (_combatManager == null) return true;
+            var pos     = new Vector2Int(hunter.gridX, hunter.gridY);
+            var monster = _combatManager.CurrentState.monster;
+            int maxRange = _combatManager.GetHunterAttackRange(hunter.hunterId, cardName);
+            int dx = Mathf.Max(0, Mathf.Max(monster.gridX - pos.x,
+                                             pos.x - (monster.gridX + monster.footprintW - 1)));
+            int dy = Mathf.Max(0, Mathf.Max(monster.gridY - pos.y,
+                                             pos.y - (monster.gridY + monster.footprintH - 1)));
+            return (dx + dy) <= maxRange;
         }
 
         // ── Grid Cell Clicks ──────────────────────────────────────
