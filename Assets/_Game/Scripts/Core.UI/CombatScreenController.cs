@@ -72,6 +72,9 @@ namespace MnM.Core.UI
         private string        _pendingCardName = null;   // Card selected, awaiting target
         private VisualElement _selectedCardEl  = null;   // Currently highlighted card element
 
+        // ── Active Hunter Selection ───────────────────────────────
+        private string _selectedHunterId = null;   // null = fall back to first non-acted hunter
+
         // ── Grid ─────────────────────────────────────────────────
         private VisualElement    _gridContainer;
         private VisualElement[,] _gridCells;              // [x, y] — 22×16
@@ -84,6 +87,8 @@ namespace MnM.Core.UI
         // ── Deployment State ──────────────────────────────────────────
         [SerializeField] private SpawnZoneSO[] _spawnZones;
         private string _deployingHunterId = null;
+        private readonly Stack<string> _deploymentHistory = new(); // hunterId placement order for undo
+        private Button _undoDeployBtn;
 
         // ── Movement State ────────────────────────────────────────────
         private HashSet<Vector2Int> _validMoveCells = new();
@@ -163,6 +168,11 @@ namespace MnM.Core.UI
 
                 if (_hunterPanels[i] == null)
                     Debug.LogWarning($"[CombatUI] hunter-panel-{i} not found in UXML");
+                else
+                {
+                    int captured = i;
+                    _hunterPanels[i].RegisterCallback<ClickEvent>(_ => OnHunterPanelClicked(captured));
+                }
             }
 
             // Wire End Turn button
@@ -171,6 +181,16 @@ namespace MnM.Core.UI
                 _endTurnBtn.clicked += OnEndTurnClicked;
             else
                 Debug.LogWarning("[CombatUI] end-turn-btn not found in UXML");
+
+            // Wire Undo Deployment button — hidden outside DeploymentPhase
+            _undoDeployBtn = _root.Q<Button>("undo-deploy-btn");
+            if (_undoDeployBtn != null)
+            {
+                _undoDeployBtn.clicked += OnUndoDeployClicked;
+                _undoDeployBtn.style.display = DisplayStyle.None;
+            }
+            else
+                Debug.LogWarning("[CombatUI] undo-deploy-btn not found in UXML");
         }
 
         // ── Event Wiring ─────────────────────────────────────────
@@ -242,6 +262,8 @@ namespace MnM.Core.UI
             // ── Normal Phase Handling ─────────────────────────────────
             ClearSpawnZone();
             _deployingHunterId = null;
+            _deploymentHistory.Clear();
+            if (_undoDeployBtn != null) _undoDeployBtn.style.display = DisplayStyle.None;
 
             string phaseText = phase switch
             {
@@ -266,13 +288,15 @@ namespace MnM.Core.UI
             if (phase == CombatPhase.BehaviorRefresh && _handCardElements.Count > 0)
                 AnimateDiscardHand();
 
-            // Enable End Turn only during the interactive phases
-            bool interactive = phase == CombatPhase.VitalityPhase || phase == CombatPhase.HunterPhase;
+            // Enable End Turn only during HunterPhase — all other phases are auto-advancing
+            bool interactive = phase == CombatPhase.HunterPhase;
             if (_endTurnBtn != null) _endTurnBtn.SetEnabled(interactive);
 
-            // Auto-advance non-interactive phases so monster acts without player input
+            // Auto-advance non-interactive phases so the player doesn't need to press buttons
             if (_autoAdvanceCoroutine != null) StopCoroutine(_autoAdvanceCoroutine);
-            if (phase == CombatPhase.BehaviorRefresh)
+            if (phase == CombatPhase.VitalityPhase)
+                _autoAdvanceCoroutine = StartCoroutine(AutoAdvancePhase(0.6f));
+            else if (phase == CombatPhase.BehaviorRefresh)
                 _autoAdvanceCoroutine = StartCoroutine(AutoAdvancePhase(0.4f));
             else if (phase == CombatPhase.MonsterPhase)
                 _autoAdvanceCoroutine = StartCoroutine(AutoAdvancePhase(1.5f));
@@ -281,6 +305,8 @@ namespace MnM.Core.UI
 
             // Clear stale highlights first, then show movement range if entering Hunter Phase
             ClearMovementRange();
+            if (phase != CombatPhase.HunterPhase)
+                _selectedHunterId = null;
             if (phase == CombatPhase.HunterPhase && _pendingCardName == null)
             {
                 var active = GetActiveHunter();
@@ -500,28 +526,90 @@ namespace MnM.Core.UI
         {
             if (_combatManager?.CurrentState == null) return;
 
-            var activeHunter = System.Array.Find(
-                _combatManager.CurrentState.hunters,
-                h => !h.hasActedThisPhase && !h.isCollapsed);
-
+            var activeHunter = GetActiveHunter();
             if (activeHunter != null)
             {
-                // Hunter still has their turn — end it
+                _selectedHunterId = null;   // Clear before ending so GetActiveHunter() won't re-select stale id
                 _combatManager.EndHunterTurn(activeHunter.hunterId);
+                ClearMovementRange();
                 Debug.Log($"[CombatUI] End Turn: {activeHunter.hunterName} done");
+
+                // Auto-select the last remaining non-acted hunter when exactly one is left
+                var state     = _combatManager.CurrentState;
+                var remaining = System.Array.FindAll(
+                    state.hunters, h => !h.hasActedThisPhase && !h.isCollapsed);
+                if (remaining.Length == 1)
+                {
+                    _selectedHunterId = remaining[0].hunterId;
+                    ShowMovementRange(remaining[0]);
+                    Debug.Log($"[CombatUI] Auto-selected last remaining hunter: {remaining[0].hunterName}");
+                }
+
+                RefreshAll();
             }
             else
             {
-                // All hunters have acted — advance to next phase
                 _combatManager.AdvancePhase();
                 Debug.Log("[CombatUI] All hunters acted — phase advanced");
             }
+        }
+
+        // ── Hunter Selection ──────────────────────────────────────
+        private void OnHunterPanelClicked(int panelIndex)
+        {
+            var state = _combatManager?.CurrentState;
+            if (state == null || _combatManager.CurrentPhase != CombatPhase.HunterPhase) return;
+            if (panelIndex >= state.hunters.Length) return;
+
+            var hunter = state.hunters[panelIndex];
+            if (hunter.isCollapsed || hunter.hasActedThisPhase)
+            {
+                Debug.Log($"[CombatUI] Panel click ignored — {hunter.hunterName} cannot act");
+                return;
+            }
+
+            SelectHunter(hunter);
+        }
+
+        private void SelectHunter(HunterCombatState hunter)
+        {
+            if (hunter == null || hunter.isCollapsed || hunter.hasActedThisPhase) return;
+            if (hunter.hunterId == GetActiveHunter()?.hunterId)
+            {
+                Debug.Log($"[CombatUI] {hunter.hunterName} is already the active hunter");
+                return;
+            }
+
+            _selectedHunterId = hunter.hunterId;
+            Debug.Log($"[CombatUI] Active hunter switched to: {hunter.hunterName}");
+
+            ClearMovementRange();
+            _pendingCardName = null;
+            if (_selectedCardEl != null)
+            {
+                _selectedCardEl.EnableInClassList("card--selected", false);
+                _selectedCardEl = null;
+            }
+            ShowMovementRange(hunter);
+            RefreshAll();
         }
 
         private HunterCombatState GetActiveHunter()
         {
             var state = _combatManager?.CurrentState;
             if (state == null) return null;
+
+            if (_selectedHunterId != null)
+            {
+                var selected = System.Array.Find(
+                    state.hunters,
+                    h => h.hunterId == _selectedHunterId && !h.hasActedThisPhase && !h.isCollapsed);
+                if (selected != null) return selected;
+
+                // Selection stale — selected hunter just ended their turn
+                _selectedHunterId = null;
+            }
+
             return System.Array.Find(state.hunters, h => !h.hasActedThisPhase && !h.isCollapsed);
         }
 
@@ -572,6 +660,18 @@ namespace MnM.Core.UI
             _hunterPanels[index].EnableInClassList("hunter-panel--collapsed", hunter.isCollapsed);
             if (hunter.isCollapsed)
                 _hunterPanels[index].EnableInClassList("stone-panel--danger", true);
+
+            // Deployment highlight — teal outline on the hunter currently being placed
+            bool isDeploying = _combatManager?.CurrentPhase == CombatPhase.DeploymentPhase &&
+                               hunter.hunterId == _deployingHunterId;
+            _hunterPanels[index].EnableInClassList("hunter-panel--deploying", isDeploying);
+
+            // Active hunter highlight — gold border, only meaningful during HunterPhase
+            bool isActive = _combatManager?.CurrentPhase == CombatPhase.HunterPhase &&
+                            !hunter.hasActedThisPhase &&
+                            !hunter.isCollapsed &&
+                            hunter.hunterId == GetActiveHunter()?.hunterId;
+            _hunterPanels[index].EnableInClassList("hunter-panel--active", isActive);
 
             // Body zones
             BuildBodyZones(index, hunter);
@@ -840,8 +940,7 @@ namespace MnM.Core.UI
             _selectedCardEl  = null;
             _pendingCardName = null;
 
-            var activeHunter = System.Array.Find(
-                state.hunters, h => !h.hasActedThisPhase && !h.isCollapsed);
+            var activeHunter = GetActiveHunter();
 
             if (activeHunter == null)
             {
@@ -934,6 +1033,44 @@ namespace MnM.Core.UI
         }
 
         // ── Deployment Helpers ────────────────────────────────────────
+        private void OnUndoDeployClicked()
+        {
+            if (_deploymentHistory.Count == 0) return;
+
+            string hunterId = _deploymentHistory.Pop();
+            var state   = _combatManager?.CurrentState;
+            if (state == null) return;
+
+            var hunter = System.Array.Find(state.hunters, h => h.hunterId == hunterId);
+            if (hunter == null) return;
+
+            // Remove from grid occupancy
+            (_combatManager as MonoBehaviour)?.GetComponent<GridManager>(); // not needed — use injected ref
+            var grid = _gridManager as IGridManager;
+            grid?.RemoveOccupant(hunterId);
+
+            // Reset hunter to unplaced state
+            hunter.gridX      = -1;
+            hunter.gridY      = -1;
+            hunter.isUnplaced = true;
+
+            // Resume deploying this hunter
+            _deployingHunterId = hunterId;
+
+            // Hide undo button if nothing left to undo
+            if (_undoDeployBtn != null)
+                _undoDeployBtn.style.display =
+                    _deploymentHistory.Count > 0 ? DisplayStyle.Flex : DisplayStyle.None;
+
+            ClearSpawnZone();
+            ShowSpawnZone();
+            RefreshAll();
+
+            // Update phase label
+            if (_phaseLabel != null) _phaseLabel.text = $"DEPLOY: Place {hunter.hunterName}";
+            Debug.Log($"[CombatUI] Undo deployment: {hunter.hunterName} returned to unplaced");
+        }
+
         private HunterCombatState GetNextUnplacedHunter()
         {
             var state = _combatManager?.CurrentState;
@@ -1087,12 +1224,13 @@ namespace MnM.Core.UI
 
                 var pos = new Vector2Int(x, y);
 
-                cell.EnableInClassList("grid-cell--denied",   false);
-                cell.EnableInClassList("grid-cell--marrow",   false);
-                cell.EnableInClassList("grid-cell--hunter",   false);
-                cell.EnableInClassList("grid-cell--monster",  false);
-                cell.EnableInClassList("grid-cell--selected", false);
-                cell.EnableInClassList("grid-cell--valid",    false);
+                cell.EnableInClassList("grid-cell--denied",        false);
+                cell.EnableInClassList("grid-cell--marrow",        false);
+                cell.EnableInClassList("grid-cell--hunter",        false);
+                cell.EnableInClassList("grid-cell--monster",       false);
+                cell.EnableInClassList("grid-cell--selected",      false);
+                cell.EnableInClassList("grid-cell--valid",         false);
+                cell.EnableInClassList("grid-cell--active-hunter", false);
                 cell.EnableInClassList("grid-cell--movable",
                     _validMoveCells.Contains(new Vector2Int(x, y)));
 
@@ -1110,6 +1248,12 @@ namespace MnM.Core.UI
                 bool isMonsterCell = IsMonsterAtCell(state.monster, x, y);
                 if (isHunterCell)  cell.AddToClassList("grid-cell--hunter");
                 if (isMonsterCell) cell.AddToClassList("grid-cell--monster");
+
+                var activeHunter = GetActiveHunter();
+                bool isActiveHunterCell = activeHunter != null &&
+                                          !activeHunter.isCollapsed &&
+                                          x == activeHunter.gridX && y == activeHunter.gridY;
+                if (isActiveHunterCell) cell.AddToClassList("grid-cell--active-hunter");
 
                 if (_gridCursor.x == x && _gridCursor.y == y)
                     cell.AddToClassList("grid-cell--selected");
@@ -1147,11 +1291,15 @@ namespace MnM.Core.UI
                     return;
                 }
 
+                // Capture before TryPlaceHunter fires OnPhaseChanged, which overwrites _deployingHunterId
+                string placingHunterId = _deployingHunterId;
                 bool placed = _combatManager.TryPlaceHunter(
-                    _deployingHunterId, new Vector2Int(x, y), _spawnZones);
+                    placingHunterId, new Vector2Int(x, y), _spawnZones);
 
                 if (placed)
                 {
+                    _deploymentHistory.Push(placingHunterId);
+                    if (_undoDeployBtn != null) _undoDeployBtn.style.display = DisplayStyle.Flex;
                     ClearSpawnZone();
                     var next = GetNextUnplacedHunter();
                     _deployingHunterId = next?.hunterId;
@@ -1191,6 +1339,22 @@ namespace MnM.Core.UI
                     return;
                 }
 
+                // Check for another non-acted hunter token FIRST — takes priority over movement
+                // (Mira's cell may fall inside movement range if BFS doesn't block it cleanly)
+                var state = _combatManager.CurrentState;
+                var clickedHunter = System.Array.Find(
+                    state.hunters,
+                    h => !h.isCollapsed && !h.hasActedThisPhase &&
+                         h.hunterId != activeHunter.hunterId &&
+                         h.gridX == x && h.gridY == y);
+
+                if (clickedHunter != null)
+                {
+                    SelectHunter(clickedHunter);
+                    return;
+                }
+
+                // Movement
                 if (_validMoveCells.Contains(destination))
                 {
                     bool moved = _combatManager.TryMoveHunter(activeHunter.hunterId, destination);
@@ -1205,14 +1369,6 @@ namespace MnM.Core.UI
                         Debug.Log($"[CombatUI] TryMoveHunter rejected: ({x},{y})");
                     }
                 }
-                else
-                {
-                    var state = _combatManager.CurrentState;
-                    var hunter = System.Array.Find(
-                        state.hunters, h => !h.isCollapsed && h.gridX == x && h.gridY == y);
-                    if (hunter != null)
-                        Debug.Log($"[CombatUI] Hunter at ({x},{y}): {hunter.hunterName}");
-                }
             }
 
             RefreshGrid();
@@ -1223,8 +1379,7 @@ namespace MnM.Core.UI
             var state = _combatManager?.CurrentState;
             if (state == null || _pendingCardName == null) return;
 
-            var activeHunter = System.Array.Find(
-                state.hunters, h => !h.hasActedThisPhase && !h.isCollapsed);
+            var activeHunter = GetActiveHunter();
             if (activeHunter == null)
             {
                 Debug.LogWarning("[CombatUI] No active hunter to play card");
@@ -1376,8 +1531,7 @@ namespace MnM.Core.UI
             var state = _combatManager?.CurrentState;
             if (state == null) return;
 
-            var activeHunter = System.Array.Find(
-                state.hunters, h => !h.hasActedThisPhase && !h.isCollapsed);
+            var activeHunter = GetActiveHunter();
             if (activeHunter == null || index >= activeHunter.handCardNames.Length) return;
 
             string cardName = activeHunter.handCardNames[index];

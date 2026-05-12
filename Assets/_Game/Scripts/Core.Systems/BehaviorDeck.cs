@@ -42,9 +42,22 @@ namespace MnM.Core.Systems
             _moodInPlay.Clear();
             _permanentlyRemoved.Clear();
 
-            if (difficultyIndex < 0 || difficultyIndex >= monster.deckCompositions.Length)
+            bool compositionsEmpty = monster.deckCompositions == null || monster.deckCompositions.Length == 0;
+            if (compositionsEmpty || difficultyIndex < 0 || difficultyIndex >= monster.deckCompositions.Length)
             {
-                Debug.LogError($"[BehaviorDeck] Invalid difficulty index {difficultyIndex} for {monster.monsterName}");
+                // Fallback for testing: use the full base pool directly (no composition configured)
+                if (monster.baseCardPool != null && monster.baseCardPool.Length > 0)
+                {
+                    _deck.AddRange(monster.baseCardPool);
+                    Shuffle(_deck);
+                    Debug.LogWarning($"[BehaviorDeck] No deckComposition for {monster.monsterName} " +
+                                     $"(index {difficultyIndex}) — using full base pool ({_deck.Count} cards)");
+                }
+                else
+                {
+                    Debug.LogError($"[BehaviorDeck] {monster.monsterName} has no deckCompositions " +
+                                   $"and no baseCardPool — deck will be empty");
+                }
                 return;
             }
 

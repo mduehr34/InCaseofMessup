@@ -23,7 +23,10 @@ namespace MnM.Core.Systems
 
         private void OnEnable()
         {
+            // Dev-fallback instance (GameBootstrap) has no UIDocument — skip overlay setup
+            if (_uiDocument == null) return;
             _overlay = _uiDocument.rootVisualElement.Q("fade-overlay");
+            if (_overlay == null) return;
             // Start fully black then fade in — reveals the first scene after Bootstrap loads it
             _overlay.style.display = DisplayStyle.Flex;
             _overlay.style.backgroundColor = new StyleColor(Color.black);

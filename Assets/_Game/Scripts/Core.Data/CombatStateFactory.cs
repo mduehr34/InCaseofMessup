@@ -27,8 +27,8 @@ namespace MnM.Core.Data
                 hasActedThisPhase   = false,
                 isCollapsed         = false,
                 bodyZones           = BuildHunterBodyZones(),
-                handCardNames       = new[] { "Brace", "Shove" },
-                deckCardNames       = new string[0],
+                handCardNames       = new string[0],
+                deckCardNames       = new[] { "Brace", "Shove", "Quick Jab", "Body Blow" },
                 discardCardNames    = new string[0],
                 activeStatusEffects = new string[0],
             };
@@ -50,6 +50,31 @@ namespace MnM.Core.Data
                 activeStatusEffects = new string[0],
             };
 
+            var mira = new HunterCombatState
+            {
+                hunterId            = "hunter_mira",
+                hunterName          = "Mira",
+                gridX               = -1,
+                gridY               = -1,
+                isUnplaced          = true,
+                facingX             = 1,
+                facingY             = 0,
+                accuracy            = 4,
+                strength            = 2,
+                luck                = 1,
+                movement            = 4,
+                currentGrit         = 2,
+                maxGrit             = 2,
+                apRemaining         = 2,
+                hasActedThisPhase   = false,
+                isCollapsed         = false,
+                bodyZones           = BuildHunterBodyZones(),
+                handCardNames       = new string[0],
+                deckCardNames       = new[] { "Strike and Move", "Hammer Fist", "Deflect", "Grapple Opener" },
+                discardCardNames    = new string[0],
+                activeStatusEffects = new string[0],
+            };
+
             return new CombatState
             {
                 campaignId    = "mock_campaign",
@@ -57,7 +82,7 @@ namespace MnM.Core.Data
                 currentRound  = 0,
                 currentPhase  = "DeploymentPhase",
                 aggroHolderId = "hunter_aldric",
-                hunters       = new[] { aldric },
+                hunters       = new[] { aldric, mira },
                 monster       = gaunt,
                 grid          = BuildEmptyGrid(),
                 log           = new string[0],

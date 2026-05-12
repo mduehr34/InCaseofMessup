@@ -65,6 +65,18 @@
     border-color: var(--color-border-danger);
 }
 
+/* Hunter panel — currently active (selected by player, their turn) */
+.hunter-panel--active {
+    border-color: rgba(200, 170, 60, 0.85);
+    border-width: 2px;
+}
+
+/* Hunter panel — currently being placed during deployment (teal, matches spawn zone) */
+.hunter-panel--deploying {
+    border-color: rgba(40, 160, 200, 0.85);
+    border-width: 2px;
+}
+
 .hunter-header {
     flex-direction: row;
     align-items:    center;
@@ -163,11 +175,6 @@
     background-color: var(--color-marrow-sink);
 }
 
-.grid-cell--hunter {
-    border-color: var(--color-text-primary);
-    border-width: 2px;
-}
-
 .grid-cell--monster {
     border-color: var(--color-text-danger);
     border-width: 2px;
@@ -185,11 +192,25 @@
     border-width:     1px;
 }
 
+/* Active hunter token — gold tint, distinct from green movable range */
+.grid-cell--active-hunter {
+    background-color: rgba(180, 140, 30, 0.45);
+    border-color:     rgba(230, 190, 60, 0.90);
+    border-width:     2px;
+}
+
 /* Deployment spawn zone — teal-blue, distinct from movement green */
 .grid-cell--spawn {
     background-color: rgba(20, 100, 130, 0.35);
     border-color:     rgba(40, 160, 200, 0.65);
     border-width:     1px;
+}
+
+/* Hunter token — defined AFTER spawn so border wins the cascade when both classes are present */
+.grid-cell--hunter {
+    background-color: rgba(80, 60, 20, 0.55);
+    border-color:     var(--color-text-primary);
+    border-width:     2px;
 }
 
 /* ── Monster Panel ───────────────────────────────────────────── */

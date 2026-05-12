@@ -27,228 +27,42 @@ MonoBehaviour:
     strength: 2
     toughness: 1
     evasion: 2
-    behaviorDeckSizeRemovable: 9
   - movement: 8
     accuracy: 2
     strength: 3
     toughness: 2
     evasion: 3
-    behaviorDeckSizeRemovable: 12
   - movement: 10
     accuracy: 3
     strength: 4
     toughness: 3
     evasion: 4
-    behaviorDeckSizeRemovable: 15
-  standardParts:
-  - partName: Head
-    partTag: 0
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames: []
-    woundRemovesCardNames:
-    - Gaunt_TremorRead
-    - Gaunt_PackMemory
-    isTrapZone: 0
-  - partName: Throat
-    partTag: 1
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_TheHowl
-    - Gaunt_ScentLock
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  - partName: Torso
-    partTag: 2
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames: []
-    woundRemovesCardNames:
-    - Gaunt_Frenzy
-    isTrapZone: 0
-  - partName: Left Flank
-    partTag: 3
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_ThroatLock
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  - partName: Right Flank
-    partTag: 4
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_CreepingAdvance
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  - partName: Hind Legs
-    partTag: 5
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_LungeStrike
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  - partName: Tail
-    partTag: 6
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_DeadStillness
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  hardenedParts:
-  - partName: Head
-    partTag: 0
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames: []
-    woundRemovesCardNames:
-    - Gaunt_TremorRead
-    - Gaunt_PackMemory
-    isTrapZone: 0
-  - partName: Throat
-    partTag: 1
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_TheHowl
-    - Gaunt_ScentLock
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  - partName: Torso
-    partTag: 2
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames: []
-    woundRemovesCardNames:
-    - Gaunt_Frenzy
-    isTrapZone: 0
-  - partName: Left Flank
-    partTag: 3
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_ThroatLock
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  - partName: Right Flank
-    partTag: 4
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_CreepingAdvance
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  - partName: Hind Legs
-    partTag: 5
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_Lunge
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  - partName: Tail
-    partTag: 6
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_FlankSense
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  apexParts:
-  - partName: Head
-    partTag: 0
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames: []
-    woundRemovesCardNames:
-    - Gaunt_TremorRead
-    - Gaunt_PackMemory
-    isTrapZone: 0
-  - partName: Throat
-    partTag: 1
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_TheHowl
-    - Gaunt_ScentLock
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  - partName: Torso
-    partTag: 2
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames: []
-    woundRemovesCardNames:
-    - Gaunt_Frenzy
-    isTrapZone: 0
-  - partName: Left Flank
-    partTag: 3
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_ThroatLock
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  - partName: Right Flank
-    partTag: 4
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_CreepingAdvance
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  - partName: Hind Legs
-    partTag: 5
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_Lunge
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  - partName: Tail
-    partTag: 6
-    shellDurability: 2
-    fleshDurability: 3
-    breakRemovesCardNames:
-    - Gaunt_FlankSense
-    woundRemovesCardNames: []
-    isTrapZone: 0
-  openingCards:
-  - {fileID: 11400000, guid: ab7a2fb7a31cda14683819dac05dda40, type: 2}
-  - {fileID: 11400000, guid: d1af09814a0bdcc47a01919e5cda3b3f, type: 2}
-  - {fileID: 11400000, guid: cee874ccab47f784f81ffdc0d9c139fd, type: 2}
-  escalationCards:
-  - {fileID: 11400000, guid: 22f1948df492cba48b3729c0207c79ee, type: 2}
-  apexCards: []
-  permanentCards: []
+  baseCardPool:
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000b0, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000ab, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a1, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000ae, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a3, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a8, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a5, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000af, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000ad, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a7, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000ac, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a2, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000aa, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a6, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a9, type: 2}
+  - {fileID: 11400000, guid: a1b2c3d40000000000000000000000a4, type: 2}
+  advancedCardPool: []
+  overwhelmingCardPool: []
+  deckCompositions: []
+  standardWoundDeck: []
+  hardenedWoundDeck: []
+  apexWoundDeck: []
   weaknesses: 
   resistances: 
-  frontFacing:
-    primaryZone: 2
-    secondaryZone: 0
-    tertiaryZone: 7
-    primaryZoneWeight: 50
-    secondaryZoneWeight: 30
-    tertiaryZoneWeight: 20
-  flankFacing:
-    primaryZone: 7
-    secondaryZone: 2
-    tertiaryZone: 8
-    primaryZoneWeight: 50
-    secondaryZoneWeight: 30
-    tertiaryZoneWeight: 20
-  rearFacing:
-    primaryZone: 8
-    secondaryZone: 9
-    tertiaryZone: 10
-    primaryZoneWeight: 50
-    secondaryZoneWeight: 30
-    tertiaryZoneWeight: 20
-  trapZoneParts: []
+  facingBonuses: []
   lootTable:
   - resource: {fileID: 11400000, guid: adcab74ce8168f04397ffe66a63fe8fd, type: 2}
     minAmount: 2
@@ -275,3 +89,4 @@ MonoBehaviour:
     maxAmount: 1
     weight: 20
   stances: []
+  hunterSpawnZones: []
