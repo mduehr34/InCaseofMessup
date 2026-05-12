@@ -238,7 +238,8 @@ namespace MnM.Core.Systems
             var current    = new Vector2Int(monster.gridX, monster.gridY);
 
             var next = StepToward(current, targetCell);
-            if (next != current && !_grid.IsOccupied(next) && _grid.IsInBounds(next))
+            // VERIFY-FIX: check full W×H footprint — single-cell IsOccupied missed IsDenied terrain cells
+            if (next != current && IsFootprintClear(next, current, monster.footprintW, monster.footprintH))
             {
                 int dx = next.x - current.x;
                 int dy = next.y - current.y;
@@ -251,6 +252,24 @@ namespace MnM.Core.Systems
                 Debug.Log($"[MonsterAI] Moved to ({next.x},{next.y}) facing ({monster.facingX},{monster.facingY})");
             }
             return result;
+        }
+
+        private bool IsFootprintClear(Vector2Int newTopLeft, Vector2Int oldTopLeft, int fpW, int fpH)
+        {
+            for (int dy = 0; dy < fpH; dy++)
+            {
+                for (int dx = 0; dx < fpW; dx++)
+                {
+                    var cell = new Vector2Int(newTopLeft.x + dx, newTopLeft.y + dy);
+                    if (!_grid.IsInBounds(cell)) return false;
+                    if (_grid.IsDenied(cell)) return false;
+                    // Skip cells the monster already occupies in its current footprint
+                    bool inOldFootprint = cell.x >= oldTopLeft.x && cell.x < oldTopLeft.x + fpW &&
+                                         cell.y >= oldTopLeft.y && cell.y < oldTopLeft.y + fpH;
+                    if (!inOldFootprint && _grid.IsOccupied(cell)) return false;
+                }
+            }
+            return true;
         }
 
         // ── Mood Card Removal ─────────────────────────────────────────
