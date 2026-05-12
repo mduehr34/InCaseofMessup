@@ -1163,8 +1163,14 @@ namespace MnM.Core.UI
                     if (grid.IsOccupied(next))        continue;
                     if (grid.IsDenied(next))          continue;
 
-                    visited[next] = cost + 1;
-                    queue.Enqueue((next, cost + 1));
+                    var nextTerrain = grid.GetTerrain(next);
+                    int entryCost   = (nextTerrain.HasValue && nextTerrain.Value.movementCost > 1)
+                                      ? nextTerrain.Value.movementCost : 1;
+                    int newCost     = cost + entryCost;
+                    if (newCost > effectiveMove) continue;
+
+                    visited[next] = newCost;
+                    queue.Enqueue((next, newCost));
                 }
             }
 
@@ -1240,13 +1246,17 @@ namespace MnM.Core.UI
 
                 var pos = new Vector2Int(x, y);
 
-                cell.EnableInClassList("grid-cell--denied",        false);
-                cell.EnableInClassList("grid-cell--marrow",        false);
-                cell.EnableInClassList("grid-cell--hunter",        false);
-                cell.EnableInClassList("grid-cell--monster",       false);
-                cell.EnableInClassList("grid-cell--selected",      false);
-                cell.EnableInClassList("grid-cell--valid",         false);
-                cell.EnableInClassList("grid-cell--active-hunter", false);
+                cell.EnableInClassList("grid-cell--denied",            false);
+                cell.EnableInClassList("grid-cell--marrow",            false);
+                cell.EnableInClassList("grid-cell--hunter",            false);
+                cell.EnableInClassList("grid-cell--monster",           false);
+                cell.EnableInClassList("grid-cell--selected",          false);
+                cell.EnableInClassList("grid-cell--valid",             false);
+                cell.EnableInClassList("grid-cell--active-hunter",     false);
+                cell.EnableInClassList("grid-cell--terrain-obstacle",  false);
+                cell.EnableInClassList("grid-cell--terrain-high",      false);
+                cell.EnableInClassList("grid-cell--terrain-ash",       false);
+                cell.EnableInClassList("grid-cell--terrain-mud",       false);
                 cell.EnableInClassList("grid-cell--movable",
                     _validMoveCells.Contains(new Vector2Int(x, y)));
 
@@ -1258,6 +1268,10 @@ namespace MnM.Core.UI
                 {
                     if (grid.IsDenied(pos))     cell.AddToClassList("grid-cell--denied");
                     if (grid.IsMarrowSink(pos)) cell.AddToClassList("grid-cell--marrow");
+
+                    var terrain = grid.GetTerrain(pos);
+                    if (terrain.HasValue && !string.IsNullOrEmpty(terrain.Value.cssClass))
+                        cell.EnableInClassList(terrain.Value.cssClass, true);
                 }
 
                 bool isHunterCell  = IsHunterAtCell(state.hunters, x, y);
@@ -1401,6 +1415,30 @@ namespace MnM.Core.UI
                     else
                     {
                         Debug.Log($"[CombatUI] TryMoveHunter rejected: ({x},{y})");
+                    }
+                }
+                else if (_combatManager.CurrentPhase == CombatPhase.HunterPhase &&
+                         !activeHunter.hasMovedThisPhase)
+                {
+                    // Log why the cell is unreachable so the player knows what blocked them
+                    var grid = _gridManager as MnM.Core.Systems.IGridManager;
+                    if (grid != null)
+                    {
+                        string reason;
+                        if (!grid.IsInBounds(destination))
+                            reason = "out of bounds";
+                        else if (grid.IsOccupied(destination))
+                            reason = "occupied by another unit";
+                        else if (grid.IsDenied(destination))
+                        {
+                            var terrain = grid.GetTerrain(destination);
+                            reason = terrain.HasValue
+                                ? $"blocked by {terrain.Value.terrainId} (impassable terrain)"
+                                : "blocked by obstacle";
+                        }
+                        else
+                            reason = $"out of movement range (movement: {activeHunter.movement})";
+                        Debug.Log($"[Combat] {activeHunter.hunterName} cannot move to ({x},{y}) — {reason}");
                     }
                 }
             }

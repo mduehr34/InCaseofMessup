@@ -1,6 +1,6 @@
 # Marrow & Myth — Master Session Order
 
-> **Last updated:** After Stage 8-L complete + combat system rework (6 new sessions inserted as 8-M through 8-R; original 8-M through 8-R shifted to 8-S through 8-X; 9-T/U added; 10-M/N inserted before 10-L)
+> **Last updated:** After Stage 8-Q and 8-R complete — terrain system and integration gate done; two deferred terrain extension sessions added (TerrainFX, TerrainGen)
 >
 > **Key change from original plan:** After completing the 8-L monster execution engine, playtesting revealed the shell/flesh HP system created frustrating combat pacing. Six sessions were inserted immediately after 8-L:
 > - **8-M** (new): Data model rework — shell/flesh HP removed; behavior deck IS the monster's health; wound location deck introduced
@@ -36,8 +36,10 @@
 | 8-N | STAGE_08_N.md | New Combat Runtime — BehaviorDeck, Wound Resolution, MonsterAI Rebuild | ✅ Done |
 | 8-O | STAGE_08_O.md | Hunter Deployment Phase — Per-Monster Spawn Zones | ✅ Done |
 | 8-P | STAGE_08_P.md | Active Hunter Selection — Player Chooses Who Acts | ✅ Done |
-| **8-Q** | **STAGE_08_Q.md** | **Combat Terrain — Obstacle and Bonus Squares** | ⬜ Next |
-| **8-R** | **STAGE_08_R.md** | **Combat Loop Integration Gate — full Aldric vs Gaunt pass (new system)** | ⬜ |
+| 8-Q | STAGE_08_Q.md | Combat Terrain — Obstacle and Bonus Squares | ✅ Done |
+| 8-Q-ext | STAGE_08_TerrainFX.md | Terrain Buff & Resource Grant System *(deferred — run after 8-R)* | ⬜ |
+| 8-Q-ext | STAGE_08_TerrainGen.md | Random Terrain Placement from Monster Spawn Table *(deferred — run after 8-R)* | ⬜ |
+| 8-R | STAGE_08_R.md | Combat Loop Integration Gate — full Aldric vs Gaunt pass (new system) | ✅ Done |
 | 8-S | STAGE_08_S.md | Hunt Travel Scene — Travel Events, CONTINUE TO HUNT | ⬜ |
 | 8-T | STAGE_08_T.md | Tutorial Tooltip & Onboarding System | ⬜ |
 | 8-U | STAGE_08_U.md | Chronicle Log & Codex UI | ⬜ |

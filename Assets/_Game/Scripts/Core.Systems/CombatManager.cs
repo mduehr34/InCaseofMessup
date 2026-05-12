@@ -9,7 +9,10 @@ namespace MnM.Core.Systems
     public class CombatManager : MonoBehaviour, ICombatManager
     {
         // ── Injected Dependencies ────────────────────────────────
-        [SerializeField] private GridManager _gridManager;
+        [SerializeField] private GridManager         _gridManager;
+        [SerializeField] private TerrainSetupSO      _terrainSetup;
+        // TODO STAGE_08_TerrainGen: assign per-monster random spawn table in Inspector or via MonsterSO
+        [SerializeField] private TerrainSpawnTableSO _terrainSpawnTable;
         // IMonsterAI injected at runtime — stub reference for now
         private IMonsterAI _monsterAI;
 
@@ -76,6 +79,46 @@ namespace MnM.Core.Systems
             {
                 Debug.LogWarning("[Combat] StartCombat: _gridManager not assigned — occupancy will not block movement");
             }
+
+            // Apply terrain layout from TerrainSetupSO — expands multi-cell footprints
+            if (_terrainSetup != null && grid != null && _terrainSetup.entries != null)
+            {
+                var terrainList = new List<TerrainCellState>();
+                foreach (var entry in _terrainSetup.entries)
+                {
+                    if (entry.terrain == null) continue;
+                    int fpW = Mathf.Max(1, entry.footprintW);
+                    int fpH = Mathf.Max(1, entry.footprintH);
+                    for (int dx = 0; dx < fpW; dx++)
+                    for (int dy = 0; dy < fpH; dy++)
+                    {
+                        var cell = new TerrainCellState
+                        {
+                            x                   = entry.gridX + dx,
+                            y                   = entry.gridY + dy,
+                            terrainId           = entry.terrain.terrainId,
+                            terrainType         = entry.terrain.terrainType,
+                            accuracyBonus       = entry.terrain.accuracyBonus,
+                            defenseBonus        = entry.terrain.defenseBonus,
+                            movementCost        = entry.terrain.movementCost,
+                            cssClass            = entry.terrain.cssClass,
+                            buffOnEnterTag      = entry.terrain.buffOnEnterTag,
+                            buffDurationRounds  = entry.terrain.buffDurationRounds,
+                            resourceGrantTag    = entry.terrain.resourceGrantTag,
+                            resourceGrantAmount = entry.terrain.resourceGrantAmount,
+                        };
+                        grid.PlaceTerrain(cell);
+                        terrainList.Add(cell);
+                    }
+                }
+                if (initialState.grid != null)
+                    initialState.grid.terrainCells = terrainList.ToArray();
+            }
+
+            // TODO STAGE_08_TerrainGen: resolve _terrainSpawnTable for random terrain placement
+            // Call ApplyRandomTerrain(grid, initialState, _terrainSpawnTable) here, after the
+            // fixed layout above, so hand-authored landmarks are always placed first.
+            // See _Docs/Stage_08/STAGE_08_TerrainGen.md for the full spec.
 
             bool anyUnplaced = System.Array.Exists(initialState.hunters, h => h.isUnplaced);
             CurrentPhase = anyUnplaced ? CombatPhase.DeploymentPhase : CombatPhase.VitalityPhase;
@@ -212,12 +255,26 @@ namespace MnM.Core.Systems
                           $"({result.newMonsterCell.x},{result.newMonsterCell.y})");
             }
 
-            // Process hits
+            // Process hits — apply terrain defense bonus to reduce incoming damage
             foreach (var hit in result.hits)
             {
-                OnDamageDealt?.Invoke(hit.hunterId, hit.damage, DamageType.Flesh);
-                var hunter = GetHunter(hit.hunterId);
-                if (hunter != null) CheckHunterCollapse(hunter);
+                var targetHunter = GetHunter(hit.hunterId);
+                int defenseBonus = 0;
+                if (targetHunter != null)
+                {
+                    var terrainAtHunter = (_gridManager as IGridManager)?.GetTerrain(
+                        new Vector2Int(targetHunter.gridX, targetHunter.gridY));
+                    if (terrainAtHunter.HasValue && terrainAtHunter.Value.terrainType == TerrainType.Bonus
+                        && terrainAtHunter.Value.defenseBonus > 0)
+                    {
+                        defenseBonus = terrainAtHunter.Value.defenseBonus;
+                        Debug.Log($"[Terrain] Defense bonus {defenseBonus} applied to " +
+                                  $"{targetHunter.hunterName} from {terrainAtHunter.Value.terrainId}");
+                    }
+                }
+                int adjustedDamage = Mathf.Max(0, hit.damage - defenseBonus);
+                OnDamageDealt?.Invoke(hit.hunterId, adjustedDamage, DamageType.Flesh);
+                if (targetHunter != null) CheckHunterCollapse(targetHunter);
             }
 
             // Sync health counts to CombatState for UI
@@ -408,10 +465,17 @@ namespace MnM.Core.Systems
 
                 if (!trapFired)
                 {
+                    // Terrain accuracy bonus — hunter standing on bonus terrain
+                    int terrainAccuracyBonus = 0;
+                    var hunterTerrain = (_gridManager as IGridManager)?.GetTerrain(
+                        new Vector2Int(hunter.gridX, hunter.gridY));
+                    if (hunterTerrain.HasValue && hunterTerrain.Value.terrainType == TerrainType.Bonus)
+                        terrainAccuracyBonus = hunterTerrain.Value.accuracyBonus;
+
                     var result = CardResolver.Resolve(
                         card, hunter, CurrentState.monster,
                         ref targetPart, GetMonsterSO(),
-                        _firstPartBreakOccurred);
+                        _firstPartBreakOccurred, terrainAccuracyBonus);
 
                     CurrentState.monster.parts[targetPartIndex] = targetPart;
 
@@ -560,10 +624,10 @@ namespace MnM.Core.Systems
             StatusEffectResolver.ApplyStatusPenalties(hunter, ref accuracy, ref effectiveMovement);
 
             var from = new Vector2Int(hunter.gridX, hunter.gridY);
-            int dist = grid.GetDistance(from, destination);
-            if (dist > effectiveMovement)
+            if (!CanReachWithTerrain(grid, from, destination, effectiveMovement))
             {
-                Debug.LogWarning($"[Combat] TryMoveHunter: distance {dist} exceeds movement {effectiveMovement}");
+                Debug.LogWarning($"[Combat] TryMoveHunter: ({destination.x},{destination.y}) " +
+                                 $"unreachable within movement {effectiveMovement} (terrain cost applied)");
                 return false;
             }
 
@@ -582,8 +646,23 @@ namespace MnM.Core.Systems
                 hunter.facingY = dy == 0 ? 0 : (dy > 0 ? 1 : -1);
             }
 
+            // Terrain entry log + deferred on-enter effects
+            var terrainAtDest = grid.GetTerrain(destination);
+            if (terrainAtDest.HasValue)
+            {
+                LogTerrainEntry(hunter.hunterName, terrainAtDest.Value);
+                // TODO STAGE_08_TerrainFX: apply buff on entry
+                // if (!string.IsNullOrEmpty(terrainAtDest.Value.buffOnEnterTag))
+                //     ApplyStatusEffect(hunterId, Enum.Parse<StatusEffect>(terrainAtDest.Value.buffOnEnterTag),
+                //                       terrainAtDest.Value.buffDurationRounds);
+                //
+                // TODO STAGE_08_TerrainFX: grant resource on first entry
+                // if (!string.IsNullOrEmpty(terrainAtDest.Value.resourceGrantTag))
+                //     ResourceManager.Instance?.Grant(terrainAtDest.Value.resourceGrantTag,
+                //                                    terrainAtDest.Value.resourceGrantAmount, hunterId);
+            }
+
             // Check which arc the hunter is in relative to the monster — may trigger Flank Sense
-            // EvaluateTrigger handles this in MonsterAI (wired when full content added Stage 7)
             var monsterCell   = new Vector2Int(CurrentState.monster.gridX, CurrentState.monster.gridY);
             var monsterFacing = new Vector2Int(CurrentState.monster.facingX, CurrentState.monster.facingY);
             var arc = grid.GetArcFromAttackerToTarget(destination, monsterCell, monsterFacing);
@@ -591,6 +670,57 @@ namespace MnM.Core.Systems
             Debug.Log($"[Combat] {hunter.hunterName} moved to ({destination.x},{destination.y}) " +
                       $"facing ({hunter.facingX},{hunter.facingY}) — Arc: {arc}");
             return true;
+        }
+
+        // Terrain-aware BFS: returns true if destination is reachable within the movement budget.
+        // Respects IsDenied (obstacles) and each cell's movementCost.
+        private static bool CanReachWithTerrain(
+            IGridManager grid, Vector2Int from, Vector2Int destination, int movement)
+        {
+            if (from == destination) return true;
+            var visited = new Dictionary<Vector2Int, int> { [from] = 0 };
+            var queue   = new Queue<(Vector2Int cell, int cost)>();
+            queue.Enqueue((from, 0));
+            var dirs = new[]
+            {
+                new Vector2Int( 1,  0), new Vector2Int(-1, 0),
+                new Vector2Int( 0,  1), new Vector2Int( 0,-1),
+            };
+
+            while (queue.Count > 0)
+            {
+                var (cell, cost) = queue.Dequeue();
+                foreach (var dir in dirs)
+                {
+                    var next = cell + dir;
+                    if (visited.ContainsKey(next))   continue;
+                    if (!grid.IsInBounds(next))      continue;
+                    if (grid.IsOccupied(next))       continue;
+                    if (grid.IsDenied(next))         continue;
+
+                    var terrain    = grid.GetTerrain(next);
+                    int entryCost  = (terrain.HasValue && terrain.Value.movementCost > 1)
+                                     ? terrain.Value.movementCost : 1;
+                    int newCost    = cost + entryCost;
+                    if (newCost > movement) continue;
+
+                    if (next == destination) return true;
+                    visited[next] = newCost;
+                    queue.Enqueue((next, newCost));
+                }
+            }
+            return false;
+        }
+
+        private static void LogTerrainEntry(string hunterName, TerrainCellState terrain)
+        {
+            var effects = new List<string>();
+            if (terrain.accuracyBonus > 0)  effects.Add($"+{terrain.accuracyBonus} accuracy on attacks");
+            if (terrain.accuracyBonus < 0)  effects.Add($"{terrain.accuracyBonus} accuracy penalty on attacks");
+            if (terrain.defenseBonus  > 0)  effects.Add($"+{terrain.defenseBonus} defense vs incoming hits");
+            if (terrain.movementCost  > 1)  effects.Add($"costs {terrain.movementCost} movement to enter");
+            string effectStr = effects.Count > 0 ? string.Join(" | ", effects) : "no stat effects";
+            Debug.Log($"[Terrain] {hunterName} entered {terrain.terrainId} — {effectStr}");
         }
 
         public void SkipHunterMove(string hunterId)

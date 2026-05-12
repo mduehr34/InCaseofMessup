@@ -221,7 +221,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MnM.Core.UI::MnM.Core.UI.CombatTestBootstrapper
   _combatManager: {fileID: 1066921340}
-  _mockMonsterSO: {fileID: 11400000, guid: 9b47334a3da03b445b364fb050f2479d, type: 2}
+  _mockMonsterSO: {fileID: 11400000, guid: a8d2e81ab05fe9f4282e5765c4a60f8b, type: 2}
 --- !u!114 &1010199893
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -321,6 +321,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: MnM.Core.Systems::MnM.Core.Systems.CombatManager
   _gridManager: {fileID: 1980084148}
+  _terrainSetup: {fileID: 11400000, guid: 8ae0b9e5911475646902135049c22a92, type: 2}
+  _terrainSpawnTable: {fileID: 0}
 --- !u!4 &1066921341
 Transform:
   m_ObjectHideFlags: 0

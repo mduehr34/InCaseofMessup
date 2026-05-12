@@ -12,10 +12,11 @@ namespace MnM.Core.Systems
 
         // ── Internal State ───────────────────────────────────────
         // Key: "x,y" string. Value: occupantId or null
-        private Dictionary<string, string>       _occupancy   = new();
-        private Dictionary<string, GridOccupant> _occupants   = new();
-        private Dictionary<string, int>          _deniedCells = new(); // key:"x,y", value:roundsRemaining
-        private HashSet<string>                  _marrowSinks = new();
+        private Dictionary<string, string>            _occupancy    = new();
+        private Dictionary<string, GridOccupant>     _occupants    = new();
+        private Dictionary<string, int>              _deniedCells  = new(); // key:"x,y", value:roundsRemaining
+        private HashSet<string>                      _marrowSinks  = new();
+        private Dictionary<string, TerrainCellState> _terrainCells = new();
 
         // ── Helpers ──────────────────────────────────────────────
         private static string Key(int x, int y) => $"{x},{y}";
@@ -183,5 +184,20 @@ namespace MnM.Core.Systems
             if (active) _marrowSinks.Add(Key(cell));
             else        _marrowSinks.Remove(Key(cell));
         }
+
+        // ── Terrain ───────────────────────────────────────────────
+        public void PlaceTerrain(TerrainCellState cell)
+        {
+            _terrainCells[Key(cell.x, cell.y)] = cell;
+            if (cell.terrainType == TerrainType.Obstacle)
+                SetDenied(new Vector2Int(cell.x, cell.y), true, int.MaxValue);
+            Debug.Log($"[Grid] Terrain placed: {cell.terrainId} at ({cell.x},{cell.y})");
+        }
+
+        public bool IsTerrain(Vector2Int cell) =>
+            _terrainCells.ContainsKey(Key(cell));
+
+        public TerrainCellState? GetTerrain(Vector2Int cell) =>
+            _terrainCells.TryGetValue(Key(cell), out var t) ? t : (TerrainCellState?)null;
     }
 }

@@ -20,7 +20,8 @@ namespace MnM.Core.Logic
             MonsterCombatState monster,
             ref MonsterPartState targetPart,
             MonsterSO monsterData,
-            bool firstPartBreakOccurredThisCombat)
+            bool firstPartBreakOccurredThisCombat,
+            int terrainAccuracyBonus = 0)
         {
             var result = new CardResolutionResult
             {
@@ -50,8 +51,11 @@ namespace MnM.Core.Logic
             }
 
             // ── Step 3: Precision Check ──────────────────────────
-            int effectiveAccuracy = attacker.accuracy;
+            int effectiveAccuracy = attacker.accuracy + terrainAccuracyBonus;
             int effectiveMovement = attacker.movement;
+            if (terrainAccuracyBonus != 0)
+                Debug.Log($"[Card] Terrain accuracy modifier: {terrainAccuracyBonus:+#;-#;0} " +
+                          $"(effective accuracy {effectiveAccuracy})");
             StatusEffectResolver.ApplyStatusPenalties(
                 attacker, ref effectiveAccuracy, ref effectiveMovement);
 

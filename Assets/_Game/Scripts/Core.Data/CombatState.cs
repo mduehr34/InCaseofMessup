@@ -119,6 +119,7 @@ namespace MnM.Core.Data
         public int height;                  // Always 16
         public DeniedCell[] deniedCells;
         public string[] marrowSinkCells;    // Encoded as "x,y" e.g. "5,3"
+        public TerrainCellState[] terrainCells;
     }
 
     [Serializable]
@@ -127,6 +128,24 @@ namespace MnM.Core.Data
         public int x;
         public int y;
         public int roundsRemaining;
+    }
+
+    [Serializable]
+    public struct TerrainCellState : IJsonSerializable
+    {
+        public int x;
+        public int y;
+        public string terrainId;        // Matches TerrainCellSO.terrainId
+        public TerrainType terrainType;
+        public int accuracyBonus;
+        public int defenseBonus;
+        public int movementCost;            // BFS entry cost — 1 = normal, 2 = slow terrain
+        public string cssClass;
+        // ── Deferred: STAGE_08_TerrainFX ─────────────────────────
+        public string buffOnEnterTag;       // StatusEffect tag applied on entry — empty = none
+        public int    buffDurationRounds;
+        public string resourceGrantTag;     // Resource type granted on entry — empty = none
+        public int    resourceGrantAmount;
     }
 
     [Serializable]
