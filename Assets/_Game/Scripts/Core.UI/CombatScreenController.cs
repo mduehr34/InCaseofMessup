@@ -1417,6 +1417,30 @@ namespace MnM.Core.UI
                         Debug.Log($"[CombatUI] TryMoveHunter rejected: ({x},{y})");
                     }
                 }
+                else if (_combatManager.CurrentPhase == CombatPhase.HunterPhase &&
+                         !activeHunter.hasMovedThisPhase)
+                {
+                    // Log why the cell is unreachable so the player knows what blocked them
+                    var grid = _gridManager as MnM.Core.Systems.IGridManager;
+                    if (grid != null)
+                    {
+                        string reason;
+                        if (!grid.IsInBounds(destination))
+                            reason = "out of bounds";
+                        else if (grid.IsOccupied(destination))
+                            reason = "occupied by another unit";
+                        else if (grid.IsDenied(destination))
+                        {
+                            var terrain = grid.GetTerrain(destination);
+                            reason = terrain.HasValue
+                                ? $"blocked by {terrain.Value.terrainId} (impassable terrain)"
+                                : "blocked by obstacle";
+                        }
+                        else
+                            reason = $"out of movement range (movement: {activeHunter.movement})";
+                        Debug.Log($"[Combat] {activeHunter.hunterName} cannot move to ({x},{y}) — {reason}");
+                    }
+                }
             }
 
             RefreshGrid();
