@@ -14,32 +14,32 @@ MonoBehaviour:
   m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.TerrainSetupSO
   entries:
   - terrain: {fileID: 11400000, guid: 268d39792ea1ad9458ac3b704c1db55b, type: 2}
-    gridX: 11
-    gridY: 7
+    gridX: 7
+    gridY: 6
     footprintW: 1
     footprintH: 1
   - terrain: {fileID: 11400000, guid: 268d39792ea1ad9458ac3b704c1db55b, type: 2}
-    gridX: 14
-    gridY: 7
-    footprintW: 1
-    footprintH: 1
-  - terrain: {fileID: 11400000, guid: 5fef5a735f96b41418524487ea759d88, type: 2}
-    gridX: 12
-    gridY: 9
-    footprintW: 1
-    footprintH: 1
-  - terrain: {fileID: 11400000, guid: f2477d937ba916b47ab082eaf886d4ef, type: 2}
-    gridX: 10
-    gridY: 7
-    footprintW: 1
-    footprintH: 1
-  - terrain: {fileID: 11400000, guid: f2477d937ba916b47ab082eaf886d4ef, type: 2}
-    gridX: 15
+    gridX: 9
     gridY: 8
     footprintW: 1
     footprintH: 1
-  - terrain: {fileID: 11400000, guid: 051acd5700b80da48b6c7e425f19dafa, type: 2}
+  - terrain: {fileID: 11400000, guid: 5fef5a735f96b41418524487ea759d88, type: 2}
+    gridX: 5
+    gridY: 8
+    footprintW: 1
+    footprintH: 1
+  - terrain: {fileID: 11400000, guid: f2477d937ba916b47ab082eaf886d4ef, type: 2}
+    gridX: 6
+    gridY: 7
+    footprintW: 1
+    footprintH: 1
+  - terrain: {fileID: 11400000, guid: f2477d937ba916b47ab082eaf886d4ef, type: 2}
     gridX: 11
-    gridY: 6
+    gridY: 9
+    footprintW: 1
+    footprintH: 1
+  - terrain: {fileID: 11400000, guid: 051acd5700b80da48b6c7e425f19dafa, type: 2}
+    gridX: 8
+    gridY: 7
     footprintW: 2
     footprintH: 1

@@ -20,7 +20,7 @@ MonoBehaviour:
   startingGrit: 3
   ironmanMode: 0
   monsterRoster:
-  - {fileID: 11400000, guid: 9b47334a3da03b445b364fb050f2479d, type: 2}
+  - {fileID: 11400000, guid: a8d2e81ab05fe9f4282e5765c4a60f8b, type: 2}
   - {fileID: 11400000, guid: 754f3eb646938d246abd58afb97105a0, type: 2}
   - {fileID: 11400000, guid: d7f5ae66858232e4ca8693fa67a67e0d, type: 2}
   - {fileID: 11400000, guid: 478172f8285f1b34da3ad9033541e11d, type: 2}

@@ -20,7 +20,7 @@ MonoBehaviour:
   startingGrit: 3
   ironmanMode: 0
   monsterRoster:
-  - {fileID: 11400000, guid: 9b47334a3da03b445b364fb050f2479d, type: 2}
+  - {fileID: 11400000, guid: a8d2e81ab05fe9f4282e5765c4a60f8b, type: 2}
   eventPool:
   - {fileID: 11400000, guid: ee01000000000000ee01000000000000, type: 2}
   - {fileID: 11400000, guid: ee02000000000000ee02000000000000, type: 2}
