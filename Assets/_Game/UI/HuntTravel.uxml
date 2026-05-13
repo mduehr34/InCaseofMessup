@@ -1,0 +1,47 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+  <ui:VisualElement name="root" style="width:100%; height:100%; position:relative; background-color:#0A0A0C;">
+
+    <!-- Background art — sprite assigned at runtime by TravelScreenController if available -->
+    <ui:VisualElement name="bg" style="position:absolute; left:0; top:0; right:0; bottom:0;
+        -unity-background-scale-mode:scale-to-fit;" />
+
+    <!-- Dark vignette overlay -->
+    <ui:VisualElement name="vignette" style="position:absolute; left:0; top:0; right:0; bottom:0;
+        background-color:rgba(0,0,0,0.45); pointer-events:none;" />
+
+    <!-- Header bar -->
+    <ui:VisualElement style="position:absolute; top:0; left:0; right:0; height:48px;
+        background-color:rgba(10,10,12,0.85); align-items:center; justify-content:center;
+        border-bottom-color:#2A2420; border-bottom-width:1px;">
+      <ui:Label name="hunt-target-label" text="HUNTING: —"
+                style="color:#D4CCBA; font-size:13px; -unity-font-style:bold; letter-spacing:1px;" />
+    </ui:VisualElement>
+
+    <!-- Hunter condition bar (built in code) -->
+    <ui:VisualElement name="hunter-condition-bar"
+        style="position:absolute; top:56px; left:12px; right:12px; height:36px;
+               flex-direction:row; justify-content:flex-start;" />
+
+    <!-- Events-remaining counter -->
+    <ui:Label name="events-remaining" text=""
+        style="position:absolute; top:100px; left:0; right:0;
+               color:rgba(180,170,155,0.6); font-size:10px;
+               -unity-text-align:upper-center;" />
+
+    <!-- Event modal overlay area — modals are appended to root, not here -->
+
+    <!-- Continue button — hidden until all events resolved -->
+    <ui:VisualElement style="position:absolute; bottom:24px; left:0; right:0; align-items:center;">
+      <ui:Button name="btn-continue-hunt" text="CONTINUE TO HUNT →"
+                 style="width:280px; height:52px;
+                        background-color:#4A2020;
+                        border-top-color:#B8860B; border-bottom-color:#B8860B;
+                        border-left-color:#B8860B; border-right-color:#B8860B;
+                        border-top-width:2px; border-bottom-width:2px;
+                        border-left-width:2px; border-right-width:2px;
+                        color:#D4CCBA; font-size:15px; -unity-font-style:bold;
+                        display:none;" />
+    </ui:VisualElement>
+
+  </ui:VisualElement>
+</ui:UXML>

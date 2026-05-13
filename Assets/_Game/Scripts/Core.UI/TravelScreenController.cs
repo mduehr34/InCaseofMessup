@@ -12,6 +12,8 @@ namespace MnM.Core.UI
         [SerializeField] private UIDocument      _uiDocument;
         [SerializeField] private VisualTreeAsset _eventModalAsset;
         [SerializeField] private CampaignSO      _campaignSO;
+        [Header("Art")]
+        [SerializeField] private Sprite          _travelBg;
 
         private VisualElement  _root;
         private Queue<EventSO> _travelEvents = new Queue<EventSO>();
@@ -28,9 +30,17 @@ namespace MnM.Core.UI
                 return;
             }
 
+            // Travel music
+            AudioManager.Instance?.SetMusicContext(AudioContext.HuntTravel);
+
+            // Background art
+            var pathVisual = _root.Q("path-visual");
+            if (pathVisual != null && _travelBg != null)
+                pathVisual.style.backgroundImage = new StyleBackground(_travelBg);
+
             // Header
             _root.Q<Label>("hunt-target-label").text =
-                $"Hunting: {gsm.SelectedMonster.monsterName} ({gsm.SelectedDifficulty})";
+                $"HUNTING: {gsm.SelectedMonster.monsterName.ToUpper()} ({gsm.SelectedDifficulty.ToUpper()})";
 
             // Hunter condition bar
             BuildHunterConditionBar(gsm.CampaignState, gsm.SelectedHunters);
@@ -56,11 +66,11 @@ namespace MnM.Core.UI
                 return;
             }
 
-            // Events are eligible if tagged "travel" (campaignTag OR seasonTag) and within year range
+            // Events are eligible if flagged isTravel, unseen, and within year range
             var eligible = _campaignSO.eventPool
                 .Where(e => e != null
+                    && e.isTravel
                     && !state.resolvedEventIds.Contains(e.eventId)
-                    && (e.campaignTag == "travel" || e.seasonTag == "travel")
                     && state.currentYear >= e.yearRangeMin
                     && state.currentYear <= e.yearRangeMax)
                 .OrderBy(_ => Random.value)
