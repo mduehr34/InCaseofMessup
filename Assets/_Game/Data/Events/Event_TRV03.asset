@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b42b211e5ee878468687a6229d4bd67, type: 3}
+  m_Name: Event_TRV03
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.EventSO
+  eventId: TRV-03
+  eventName: The Fog
+  yearRangeMin: 1
+  yearRangeMax: 30
+  isMandatory: 0
+  campaignTag: travel
+  monsterTag: 
+  seasonTag: 
+  difficultyTag: 
+  isTravel: 1
+  narrativeText: The fog came in fast. One moment you could see each other; the next,
+    only shapes in grey. You split up briefly. Something moved between you.
+  choices:
+  - choiceLabel: A
+    outcomeText: "Call out \u2014 stay loud until you regroup. (No effect. You arrive
+      together.)"
+    mechanicalEffect: 
+    artifactUnlockId: 
+    codexEntryId: 
+    guidingPrincipalTrigger: 
+  - choiceLabel: B
+    outcomeText: Stay silent. Whatever it was might still be close. (All hunters
+      begin combat with the Shaken status.)
+    mechanicalEffect: status:Shaken:all
+    artifactUnlockId: 
+    codexEntryId: 
+    guidingPrincipalTrigger: 

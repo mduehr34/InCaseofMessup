@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4b42b211e5ee878468687a6229d4bd67, type: 3}
+  m_Name: Event_TRV01
+  m_EditorClassIdentifier: MnM.Core.Data::MnM.Core.Data.EventSO
+  eventId: TRV-01
+  eventName: Tracks
+  yearRangeMin: 1
+  yearRangeMax: 30
+  isMandatory: 0
+  campaignTag: travel
+  monsterTag: 
+  seasonTag: 
+  difficultyTag: 
+  isTravel: 1
+  narrativeText: Fresh tracks in the mud. Large. Recent. Something big passed through
+    here not long ago, and the trail is still warm.
+  choices:
+  - choiceLabel: A
+    outcomeText: "Follow the tracks. (+1 Accuracy for the first combat round \u2014
+      you know exactly where it is.)"
+    mechanicalEffect: accuracy_bonus_round1:1
+    artifactUnlockId: 
+    codexEntryId: 
+    guidingPrincipalTrigger: 
+  - choiceLabel: B
+    outcomeText: "Avoid the trail. Circle wide and approach from upwind. (No effect
+      \u2014 but no risk either.)"
+    mechanicalEffect: 
+    artifactUnlockId: 
+    codexEntryId: 
+    guidingPrincipalTrigger: 

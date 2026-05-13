@@ -21,7 +21,10 @@ MonoBehaviour:
   ironmanMode: 0
   monsterRoster:
   - {fileID: 11400000, guid: 0a802bcfa85f9c54b97e0852dd9253c0, type: 2}
-  eventPool: []
+  eventPool:
+  - {fileID: 11400000, guid: 5ef799612c324e74eb02e08f9e47d8a8, type: 2}
+  - {fileID: 11400000, guid: 6bc50d7456ddc6443891e90add346353, type: 2}
+  - {fileID: 11400000, guid: 59d9c4361b4b9e24d923a1a07cb26130, type: 2}
   startingInnovations: []
   crafterPool: []
   guidingPrincipals: []

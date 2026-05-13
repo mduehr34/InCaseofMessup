@@ -1,0 +1,82 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+
+  <!-- Full-screen semi-transparent backdrop -->
+  <ui:VisualElement name="modal-backdrop" style="position:absolute; left:0; top:0; right:0; bottom:0;
+      background-color:rgba(0,0,0,0.55); align-items:center; justify-content:center;">
+
+    <!-- Event card panel -->
+    <ui:VisualElement name="event-card"
+        style="width:480px;
+               background-color:rgba(12,10,8,0.97);
+               border-top-color:#B8860B; border-bottom-color:#B8860B;
+               border-left-color:#B8860B; border-right-color:#B8860B;
+               border-top-width:2px; border-bottom-width:2px;
+               border-left-width:2px; border-right-width:2px;
+               border-top-left-radius:2px; border-top-right-radius:2px;
+               border-bottom-left-radius:2px; border-bottom-right-radius:2px;
+               padding-top:24px; padding-bottom:24px;
+               padding-left:28px; padding-right:28px;">
+
+      <!-- Event ID + Name header row -->
+      <ui:VisualElement style="flex-direction:row; align-items:baseline; margin-bottom:4px;">
+        <ui:Label name="event-id" text="EVT-00"
+            style="color:rgba(184,134,11,0.7); font-size:9px; margin-right:8px;" />
+        <ui:Label name="event-name" text="EVENT NAME"
+            style="color:#B8860B; font-size:14px; -unity-font-style:bold; letter-spacing:1px;
+                   flex-grow:1;" />
+      </ui:VisualElement>
+
+      <!-- Thin gold divider -->
+      <ui:VisualElement style="height:1px; background-color:rgba(184,134,11,0.4);
+          margin-bottom:16px;" />
+
+      <!-- Narrative text -->
+      <ui:Label name="event-narrative" text=""
+          style="color:#D4CCBA; font-size:11px; white-space:normal;
+                 -unity-text-align:upper-left; margin-bottom:20px;" />
+
+      <!-- Mandatory notice — shown only when isMandatory, hidden otherwise -->
+      <ui:Label name="event-mandatory" text="This outcome is unavoidable."
+          style="color:rgba(180,60,60,0.85); font-size:9px;
+                 -unity-font-style:italic; margin-bottom:12px; display:none;" />
+
+      <!-- CHOICES layout (two buttons A / B) — shown for choice events -->
+      <ui:VisualElement name="event-choices" style="display:none;">
+        <ui:Button name="btn-choice-a" text="A: …"
+            style="margin-bottom:10px; white-space:normal;
+                   background-color:rgba(30,25,20,0.9);
+                   border-top-color:rgba(80,70,55,1); border-bottom-color:rgba(80,70,55,1);
+                   border-left-color:rgba(80,70,55,1); border-right-color:rgba(80,70,55,1);
+                   border-top-width:1px; border-bottom-width:1px;
+                   border-left-width:1px; border-right-width:1px;
+                   color:#D4CCBA; font-size:10px;
+                   padding-top:8px; padding-bottom:8px;
+                   padding-left:12px; padding-right:12px;" />
+        <ui:Button name="btn-choice-b" text="B: …"
+            style="white-space:normal;
+                   background-color:rgba(30,25,20,0.9);
+                   border-top-color:rgba(80,70,55,1); border-bottom-color:rgba(80,70,55,1);
+                   border-left-color:rgba(80,70,55,1); border-right-color:rgba(80,70,55,1);
+                   border-top-width:1px; border-bottom-width:1px;
+                   border-left-width:1px; border-right-width:1px;
+                   color:#D4CCBA; font-size:10px;
+                   padding-top:8px; padding-bottom:8px;
+                   padding-left:12px; padding-right:12px;" />
+      </ui:VisualElement>
+
+      <!-- ACKNOWLEDGE button — shown only for mandatory / no-choice events -->
+      <ui:Button name="btn-acknowledge" text="ACKNOWLEDGE"
+          style="display:none; align-self:flex-end;
+                 background-color:rgba(50,40,30,0.9);
+                 border-top-color:#B8860B; border-bottom-color:#B8860B;
+                 border-left-color:#B8860B; border-right-color:#B8860B;
+                 border-top-width:1px; border-bottom-width:1px;
+                 border-left-width:1px; border-right-width:1px;
+                 color:#D4CCBA; font-size:11px;
+                 padding-top:8px; padding-bottom:8px;
+                 padding-left:16px; padding-right:16px;" />
+
+    </ui:VisualElement>
+  </ui:VisualElement>
+
+</ui:UXML>

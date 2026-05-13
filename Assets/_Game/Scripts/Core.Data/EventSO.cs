@@ -14,6 +14,8 @@ namespace MnM.Core.Data
         public string monsterTag;           // Empty if not monster-specific
         public string seasonTag;
         public string difficultyTag;
+        [Header("Travel")]
+        public bool isTravel;           // If true, can fire during the Hunt Travel scene
         [TextArea] public string narrativeText;
         // Max 2 choices. 0 choices = mandatory outcome, no player decision.
         public EventChoice[] choices;

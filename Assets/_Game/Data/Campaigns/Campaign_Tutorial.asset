@@ -27,6 +27,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ee03000000000000ee03000000000000, type: 2}
   - {fileID: 11400000, guid: ee05000000000000ee05000000000000, type: 2}
   - {fileID: 11400000, guid: ee06000000000000ee06000000000000, type: 2}
+  - {fileID: 11400000, guid: 5ef799612c324e74eb02e08f9e47d8a8, type: 2}
+  - {fileID: 11400000, guid: 6bc50d7456ddc6443891e90add346353, type: 2}
+  - {fileID: 11400000, guid: 59d9c4361b4b9e24d923a1a07cb26130, type: 2}
   startingInnovations:
   - {fileID: 11400000, guid: 9e082aa0030da364b9794b30dc597f80, type: 2}
   - {fileID: 11400000, guid: 3720c18bf9d5def40814b4a0a8734736, type: 2}

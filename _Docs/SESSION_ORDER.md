@@ -1,6 +1,6 @@
 # Marrow & Myth — Master Session Order
 
-> **Last updated:** After Stage 8-R post-gate bug fixes — monster footprint movement, blank card rendering, campaign roster, terrain spawn position all resolved; next is 8-S (Hunt Travel Scene)
+> **Last updated:** After Stage 8-S — Hunt Travel Scene complete; isTravel flag, TRV-01/02/03 events, travel music and background wired; next is 8-T (Tutorial Tooltip & Onboarding System)
 >
 > **Key change from original plan:** After completing the 8-L monster execution engine, playtesting revealed the shell/flesh HP system created frustrating combat pacing. Six sessions were inserted immediately after 8-L:
 > - **8-M** (new): Data model rework — shell/flesh HP removed; behavior deck IS the monster's health; wound location deck introduced
@@ -40,7 +40,7 @@
 | 8-Q-ext | STAGE_08_TerrainFX.md | Terrain Buff & Resource Grant System *(deferred — run after 8-R)* | ⬜ |
 | 8-Q-ext | STAGE_08_TerrainGen.md | Random Terrain Placement from Monster Spawn Table *(deferred — run after 8-R)* | ⬜ |
 | 8-R | STAGE_08_R.md | Combat Loop Integration Gate — full Aldric vs Gaunt pass (new system) | ✅ Done |
-| 8-S | STAGE_08_S.md | Hunt Travel Scene — Travel Events, CONTINUE TO HUNT | ⬜ |
+| 8-S | STAGE_08_S.md | Hunt Travel Scene — Travel Events, CONTINUE TO HUNT | ✅ Done |
 | 8-T | STAGE_08_T.md | Tutorial Tooltip & Onboarding System | ⬜ |
 | 8-U | STAGE_08_U.md | Chronicle Log & Codex UI | ⬜ |
 | 8-V | STAGE_08_V.md | Birth, Retirement & Year-End Screens | ⬜ |
