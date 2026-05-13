@@ -1,6 +1,6 @@
 # Marrow & Myth — Master Session Order
 
-> **Last updated:** After Stage 8-Q and 8-R complete — terrain system and integration gate done; two deferred terrain extension sessions added (TerrainFX, TerrainGen)
+> **Last updated:** After Stage 8-R post-gate bug fixes — monster footprint movement, blank card rendering, campaign roster, terrain spawn position all resolved; next is 8-S (Hunt Travel Scene)
 >
 > **Key change from original plan:** After completing the 8-L monster execution engine, playtesting revealed the shell/flesh HP system created frustrating combat pacing. Six sessions were inserted immediately after 8-L:
 > - **8-M** (new): Data model rework — shell/flesh HP removed; behavior deck IS the monster's health; wound location deck introduced
